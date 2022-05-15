@@ -340,8 +340,8 @@ namespace Notes2022.Client.Menus
             sb.Append(currentHeader.NoteSubject);
             sb.Append("<br />Author: ");
             sb.Append(currentHeader.AuthorName + "    ");
-            sb.Append((Globals.LocalTimeBlazor(currentHeader.LastEdited.ToDateTime()).ToLongDateString()) + " " 
-                + (Globals.LocalTimeBlazor(currentHeader.LastEdited.ToDateTime()).ToShortTimeString()));
+            sb.Append(currentHeader.LastEdited.ToDateTime().ToLocalTime().ToLongDateString() + " "
+                + currentHeader.LastEdited.ToDateTime().ToLocalTime().ToShortTimeString() );
 
             NoteContent currentContent = allNotes.Single(p => p.Id == currentHeader.Id).Content;   //await Client.GetExport2Async(new NoteId() { Id = currentHeader.Id }, myState.AuthHeader);
 

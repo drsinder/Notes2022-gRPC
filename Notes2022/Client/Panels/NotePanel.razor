@@ -72,8 +72,8 @@
                     <h4>
                         Subject: @model.Header.NoteSubject <br />
                         Author: @model.Header.AuthorName &nbsp;&nbsp;&nbsp;On:
-                        @(Globals.LocalTimeBlazor(model.Header.LastEdited.ToDateTime()).ToLongDateString()) At:
-                        @Globals.LocalTimeBlazor(model.Header.LastEdited.ToDateTime()).ToShortTimeString() @*@Model.tZone.Abbreviation*@
+                        @(model.Header.LastEdited.ToDateTime())>ToLocalTime().ToLongDateString()) At:
+                        @model.Header.LastEdited.ToDateTime().ToLocalTime().ToShortTimeString() @*@Model.tZone.Abbreviation*@
                         @if (!string.IsNullOrEmpty(model.Header.DirectorMessage))
                         {
                             <br />

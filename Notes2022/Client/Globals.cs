@@ -11,12 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Grpc.Core;
-using Notes2022.Proto;
 using Notes2022.Client.Shared;
 using Notes2022.Client.Menus;
 using Notes2022.Client.Pages.Admin;
-using Notes2022.Client.Pages;
 using System.Text;
 
 namespace Notes2022.Client
@@ -47,8 +44,8 @@ namespace Notes2022.Client
         /// <summary>
         /// Gets the cookie name.
         /// </summary>
-        /// <value>The cookie.</value>
-        public static string Cookie { get; } = "notes2022login";
+        /// <value>The cookie.  Different installations should use different values here</value>
+        public static string Cookie { get; set; } = "notes2022login";
 
         /// <summary>
         /// Gets or sets the return URL.
@@ -61,33 +58,6 @@ namespace Notes2022.Client
         /// </summary>
         /// <value>The goto note.</value>
         public static long GotoNote { get; set; } = 0;
-
-        /// <summary>
-        /// GMT to Local.
-        /// </summary>
-        /// <param name="dt">The dt.</param>
-        /// <returns>DateTime.</returns>
-        public static DateTime LocalTimeBlazor(DateTime dt)
-        {
-            int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
-            int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
-
-            return dt.AddHours(OHours).AddMinutes(OMinutes);    // *2 needed because we go in and out of unix utc time
-        }
-
-        /// <summary>
-        /// Converts to a Universal time
-        /// </summary>
-        /// <param name="dt">The dt.</param>
-        /// <returns>DateTime.</returns>
-        public static DateTime UTimeBlazor(DateTime dt)
-        {
-            int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
-            int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
-
-            return dt.AddHours(-OHours).AddMinutes(-OMinutes);    // *2 needed because we go in and out of unix utc time
-        }
-
 
         /// <summary>
         /// Base64 Encodes the plain text.

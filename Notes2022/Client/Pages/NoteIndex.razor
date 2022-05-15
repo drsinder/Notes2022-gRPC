@@ -102,7 +102,7 @@ else                    @*    Index mode        *@
                             @{
                                             var itemx = (inner as NoteHeader);
                                             itemx = itemx is not null ? itemx : new();
-                                            <span>@Globals.LocalTimeBlazor(itemx.CreateDate.ToDateTime())</span>
+                                            <span>@itemx.CreateDate.ToDateTime().ToLocalTime()</span>
                                         }
                                     </Template>
 

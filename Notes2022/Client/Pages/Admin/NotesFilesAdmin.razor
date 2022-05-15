@@ -71,7 +71,7 @@ else
                                 @file.NoteFileTitle
                             </td>
                             <td>
-                                @Globals.LocalTimeBlazor(file.LastEdited.ToDateTime()).ToShortTimeString() @Globals.LocalTimeBlazor(file.LastEdited.ToDateTime()).ToShortDateString()
+                                @file.LastEdited.ToDateTime().ToLocalTime().ToShortTimeString() @file.LastEdited.ToDateTime().ToLocalTime().ToShortDateString()
                             </td>
                             <td>
                                 @(uList.Find(p => p.Id == file.OwnerId).DisplayName)

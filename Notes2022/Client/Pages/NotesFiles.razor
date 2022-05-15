@@ -49,7 +49,7 @@ else
                     @{
                         var itemx = (inner as NoteFile);
                         itemx = itemx is not null ? itemx : new();
-                        DateTime curTimex = Globals.LocalTimeBlazor(itemx.LastEdited.ToDateTime());
+                        DateTime curTimex = itemx.LastEdited.ToDateTime().ToLocalTime();
                     string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString();
                     <span>@tellx</span>
                  }

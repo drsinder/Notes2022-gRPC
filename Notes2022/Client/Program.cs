@@ -29,9 +29,11 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddSingleton<App>();   // for login state mgt = "myState" injection in _imports.razor
+builder.Services.AddSingleton<App>();       // for login state mgt = "myState" injection in _imports.razor
 
-builder.Services.AddSyncfusionBlazor();   // options => { options.IgnoreScriptIsolation = true; });
+builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
+
+Globals.Cookie = "notes2022login-dev";      // per-installation value!!  Select your own value here.
 
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
