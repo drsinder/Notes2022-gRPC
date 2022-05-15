@@ -1343,10 +1343,10 @@ message NoteCount {
   <topic>
     <type>normal</type>
     <is-default>no</is-default>
-    <name>Database Diagram</name>
+    <name>Service and Database Diagram</name>
     <id>new_topic_4</id>
     <comment><![CDATA[<summary>
-<img src="Notes2022Tables.png"/>
+<img src="Notes2022Service.png"/><img src="Notes2022Tables.png"/>
 </summary>
 <remarks>
 <img src="Notes2022 Database.png"/>
