@@ -115,12 +115,6 @@ namespace Notes2022.Server.Data
                 .HasKey(new string[] { "UserId", "NoteFileId" });
 
 
-
-
-
-
-
-
             builder.Entity<NoteFile>()
               .Property(m => m.LastEdited)
               .HasConversion(v => v.ToDateTimeOffset(), v => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(v));
@@ -149,43 +143,9 @@ namespace Notes2022.Server.Data
 
 
 
-
             builder.Entity<NoteHeader>().Ignore(c => c.Responses);
             builder.Entity<NoteHeader>().Ignore(c => c.Content);
             builder.Entity<NoteHeader>().Ignore(c => c.Tags);
-
-
-            //builder.Entity<NoteAccess>()
-            //    .HasKey(new string[] { "UserID", "NoteFileId", "ArchiveId" });
-
-            //builder.Entity<NoteHeader>()
-            //    .HasOne(p => p.NoteContent);
-            ////.WithOne(i => i.NoteHeader)
-            ////.HasForeignKey<NoteContent>(b => b.NoteHeaderId);
-
-            //builder.Entity<NoteHeader>()
-            //    .HasIndex(new string[] { "NoteFileId" });
-
-            //builder.Entity<NoteHeader>()
-            //    .HasIndex(new string[] { "NoteFileId", "ArchiveId" });
-
-            //builder.Entity<NoteHeader>()
-            //    .HasIndex(new string[] { "LinkGuid" });
-
-            //builder.Entity<Tags>()
-            //    .HasKey(new string[] { "Tag", "NoteHeaderId" });
-
-            //builder.Entity<Tags>()
-            //    .HasIndex(new string[] { "NoteFileId" });
-
-            //builder.Entity<Tags>()
-            //    .HasIndex(new string[] { "NoteFileId", "ArchiveId" });
-
-            //builder.Entity<Sequencer>()
-            //    .HasKey(new string[] { "UserId", "NoteFileId" });
-
         }
-
-
     }
 }
