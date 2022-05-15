@@ -72,7 +72,7 @@ namespace Notes2022.Client
             int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
             int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
 
-            return dt.AddHours(OHours * 2).AddMinutes(OMinutes * 2);    // *2 needed because we go in and out of unix utc time
+            return dt.AddHours(OHours).AddMinutes(OMinutes);    // *2 needed because we go in and out of unix utc time
         }
 
         /// <summary>

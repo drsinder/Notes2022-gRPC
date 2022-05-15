@@ -257,15 +257,15 @@ namespace Notes2022.Server
 
             if (!send) // indicates an import operation / adjust time to UCT / assume original was CST = UCT-06, so add 6 hours
             {
-                int offset = 6;
-                if (nh.LastEdited.ToDateTime().IsDaylightSavingTime())
-                    offset--;       // five if DST
+                //int offset = 6;
+                //if (nh.LastEdited.ToDateTime().IsDaylightSavingTime())
+                //    offset--;       // five if DST
 
                 // throw in an added random time in ms
                 Random rand = new();
                 int ms = rand.Next(999);
 
-                nh.LastEdited = nh.LastEdited + Google.Protobuf.WellKnownTypes.TimeExtensions.ToDuration(new TimeSpan(0, offset, 0, 0, ms));  //nh.LastEdited.ToDateTime().AddHours(offset).AddMilliseconds(ms);
+                nh.LastEdited = nh.LastEdited + Google.Protobuf.WellKnownTypes.TimeExtensions.ToDuration(new TimeSpan(0, 0, 0, 0, ms));  //nh.LastEdited.ToDateTime().AddHours(offset).AddMilliseconds(ms);
                 nh.CreateDate = nh.LastEdited;
                 nh.ThreadLastEdited = nh.CreateDate;
             }
