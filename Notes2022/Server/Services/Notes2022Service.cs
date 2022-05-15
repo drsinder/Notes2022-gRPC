@@ -1682,6 +1682,12 @@ namespace Notes2022.Server.Services
                 return stuff;
             }
 
+            if (request.Val == "CookieName")
+            {
+                stuff.Val = _configuration["CookieName"];
+                return stuff;
+            }
+
             string myFileInput = Globals.ImportRoot + "Text\\" + request.Val;
             // Get the input file
             StreamReader file;

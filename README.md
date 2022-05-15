@@ -57,11 +57,11 @@ Example you will need to fill in the values for your case:
   "ConnectionStrings:DefaultConnection": "Server=localhost;Database=Notes2022;Trusted_Connection=True;MultipleActiveResultSets=true",
   
  "JWTAuth": {
-    "ValidAudienceURL": "https://localhost:7130",
-    "ValidIssuerURL": "https://localhost:7130",
+    "ValidAudienceURL": "https://localhost:7133",
+    "ValidIssuerURL": "https://localhost:7133",
     "SecretKey": "Use a very long string here for your key"
   },
-  "AppUrl": "https://localhost:7130",
+  "AppUrl": "https://localhost:7133",
 
   "ImportRoot": "E:\\Projects\\2022\\Notes2022\\Notes2022\\Server\\wwwroot\\Import\\",
   
@@ -77,7 +77,7 @@ Example you will need to fill in the values for your case:
 
   "SyncfusionKey": "xxx"
 
-  
+  "CookieName":  "notes2022-xxxx"
 }
 
 - PrimeAdminEmail will become an Admin when the email address is used for registeration.

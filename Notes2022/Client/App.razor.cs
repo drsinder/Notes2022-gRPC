@@ -86,6 +86,10 @@ namespace Notes2022.Client
             { Val = "syncfusionkey.rsghjjsrsrj43632353" });
             SyncfusionLicenseProvider.RegisterLicense(key.Val);
 
+            AString cookiename = await Client.GetTextFileAsync(new AString()
+            { Val = "CookieName" });
+            Globals.Cookie = cookiename.Val;
+
             // JS injected in .razor file - make sure the cookie.js is loaded
             if (module is null)
                 module = await JS.InvokeAsync<IJSObjectReference>("import", "./cookies.js");

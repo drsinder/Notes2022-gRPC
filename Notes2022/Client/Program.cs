@@ -33,8 +33,6 @@ builder.Services.AddSingleton<App>();       // for login state mgt = "myState" i
 
 builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
 
-Globals.Cookie = "notes2022login-dev";      // per-installation value!!  Select your own value here.
-
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
 {
