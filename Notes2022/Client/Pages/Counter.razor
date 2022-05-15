@@ -1,0 +1,42 @@
+﻿@page "/counter"
+
+@using Grpc.Core
+@using Grpc.Net.Client.Web
+@using Notes2022.Client
+@using Notes2022.Proto
+@using Grpc.Net.Client
+@using Google.Protobuf.WellKnownTypes
+
+@inject Auth.AuthClient AuthClient
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int currentCount = 0;
+
+
+    private async Task IncrementCount()
+    {
+        currentCount++;
+        //await AuthClient.LogoutAsync(new LogoutRequest(), Globals.GetAuthHeader());
+
+        //Globals.LoginReply = null;
+    }
+    
+    //protected override async Task OnInitializedAsync()
+    //{
+    //        LoginRequest req = new LoginRequest() { Email = "Dale Sinder", Password = "aascfbgsfgf66ffhAM" };
+    //        LoginReply ar = await AuthClient.LoginAsync(req);
+    //        if (ar.Status == 200) 
+    //        {
+    //            Globals.LoginReply = ar;
+    //        }
+
+    //}
+}

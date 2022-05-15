@@ -1,0 +1,26 @@
+﻿@page "/authentication/logout"
+
+@using Microsoft.AspNetCore.Components
+@using Grpc.Core
+@using Grpc.Net.Client.Web
+@using Notes2022.Client
+@using Notes2022.Proto
+@using Grpc.Net.Client
+@using Google.Protobuf.WellKnownTypes
+@using System.Web
+
+@inject Notes2022Server.Notes2022ServerClient AuthClient
+@inject NavigationManager Navigation
+
+<h3>Logout</h3>
+
+@code {
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthClient.LogoutAsync(new NoRequest(), myState.AuthHeader);
+        myState.LoginReply = null;
+        Navigation.NavigateTo("");
+    }
+}

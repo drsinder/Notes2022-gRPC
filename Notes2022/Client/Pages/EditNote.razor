@@ -1,0 +1,13 @@
+﻿@page "/editnote/{NoteId:long}"
+
+@using Notes2022.Client.Panels
+
+@if (go)
+{
+    <NoteEditor Model="@Model" ></NoteEditor>
+}
+else
+{
+    <div>Loading...</div>
+}
+

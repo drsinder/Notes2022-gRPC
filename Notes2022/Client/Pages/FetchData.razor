@@ -1,0 +1,90 @@
+﻿@page "/fetchdata"
+
+@using Grpc.Core
+@using Grpc.Net.Client.Web
+@using Notes2022.Client
+@using Notes2022.Proto
+@using Grpc.Net.Client
+@using Google.Protobuf.WellKnownTypes
+
+@inject Weather.WeatherClient WeatherClient
+@inject Auth.AuthClient AuthClient
+@inject Notes2022Server.Notes2022ServerClient Client
+
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (Forecasts == null)
+{
+    <p><em>@message</em></p>
+}
+else
+{
+    <p>@message</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in Forecasts.Forecast)
+            {
+                <tr>
+                    <td>@((forecast.Date).ToDateTime().ToShortDateString())</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherReply? Forecasts;
+
+    private string message = "Loading...";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+
+            //RegisterRequest regreq = new RegisterRequest() {Email = "sinder@illinois.edu", Password = "aascfbgsfgf66ffhAM", Username = "Dale Sinder" };
+            //AuthReply ar1 = await AuthClient.RegisterAsync(regreq);
+
+            UserInfo? uinfo = Globals.UserInfo;
+
+            Forecasts = await WeatherClient.GetWeatherForecastAsync(new WeatherRequest(), Globals.AuthHeader);
+
+            GAppUser user = await Client.GetAppUserAsync(new AppUserRequest() {Subject = uinfo?.Subject}, Globals.AuthHeader);
+
+            GNotefile cfile = new GNotefile() { NoteFileName = "Test File 4", NoteFileTitle = "Test Title 4" };
+            //GNotefile? newfile = await Client.CreateNoteFileAsync(cfile, Globals.AuthHeader);
+
+            GNotefileList nf = await Client.GetAllNotefilesAsync(new NoRequest(), Globals.AuthHeader);
+
+            message = $"Hello {uinfo?.Displayname}, Id = {user.Id}, NoteFiles = {nf.Notefiles.Count}";
+
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.PermissionDenied)
+        {
+            message = "Permisson denied...";
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+
+    }
+}

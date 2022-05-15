@@ -1,0 +1,15 @@
+﻿@inject Notes2022Server.Notes2022ServerClient Client
+
+@if (CurrentTracker != null)
+{
+    <SfSplitButton Content="Move">
+        <SplitButtonEvents ItemSelected="ItemSelected">
+        </SplitButtonEvents>
+        <DropDownMenuItems>
+            <DropDownMenuItem Text="Up" ></DropDownMenuItem>
+            <DropDownMenuItem Text="Down" ></DropDownMenuItem>
+            <DropDownMenuItem Text="Top" ></DropDownMenuItem>
+            <DropDownMenuItem Text="Bottom" ></DropDownMenuItem>
+        </DropDownMenuItems>
+    </SfSplitButton>
+}

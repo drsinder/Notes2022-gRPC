@@ -1,0 +1,69 @@
+﻿@page "/authentication/login"
+
+@using Microsoft.AspNetCore.Components
+@using Grpc.Core
+@using Grpc.Net.Client.Web
+@using Notes2022.Client
+@using Notes2022.Proto
+@using Grpc.Net.Client
+@using Google.Protobuf.WellKnownTypes
+
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+
+@inject Notes2022Server.Notes2022ServerClient AuthClient
+@inject NavigationManager Navigation
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <section>
+                <h1>Login</h1>
+                <h2>Use a local account to log in.</h2>
+                <hr />
+                <EditForm id="loginform" Model="@Input">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+    
+                    <div class="form-floating">
+                        <strong>Email or Name</strong>
+                        <InputText id="name" @bind-Value="Input.Email" class="form-control medium-input-minus" /> 
+                    </div>
+                    <div class="form-floating">
+                        <strong>Password</strong>
+                        <InputText type="password" placeholder="Password" id="password" @bind-Value="Input.Password" class="form-control medium-input-minus" /> 
+                    </div>
+                    <div class="error">
+                        <strong>@Message</strong>
+                    </div>
+                    <div class="form-floating form-control medium-input-minus" >
+                        <br />
+                        <strong>Stay logged in:</strong>
+                        <SfRadioButton Label="No" Name="options" Value="0" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                        <SfRadioButton Label="1 hour" Name="options" Value="1" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                        <SfRadioButton Label="2 hours" Name="options" Value="2" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                        <SfRadioButton Label="1 day" Name="options" Value="24" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                        <SfRadioButton Label="7 days" Name="options" Value="168" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                        <SfRadioButton Label="30 days" Name="options" Value="720" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                        <SfRadioButton Label="1 year" Name="options" Value="8760" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                    </div>
+                    <div>
+                        <br/>
+                        <SfButton @onclick="GotoLogin" class="logbutton">Login</SfButton>
+                    </div>
+
+                </EditForm>
+
+@*                <div>
+                    <p>
+                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                    </p>
+                    <p>
+                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                    </p>
+                </div>
+*@
+        </section>
+    </div>
+</div>
+
