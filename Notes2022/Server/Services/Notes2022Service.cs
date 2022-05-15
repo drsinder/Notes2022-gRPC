@@ -562,7 +562,7 @@ namespace Notes2022.Server.Services
 
                         //List<NoteFile> myNoteFiles = new();
 
-                        NoteFileList myNoteFiles = new NoteFileList();
+                        NoteFileList myNoteFiles = new();
 
                         bool isAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin);
                         foreach (NoteFile file in allFiles)
@@ -667,8 +667,8 @@ namespace Notes2022.Server.Services
         [Authorize(Roles = "Admin")]
         public override async Task<NoRequest> Import(ImportRequest request, ServerCallContext context)
         {
-            MemoryStream? input = new MemoryStream(request.Payload.ToArray());
-            StreamReader file = new StreamReader(input);
+            MemoryStream? input = new(request.Payload.ToArray());
+            StreamReader file = new(input);
 
             Importer? imp = new();
             _ = await imp.Import(_db, file, request.NoteFile);
@@ -970,7 +970,7 @@ namespace Notes2022.Server.Services
                 .OrderBy(p => p.Version)
                 .ToList();
 
-            NoteHeaderList ret= new NoteHeaderList();
+            NoteHeaderList ret= new();
             ret.List.AddRange(hl);
             return ret;
         }
@@ -1001,7 +1001,7 @@ namespace Notes2022.Server.Services
                     avail.Add(m);   // ONLY if you have current read access!!
             }
 
-            SequencerList ret = new SequencerList();
+            SequencerList ret = new();
             ret.List.AddRange(avail.OrderBy(p => p.Ordinal).ToList());
 
             return ret;
@@ -1441,7 +1441,7 @@ namespace Notes2022.Server.Services
         {
             List<NoteFile> noteFiles = await _db.NoteFile.OrderBy(p => p.NoteFileName).ToListAsync();
 
-            NoteFileList ret = new NoteFileList();
+            NoteFileList ret = new();
             ret.List.AddRange(noteFiles);
             return ret;
         }
@@ -1500,9 +1500,7 @@ namespace Notes2022.Server.Services
 
                 Header.CreateDate = Header.ThreadLastEdited = Header.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
-#pragma warning disable CS8604 // Possible null reference argument.
                 _ = await NoteDataManager.CreateNote(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
-#pragma warning restore CS8604 // Possible null reference argument.
             }
             else    // whole note string
             {
@@ -1538,9 +1536,7 @@ namespace Notes2022.Server.Services
 
                 Header.Content = null;
 
-#pragma warning disable CS8604 // Possible null reference argument.
                 NoteHeader NewHeader = await NoteDataManager.CreateNote(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
-#pragma warning restore CS8604 // Possible null reference argument.
 
                 // now deal with any responses
                 for (int i = 1; i <= BaseHeader.ResponseCount; i++)
@@ -1573,9 +1569,7 @@ namespace Notes2022.Server.Services
 
                     Header.CreateDate = Header.ThreadLastEdited = Header.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
-#pragma warning disable CS8604 // Possible null reference argument.
                     _ = await NoteDataManager.CreateResponse(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
-#pragma warning restore CS8604 // Possible null reference argument.
                 }
             }
             return new NoRequest();
