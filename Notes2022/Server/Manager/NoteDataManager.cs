@@ -332,9 +332,7 @@ namespace Notes2022.Server
                 NoteBody = body
             };
             db.NoteContent.Add(newContent);
-            //int rr = db.Database.ExecuteSqlRaw(@"SET IDENTITY_INSERT NoteContent ON");
             await db.SaveChangesAsync();
-            //rr = db.Database.ExecuteSqlRaw(@"SET IDENTITY_INSERT NoteContent OFF");
 
             // deal with tags
 
