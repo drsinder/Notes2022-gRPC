@@ -346,9 +346,11 @@ namespace Notes2022.Client.Pages.Admin
             Navigation.NavigateTo("noteindex/" + fileId);
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         async Task ImportNoteFile2(int Id)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            NoteFile file = files.List.ToList().Find(x => x.Id == Id);
+            NoteFile file = files.List.ToList().Single(x => x.Id == Id);
             filename = file.NoteFileName;
             fileId = file.Id;
 

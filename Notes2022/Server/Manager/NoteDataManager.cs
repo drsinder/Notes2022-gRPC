@@ -270,13 +270,9 @@ namespace Notes2022.Server
                 nh.ThreadLastEdited = nh.CreateDate;
             }
 
-            NoteFile? nf = await db.NoteFile
-                .Where(p => p.Id == nh.NoteFileId)
-                .FirstOrDefaultAsync();
+            NoteFile nf = await db.NoteFile.SingleAsync(p => p.Id == nh.NoteFileId);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             nf.LastEdited = nh.CreateDate;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             db.Entry(nf).State = EntityState.Modified;
             db.NoteHeader.Add(nh);
             await db.SaveChangesAsync();

@@ -207,30 +207,32 @@ namespace Notes2022.Server.Data
         /// <returns>ApplicationUser.</returns>
         public static ApplicationUser GetApplicationUser(GAppUser other)
         {
-            ApplicationUser u = new ApplicationUser();
-            u.Id = other.Id;
-            u.DisplayName = other.DisplayName;
-            u.TimeZoneID = other.TimeZoneID;
-            u.Ipref0 = other.Ipref0;
-            u.Ipref1 = other.Ipref1;
-            u.Ipref2 = other.Ipref2;
-            u.Ipref3 = other.Ipref3;
-            u.Ipref4 = other.Ipref4;
-            u.Ipref5 = other.Ipref5;
-            u.Ipref6 = other.Ipref6;
-            u.Ipref7 = other.Ipref7;
-            u.Ipref8 = other.Ipref8;
-            u.Ipref9 = other.Ipref9;
-            u.Pref0 = other.Pref0;
-            u.Pref1 = other.Pref1;
-            u.Pref2 = other.Pref2;
-            u.Pref3 = other.Pref3;
-            u.Pref4 = other.Pref4;
-            u.Pref5 = other.Pref5;
-            u.Pref6 = other.Pref6;
-            u.Pref7 = other.Pref7;
-            u.Pref8 = other.Pref8;
-            u.Pref9 = other.Pref9;
+            ApplicationUser u = new()
+            {
+                Id = other.Id,
+                DisplayName = other.DisplayName,
+                TimeZoneID = other.TimeZoneID,
+                Ipref0 = other.Ipref0,
+                Ipref1 = other.Ipref1,
+                Ipref2 = other.Ipref2,
+                Ipref3 = other.Ipref3,
+                Ipref4 = other.Ipref4,
+                Ipref5 = other.Ipref5,
+                Ipref6 = other.Ipref6,
+                Ipref7 = other.Ipref7,
+                Ipref8 = other.Ipref8,
+                Ipref9 = other.Ipref9,
+                Pref0 = other.Pref0,
+                Pref1 = other.Pref1,
+                Pref2 = other.Pref2,
+                Pref3 = other.Pref3,
+                Pref4 = other.Pref4,
+                Pref5 = other.Pref5,
+                Pref6 = other.Pref6,
+                Pref7 = other.Pref7,
+                Pref8 = other.Pref8,
+                Pref9 = other.Pref9
+            };
             //u.MyGuid = other.MyGuid;  // null
             return u;
         }
@@ -278,30 +280,32 @@ namespace Notes2022.Server.Data
         /// <returns>GAppUser.</returns>
         public GAppUser GetGAppUser()
         {
-            GAppUser u = new GAppUser();
-            u.Id = Id;
-            u.DisplayName = DisplayName;
-            u.TimeZoneID = TimeZoneID;
-            u.Ipref0 = Ipref0;
-            u.Ipref1 = Ipref1;
-            u.Ipref2 = Ipref2;
-            u.Ipref3 = Ipref3;
-            u.Ipref4 = Ipref4;
-            u.Ipref5 = Ipref5;
-            u.Ipref6 = Ipref6;
-            u.Ipref7 = Ipref7;
-            u.Ipref8 = Ipref8;
-            u.Ipref9 = Ipref9;
-            u.Pref0 = Pref0;
-            u.Pref1 = Pref1;
-            u.Pref2 = Pref2;
-            u.Pref3 = Pref3;
-            u.Pref4 = Pref4;
-            u.Pref5 = Pref5;
-            u.Pref6 = Pref6;
-            u.Pref7 = Pref7;
-            u.Pref8 = Pref8;
-            u.Pref9 = Pref9;
+            GAppUser u = new()
+            {
+                Id = Id,
+                DisplayName = DisplayName,
+                TimeZoneID = TimeZoneID,
+                Ipref0 = Ipref0,
+                Ipref1 = Ipref1,
+                Ipref2 = Ipref2,
+                Ipref3 = Ipref3,
+                Ipref4 = Ipref4,
+                Ipref5 = Ipref5,
+                Ipref6 = Ipref6,
+                Ipref7 = Ipref7,
+                Ipref8 = Ipref8,
+                Ipref9 = Ipref9,
+                Pref0 = Pref0,
+                Pref1 = Pref1,
+                Pref2 = Pref2,
+                Pref3 = Pref3,
+                Pref4 = Pref4,
+                Pref5 = Pref5,
+                Pref6 = Pref6,
+                Pref7 = Pref7,
+                Pref8 = Pref8,
+                Pref9 = Pref9
+            };
             //u.MyGuid = MyGuid;    //null
             return u;
         }
@@ -314,7 +318,7 @@ namespace Notes2022.Server.Data
         /// <returns>List&lt;ApplicationUser&gt;.</returns>
         public static List<ApplicationUser> GetApplicationUsers(GAppUserList other)
         {
-            List<ApplicationUser> list = new List<ApplicationUser>();
+            List<ApplicationUser> list = new();
             foreach (GAppUser user in other.List)
             {
                 list.Add(GetApplicationUser(user));
@@ -330,7 +334,7 @@ namespace Notes2022.Server.Data
         /// <returns>GAppUserList.</returns>
         public static GAppUserList GetGAppUserList(List<ApplicationUser> other)
         {
-            GAppUserList list = new GAppUserList();
+            GAppUserList list = new();
             foreach (ApplicationUser u in other)
             {
                 list.List.Add(u.GetGAppUser());

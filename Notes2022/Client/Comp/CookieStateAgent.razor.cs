@@ -31,7 +31,7 @@ namespace Notes2022.Client.Comp
                     await LoginReplyAsync();   // try to get a cookie to auth
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -72,11 +72,11 @@ namespace Notes2022.Client.Comp
                 string cookie = await module.InvokeAsync<string>("ReadCookie", Globals.Cookie);
                 return cookie;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
-            return null;
+            return String.Empty;
         }
     }
 }

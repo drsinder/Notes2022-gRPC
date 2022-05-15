@@ -1396,22 +1396,16 @@ namespace Notes2022.Server.Services
         [Authorize]
         public override async Task<NoteContent> GetExport2(NoteId request, ServerCallContext context)
         {
-            NoteContent? nc = await _db.NoteContent
-                .Where(p => p.NoteHeaderId == request.Id)
-                .FirstOrDefaultAsync();
+            NoteContent nc = _db.NoteContent.Single(p => p.NoteHeaderId == request.Id);
 
-            NoteHeader? nh = await _db.NoteHeader
-                .Where(p => p.Id == request.Id)
-                .FirstOrDefaultAsync();
-
+            NoteHeader nh = _db.NoteHeader.Single(p => p.Id == request.Id);
+                
             ApplicationUser appUser = await GetAppUser(context);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, nh.NoteFileId, nh.ArchiveId);
             if (!na.ReadAccess)
                 return new NoteContent();
 
             return nc;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         /// <summary>
