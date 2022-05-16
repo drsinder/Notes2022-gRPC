@@ -536,9 +536,9 @@ namespace Notes2022.Server
         {
 #pragma warning disable CS8603 // Possible null reference return.
             return await db.NoteHeader
-                .Include("NoteContent")
+                //.Include("NoteContent")
                 //.Include("NoteFile")
-                .Include("Tags")
+                //.Include("Tags")
                 .Where(p => p.Id == noteid)
                 .OrderBy((x => x.NoteOrdinal))
                 .FirstOrDefaultAsync();
