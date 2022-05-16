@@ -55,21 +55,20 @@ service Notes2022Server {
 	rpc CreateNoteFile(NoteFile) returns (NoteFile);					// create a note file
 	rpc UpdateNoteFile(NoteFile) returns (NoteFile);					// updates note file data
 	rpc DeleteNoteFile(NoteFile) returns (NoRequest);					// deletes a note file
-//	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given server side file name
 	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as btye[]
-	rpc UpdateAccessItem(NoteAccess) returns (NoteAccess);			// get a single access item
+	rpc UpdateAccessItem(NoteAccess) returns (NoteAccess);				// get a single access item
 	rpc DeleteAccessItem(NoteAccess) returns (NoRequest);				// deletes an access item
-	rpc AddAccessItem(NoteAccess) returns (NoteAccess);				// adds an access item
+	rpc AddAccessItem(NoteAccess) returns (NoteAccess);					// adds an access item
 	rpc UpdateUserData(GAppUser) returns (GAppUser);					// updates user data
 	rpc GetVersions(GetVersionsRequest) returns (NoteHeaderList);		// gets the non-zero version headers
 	rpc GetSequencer(NoRequest) returns (SequencerList);				// gets the sequencer list for a user
 	rpc CreateSequencer(SCheckModel) returns (NoRequest);				// creates a sequencer item
 	rpc DeleteSequencer(SCheckModel) returns (NoRequest);				// deletes a sequencer item
-	rpc UpdateSequencer(Sequencer) returns (NoRequest);				// updates a sequencer item - while sequencing
+	rpc UpdateSequencer(Sequencer) returns (NoRequest);					// updates a sequencer item - while sequencing
 	rpc UpdateSequencerOrdinal(Sequencer) returns (NoRequest);			// updates a sequencer item ordinal
 	rpc GetNoteFile(NoteFileRequest) returns (NoteFile);				// get the notefile for the note index
 	rpc CreateNewNote(TextViewModel) returns (NoteHeader);				// get a note header
-	rpc UpdateNote(TextViewModel) returns (NoteHeader);				// updates a note header
+	rpc UpdateNote(TextViewModel) returns (NoteHeader);					// updates a note header
 	rpc SendEmailAuth(GEmail) returns (NoRequest);						// authenticated
 	rpc GetExport2(NoteId) returns (NoteContent);						// gets note content during an export
 	rpc DoForward(ForwardViewModel) returns (NoRequest);				// forwards note(s) via email
@@ -92,8 +91,6 @@ service Notes2022Server {
 //	rpc GetExport(ExportRequest) returns (GNoteHeaderList);				// gets a note header list during an Export
 	rpc GetTextFile(AString) returns (AString);	// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
 	rpc NoOp(NoRequest) returns (NoRequest);
-
-
 }
 
 
@@ -336,15 +333,9 @@ message HomePageModel {
 	GAppUserList userDataList = 5;		// list of all users
 }
 
-// request to import a file
-//message ImportRequest {
-//	string noteFile = 1;		// file name to import to
-//	string uploadFile = 2;		// name of source file to import or its contents
-//}
-
 message ImportRequest {
-	string noteFile = 1;		// file name to import to
-	bytes payload = 2;			// import contents
+	string noteFile = 1;			// file name to import to
+	bytes payload = 2;				// import contents
 }
 
 // used to display the note file index
@@ -359,9 +350,9 @@ message NoteDisplayIndexModel
 	int32 expandOrdinal = 7;
 	repeated NoteHeader notes = 8;		// list of base notes
 	repeated NoteHeader allNotes = 9;	// list of all notes
-	string linkedText = 10;			// extra text to be displayed for a linked file
+	string linkedText = 10;				// extra text to be displayed for a linked file
 	string message = 11;			
-	GAppUser userData = 12;			// user data
+	GAppUser userData = 12;				// user data
 	repeated Tags tags = 13;			// all tags for file
 }
 
@@ -376,7 +367,7 @@ message DisplayModel {
 	NoteFile noteFile = 1;			// the note file
 	NoteHeader header = 2;			// the note header
 	NoteContent content = 3;		// note body
-	repeated Tags tags = 4;				// tags for this note
+	repeated Tags tags = 4;			// tags for this note
 	NoteAccess access = 5;			// access item/token for file/user
 	bool canEdit = 6;				// can user edit the note
 	bool isAdmin = 7;				// is user an admin
@@ -441,7 +432,7 @@ message AboutModel {
 
 // container for an email
 message GEmail {
-	string address = 1;		// send to
+	string address = 1;			// send to
 	string subject = 2;
 	string body = 3;
 }
@@ -479,8 +470,8 @@ message CopyModel {
 
 // Used to get a representation of the whole file - to be serialized as json
 message JsonExport {
-	NoteFile NoteFile = 1;				// notefile to export
-	NoteAccess NoteAccess = 2;			// access token for requesting user
+	NoteFile NoteFile = 1;			// notefile to export
+	NoteAccess NoteAccess = 2;		// access token for requesting user
 	NoteHeaderList NoteHeaders = 3;	// list of headers - includes Content and Tags!
 }
 
