@@ -158,6 +158,30 @@ namespace Notes2022.Server.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
 
+            //builder.Entity<NoteFile>()
+            //    .HasOne<ApplicationUser>()
+            //    .WithMany()
+            //    .HasForeignKey(x => x.OwnerId)
+            //    .IsRequired();
+
+            //builder.Entity<NoteHeader>()
+            //    .HasOne<ApplicationUser>()
+            //    .WithMany()
+            //    .HasForeignKey(x => x.AuthorID)
+            //    .IsRequired();
+
+            //builder.Entity<Sequencer>()
+            //    .HasOne<ApplicationUser>()
+            //    .WithMany()
+            //    .HasForeignKey(x => x.UserId)
+            //    .IsRequired();
+
+            //builder.Entity<NoteAccess>()
+            //    .HasOne<ApplicationUser>()
+            //    .WithMany()
+            //    .HasForeignKey(x => x.UserID)
+            //    .IsRequired();
+
 
 
             // Define conversions to and from Google.Protobuf.WellKnownTypes.Timestamp for DateTime

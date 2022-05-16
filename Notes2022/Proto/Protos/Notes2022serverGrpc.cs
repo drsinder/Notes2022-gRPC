@@ -725,7 +725,7 @@ namespace Notes2022.Proto {
       }
 
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given server side file name
+      /// runs an import given client side file contents as btye[]
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -1877,7 +1877,7 @@ namespace Notes2022.Proto {
         return CallInvoker.AsyncUnaryCall(__Method_DeleteNoteFile, null, options, request);
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given server side file name
+      /// runs an import given client side file contents as btye[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1890,7 +1890,7 @@ namespace Notes2022.Proto {
         return Import(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given server side file name
+      /// runs an import given client side file contents as btye[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1901,7 +1901,7 @@ namespace Notes2022.Proto {
         return CallInvoker.BlockingUnaryCall(__Method_Import, null, options, request);
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given server side file name
+      /// runs an import given client side file contents as btye[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1914,7 +1914,7 @@ namespace Notes2022.Proto {
         return ImportAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given server side file name
+      /// runs an import given client side file contents as btye[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>

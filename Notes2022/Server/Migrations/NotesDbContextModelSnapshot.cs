@@ -195,7 +195,7 @@ namespace Notes2022.Server.Migrations
 
                     b.HasIndex("NoteFileId");
 
-                    b.ToTable("NoteAccess");
+                    b.ToTable("NoteAccess", (string)null);
                 });
 
             modelBuilder.Entity("Notes2022.Proto.NoteContent", b =>
@@ -217,7 +217,7 @@ namespace Notes2022.Server.Migrations
                     b.HasIndex("NoteHeaderId")
                         .IsUnique();
 
-                    b.ToTable("NoteContent");
+                    b.ToTable("NoteContent", (string)null);
                 });
 
             modelBuilder.Entity("Notes2022.Proto.NoteFile", b =>
@@ -245,7 +245,7 @@ namespace Notes2022.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NoteFile");
+                    b.ToTable("NoteFile", (string)null);
                 });
 
             modelBuilder.Entity("Notes2022.Proto.NoteHeader", b =>
@@ -315,7 +315,7 @@ namespace Notes2022.Server.Migrations
 
                     b.HasIndex("NoteFileId", "ArchiveId");
 
-                    b.ToTable("NoteHeader");
+                    b.ToTable("NoteHeader", (string)null);
                 });
 
             modelBuilder.Entity("Notes2022.Proto.Sequencer", b =>
@@ -342,7 +342,7 @@ namespace Notes2022.Server.Migrations
 
                     b.HasIndex("NoteFileId");
 
-                    b.ToTable("Sequencer");
+                    b.ToTable("Sequencer", (string)null);
                 });
 
             modelBuilder.Entity("Notes2022.Proto.Tags", b =>
@@ -365,7 +365,7 @@ namespace Notes2022.Server.Migrations
 
                     b.HasIndex("NoteFileId", "ArchiveId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("Notes2022.Server.Data.ApplicationUser", b =>
