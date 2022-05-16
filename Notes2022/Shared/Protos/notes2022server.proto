@@ -99,7 +99,7 @@ service Notes2022Server {
 
 // Database Entities
 
-// data for a note file
+// data for a note file - Included in database context
 message NoteFile {
 	int32 id = 1;				// file Id
 	int32 numberArchives = 2;	// number of archives it has
@@ -113,7 +113,7 @@ message NoteFileList {
 	repeated NoteFile List = 1;
 }
 
-// header for a note
+// header for a note - Included in database context
 message NoteHeader {
 	int64 id = 1;					// note Id
 	int32 noteFileId = 2;			// Id of file to which it belongs
@@ -142,7 +142,7 @@ message NoteHeaderList {
 	repeated NoteHeader List = 1;
 }
 
-// note content
+// note content - Included in database context
 message NoteContent {
 	int64 id = 1;				// just for Ident in DB
 	int64 noteHeaderId = 2;
@@ -154,7 +154,7 @@ message NoteContentList {
 	repeated NoteContent list = 1;
 }
 
-// tag for a note
+// tag for a note - Included in database context
 message Tags {
 	int32 noteFileId = 1;		// file Id
 	int32 archiveId = 2;		// archive Id
@@ -167,7 +167,7 @@ message TagsList {
 	repeated Tags list = 1;
 }
 
-// access item/token for a user
+// access item/token for a user - Included in database context
 message NoteAccess {
 	string userID = 1;			// Id / subject
 	int32 noteFileId = 2;		// file Id
@@ -186,7 +186,7 @@ message NoteAccessList {
 	repeated NoteAccess list = 1;
 }
 
-// sequencer item
+// sequencer item - Included in database context
 message Sequencer {
 	string userId = 1;							// user Id / subject
 	int32 noteFileId = 2;						// note file Id
@@ -209,7 +209,7 @@ message AppUserRequest {
 
 //////////////////////////////////////////////
 
-// Includes user defined elements and Id
+// Includes user defined elements and Id  - Included in database context
 message GAppUser {
 	string id = 1;			// = Subject in Jwt
 	string displayName = 2;	// users name for display

@@ -286,7 +286,7 @@ namespace Notes2022.Proto {
   }
   #region Messages
   /// <summary>
-  /// data for a note file
+  /// data for a note file - Included in database context
   /// </summary>
   public sealed partial class NoteFile : pb::IMessage<NoteFile>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -868,7 +868,7 @@ namespace Notes2022.Proto {
   }
 
   /// <summary>
-  /// header for a note
+  /// header for a note - Included in database context
   /// </summary>
   public sealed partial class NoteHeader : pb::IMessage<NoteHeader>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -2095,7 +2095,7 @@ namespace Notes2022.Proto {
   }
 
   /// <summary>
-  /// note content
+  /// note content - Included in database context
   /// </summary>
   public sealed partial class NoteContent : pb::IMessage<NoteContent>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -2545,7 +2545,7 @@ namespace Notes2022.Proto {
   }
 
   /// <summary>
-  /// tag for a note
+  /// tag for a note - Included in database context
   /// </summary>
   public sealed partial class Tags : pb::IMessage<Tags>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -3041,7 +3041,7 @@ namespace Notes2022.Proto {
   }
 
   /// <summary>
-  /// access item/token for a user
+  /// access item/token for a user - Included in database context
   /// </summary>
   public sealed partial class NoteAccess : pb::IMessage<NoteAccess>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -3777,7 +3777,7 @@ namespace Notes2022.Proto {
   }
 
   /// <summary>
-  /// sequencer item
+  /// sequencer item - Included in database context
   /// </summary>
   public sealed partial class Sequencer : pb::IMessage<Sequencer>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -4566,7 +4566,7 @@ namespace Notes2022.Proto {
   }
 
   /// <summary>
-  /// Includes user defined elements and Id
+  /// Includes user defined elements and Id  - Included in database context
   /// </summary>
   public sealed partial class GAppUser : pb::IMessage<GAppUser>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
