@@ -595,7 +595,9 @@ namespace Notes2022.Server.Services
         /// </summary>
         /// <param name="noteFile">The note file.</param>
         /// <param name="context">The context.</param>
-        /// <returns>NoteFile.</returns>
+        /// <returns>
+        /// NoteFile.
+        /// </returns>
         [Authorize(Roles = "Admin")]
         public override async Task<NoteFile> UpdateNoteFile(NoteFile noteFile, ServerCallContext context)
         {
