@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Notes2022.Server.Data;
 
@@ -11,9 +12,10 @@ using Notes2022.Server.Data;
 namespace Notes2022.Server.Migrations
 {
     [DbContext(typeof(NotesDbContext))]
-    partial class NotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220516072555_RelationShips")]
+    partial class RelationShips
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -583,15 +585,6 @@ namespace Notes2022.Server.Migrations
                 });
 
             modelBuilder.Entity("Notes2022.Proto.Sequencer", b =>
-                {
-                    b.HasOne("Notes2022.Proto.NoteFile", null)
-                        .WithMany()
-                        .HasForeignKey("NoteFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Notes2022.Proto.Tags", b =>
                 {
                     b.HasOne("Notes2022.Proto.NoteFile", null)
                         .WithMany()

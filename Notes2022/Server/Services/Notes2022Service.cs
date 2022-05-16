@@ -619,24 +619,24 @@ namespace Notes2022.Server.Services
             NoteFile nf = await NoteDataManager.GetFileById(_db, noteFile.Id);
 
             // remove tags
-            List<Tags> tl = _db.Tags.Where(p => p.NoteFileId == nf.Id).ToList();
-            _db.Tags.RemoveRange(tl);
+            //List<Tags> tl = _db.Tags.Where(p => p.NoteFileId == nf.Id).ToList();
+            //_db.Tags.RemoveRange(tl);
 
             // remove content
-            List<NoteHeader> hl = _db.NoteHeader.Where(p => p.NoteFileId == nf.Id).ToList();
-            foreach (NoteHeader h in hl)
-            {
-                NoteContent? c = _db.NoteContent.SingleOrDefault(p => p.NoteHeaderId == h.Id);
-                if (c != null)
-                    _db.NoteContent.Remove(c);
-            }
+            //List<NoteHeader> hl = _db.NoteHeader.Where(p => p.NoteFileId == nf.Id).ToList();
+            //foreach (NoteHeader h in hl)
+            //{
+            //    NoteContent? c = _db.NoteContent.SingleOrDefault(p => p.NoteHeaderId == h.Id);
+            //    if (c != null)
+            //        _db.NoteContent.Remove(c);
+            //}
 
-            // remove headers
-            _db.NoteHeader.RemoveRange(hl);
+            //// remove headers
+            //_db.NoteHeader.RemoveRange(hl);
 
-            // remove access
-            List<NoteAccess> al = _db.NoteAccess.Where(p => p.NoteFileId == nf.Id).ToList();
-            _db.NoteAccess.RemoveRange(al);
+            //// remove access
+            //List<NoteAccess> al = _db.NoteAccess.Where(p => p.NoteFileId == nf.Id).ToList();
+            //_db.NoteAccess.RemoveRange(al);
 
             // remove file
             _db.NoteFile.Remove(nf);

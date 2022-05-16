@@ -118,11 +118,46 @@ namespace Notes2022.Server.Data
             builder.Entity<Sequencer>()
                 .HasKey(new string[] { "UserId", "NoteFileId" });
 
+            // Relationships
 
-            //builder.Entity<NoteHeader>()
-            //    .HasOne<NoteFile>()
-            //    .WithMany()
-            //    .HasForeignKey(x => x.NoteFileId);
+            builder.Entity<NoteHeader>()
+                .HasOne<NoteFile>()
+                .WithMany()
+                .HasForeignKey(x => x.NoteFileId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<NoteContent>()
+                .HasOne<NoteHeader>()
+                .WithMany()     // really only one but I can't get that to work
+                .HasForeignKey(x => x.NoteHeaderId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            builder.Entity<NoteAccess>()
+                .HasOne<NoteFile>()
+                .WithMany()
+                .HasForeignKey(x => x.NoteFileId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            builder.Entity<Sequencer>()
+                .HasOne<NoteFile>()
+                .WithMany()
+                .HasForeignKey(x => x.NoteFileId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Tags>()
+                .HasOne<NoteFile>()
+                .WithMany()
+                .HasForeignKey(x => x.NoteFileId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+
 
 
             // Define conversions to and from Google.Protobuf.WellKnownTypes.Timestamp for DateTime
