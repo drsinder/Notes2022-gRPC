@@ -119,6 +119,12 @@ namespace Notes2022.Server.Data
                 .HasKey(new string[] { "UserId", "NoteFileId" });
 
 
+            //builder.Entity<NoteHeader>()
+            //    .HasOne<NoteFile>()
+            //    .WithMany()
+            //    .HasForeignKey(x => x.NoteFileId);
+
+
             // Define conversions to and from Google.Protobuf.WellKnownTypes.Timestamp for DateTime
 
             builder.Entity<NoteFile>()
