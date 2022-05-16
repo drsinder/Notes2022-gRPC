@@ -100,10 +100,13 @@ namespace Notes2022.Client.Pages
 #pragma warning restore CS8604 // Possible null reference argument.
                 }
             }
-            foreach (var s in stuff)
+            if (stuff is not null && stuff.Count > 0)
             {
-                if (files.Find(p => p.Id == s.Id) is null)
-                    files.Add(s);
+                foreach (var s in stuff)
+                {
+                    if (files.Find(p => p.Id == s.Id) is null)
+                        files.Add(s);
+                }
             }
             StateHasChanged();
         }

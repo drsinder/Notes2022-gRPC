@@ -56,9 +56,10 @@ else
                     </tr>
                 </thead>
                 <tbody>
+
                     @foreach (NoteFile file in files)
                     {
-                        Sequencer CurrentTracker = trackers.Single(p => p.NoteFileId == file.Id);
+                        Sequencer? CurrentTracker = trackers.SingleOrDefault(p => p.NoteFileId == file.Id);
                         bool current = CurrentTracker != null;
                         <tr>
                             <td>
@@ -74,7 +75,7 @@ else
                                 @file.NoteFileTitle
                             </td>
                             <td>
-                                @(file.LastEdited).ToDateTime().ToLocalTime().ToShortTimeString() @(file.LastEdited).ToDateTime().ToLocalTime().ToShortDateString()
+                                @(file.LastEdited.ToDateTime().ToLocalTime().ToShortTimeString()) @(file.LastEdited.ToDateTime().ToLocalTime().ToShortDateString())
                             </td>
 
                         </tr>
