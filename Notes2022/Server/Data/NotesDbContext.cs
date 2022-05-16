@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Notes2022.Proto;
@@ -25,6 +24,9 @@ namespace Notes2022.Server.Data
     /// <seealso cref="Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext{Notes2022.Server.Entities.ApplicationUser}" />
     public partial class NotesDbContext : IdentityDbContext<ApplicationUser>
     {
+        // Select classes from proto messages to be included in database
+        // ApplucationUser is included by inheritence.
+
         /// <summary>
         /// Gets or sets the note file.
         /// </summary>
@@ -83,6 +85,8 @@ namespace Notes2022.Server.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
+            // Add keys and indexes.
+
             builder.Entity<NoteContent>()
                 .HasKey(new string[] { "Id" });
 
@@ -115,10 +119,11 @@ namespace Notes2022.Server.Data
                 .HasKey(new string[] { "UserId", "NoteFileId" });
 
 
+            // Define conversions to and from Google.Protobuf.WellKnownTypes.Timestamp for DateTime
+
             builder.Entity<NoteFile>()
               .Property(m => m.LastEdited)
               .HasConversion(v => v.ToDateTimeOffset(), v => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(v));
-
 
 
             builder.Entity<NoteHeader>()
@@ -141,7 +146,7 @@ namespace Notes2022.Server.Data
               .Property(m => m.StartTime)
               .HasConversion(v => v.ToDateTimeOffset(), v => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(v));
 
-
+            // Exclude three columns from NoteHeader Table in DB but make them available for use in gRPC.
 
             builder.Entity<NoteHeader>().Ignore(c => c.Responses);
             builder.Entity<NoteHeader>().Ignore(c => c.Content);
