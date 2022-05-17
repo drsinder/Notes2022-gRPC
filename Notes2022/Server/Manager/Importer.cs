@@ -44,6 +44,13 @@ using System.Text.RegularExpressions;
 
 namespace Notes2022.Server
 {
+    enum FileType
+    {
+        NovaNet,
+        WebNotes,
+        PlatoNotes
+    }
+
     /// <summary>
     /// Does the import of a text file from an old plato/novanet system notefile
     /// There be messy stuff in here!!!
@@ -54,31 +61,6 @@ namespace Notes2022.Server
         /// The ff
         /// </summary>
         private const char Ff = (char)(12); //  FF
-
-        ///// <summary>
-        ///// Imports the specified database.
-        ///// </summary>
-        ///// <param name="_db">The database.</param>
-        ///// <param name="myFileInput">My file input.</param>
-        ///// <param name="myNotesFile">My notes file.</param>
-        ///// <returns><c>true</c> if success, <c>false</c> otherwise.</returns>
-        //public async Task<bool> Import(NotesDbContext _db, string myFileInput, string myNotesFile)
-        //{
-        //    Output("");
-
-        //    // Get the input file
-        //    StreamReader file;
-        //    try
-        //    {
-        //        file = new StreamReader(myFileInput);
-        //    }
-        //    catch
-        //    {
-        //        return false;
-        //    }
-
-        //    return await Import(_db, file, myNotesFile);
-        //}
 
         /// <summary>
         /// Import the file stream from a server file or from a file uploaded from client
@@ -114,7 +96,7 @@ namespace Notes2022.Server
             NoteHeader makeHeader = null;
             int basenotes = 0;
 
-            int filetype = 0;  // 0= NovaNET | 1 = Notes 3.1 | 2 = plato iv group notes -- we can process three formats
+            FileType filetype = FileType.NovaNet;  // 0= NovaNET | 1 = Notes 3.1 | 2 = plato iv group notes -- we can process three formats
 
             // Read the file and process it line by line.
             // we first determine the file type
@@ -130,13 +112,13 @@ namespace Notes2022.Server
                     {
                         if (line.StartsWith("2021 NoteFile ") || line.StartsWith("2022 NoteFile "))  // By this we know it came from Notes Web edition
                         {
-                            filetype = 1;   // Notes 3.1
+                            filetype = FileType.WebNotes;   // Notes 3.1
                             await file.ReadLineAsync();
                             line = await file.ReadLineAsync();
                         }
                         else if (line.StartsWith("+++ plato iv group notes +++"))
                         {
-                            filetype = 2;   // plato iv group notes
+                            filetype = FileType.PlatoNotes;   // plato iv group notes
                             await file.ReadLineAsync();
                             await file.ReadLineAsync();
                             await file.ReadLineAsync();
@@ -155,7 +137,7 @@ namespace Notes2022.Server
                         }   // else we assume it's novanet format = 0
                     }
 
-                    if (filetype == 0)  // Process for NovaNET output
+                    if (filetype == FileType.NovaNet)  // Process for NovaNET output
                     {
 
 #pragma warning disable CS8604 // Possible null reference argument.
@@ -288,7 +270,7 @@ namespace Notes2022.Server
                         counter++;
                     }  // end NovaNET
 
-                    else if (filetype == 1)  // Process from Notes 3.1 export as text - NOT TESTED IN A LONG TIME!!!
+                    else if (filetype == FileType.WebNotes)  // Process from Notes 3.1 export as text - NOT TESTED IN A LONG TIME!!!
                     {
                         if (line.StartsWith("Note: "))  // possible note header
                         {
@@ -323,8 +305,6 @@ namespace Notes2022.Server
                                                 GC.WaitForPendingFinalizers();
                                             }
                                         }
-
-
                                     }
                                     else // resp
                                     {
@@ -399,7 +379,7 @@ namespace Notes2022.Server
                         counter++;
                     }  // end Notes 3.1
 
-                    else if (filetype == 2)  // PLATO iv group notes
+                    else if (filetype == FileType.PlatoNotes)  // PLATO iv group notes
                     {
 
                         int xflag = 0;
@@ -527,7 +507,7 @@ namespace Notes2022.Server
 
                 // Cleanup after all lines in input file processed - YUCK!!
 
-                if (filetype == 0)  // NovaNET
+                if (filetype == FileType.NovaNet)  // NovaNET
                 {
                     if (newContent is not null)  // have a note to write
                     {
@@ -558,7 +538,7 @@ namespace Notes2022.Server
                         }
                     }
                 }
-                else if (filetype == 1)  // Notes 3.1
+                else if (filetype == FileType.WebNotes)  // Notes 3.1
                 {
                     if (newContent is not null)  // have a note to write
                     {
@@ -590,7 +570,7 @@ namespace Notes2022.Server
                         }
                     }
                 }
-                else if (filetype == 2)  // PLATO
+                else if (filetype == FileType.PlatoNotes)  // PLATO
                 {
                     if (newContent is not null)  // have a note to write
                     {
@@ -703,9 +683,7 @@ namespace Notes2022.Server
         {
         }
 
-
-
-        /// <summary>Imports the Give input JsonExport object to the notesfile.</summary>
+        /// <summary>Imports the given input JsonExport object to the notesfile.</summary>
         /// <param name="_db">The database.</param>
         /// <param name="input">The input json text deserialized to a JsonExport object</param>
         /// <param name="myNotesFile">The notes file. name to import to</param>
@@ -747,6 +725,7 @@ namespace Notes2022.Server
                     makeHeader.NoteFileId = noteFile.Id;
                     makeHeader.ArchiveId = 0;
                     makeHeader.AuthorID = Globals.ImportedAuthorId;
+
                     await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
                 }
             }
