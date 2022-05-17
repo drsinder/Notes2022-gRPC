@@ -721,12 +721,9 @@ namespace Notes2022.Server
             if (noteFile is null)
                 return false;
 
-            long baseNoteHeaderId;
-
+            // base note loop
             foreach ( NoteHeader nh in input.NoteHeaders.List)
             {
-                NoteHeader newHeader;
-
                 NoteHeader makeHeader = new(nh);
 
                 makeHeader.NoteFileId = noteFile.Id;
@@ -736,18 +733,17 @@ namespace Notes2022.Server
                 makeHeader.ResponseCount = 0;
                 makeHeader.ResponseOrdinal = 0;
 
-                newHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
-                NoteHeader baseNoteHeader = await GetBaseNoteHeader(_db, newHeader);
-                baseNoteHeaderId = baseNoteHeader.BaseNoteId;
+                NoteHeader baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
+                long baseNoteHeaderId = baseNoteHeader.BaseNoteId;
 
                 if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
                     continue;
 
+                // response loop
                 foreach ( NoteHeader rh in nh.Responses.List )
                 {
-                    NoteHeader bnh = await NoteDataManager.GetBaseNoteHeaderById(_db, baseNoteHeaderId);
                     makeHeader = new(rh);
-                    makeHeader.BaseNoteId = bnh.Id;  //Fix
+                    makeHeader.BaseNoteId = baseNoteHeaderId;
                     makeHeader.NoteFileId = noteFile.Id;
                     makeHeader.ArchiveId = 0;
                     makeHeader.AuthorID = Globals.ImportedAuthorId;
