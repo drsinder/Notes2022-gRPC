@@ -46,6 +46,7 @@ using System.Runtime;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+//using Newtonsoft.Json;
 
 namespace Notes2022.Server.Services
 {
@@ -683,6 +684,32 @@ namespace Notes2022.Server.Services
             GC.Collect();
             return new NoRequest();
         }
+
+
+        [Authorize(Roles = "Admin")]
+        public override async Task<NoRequest> ImportJson(ImportRequest request, ServerCallContext context)
+        {
+
+            MemoryStream? input = new(request.Payload.ToArray());
+            StreamReader file = new(input);
+
+            string textVal =  await file.ReadToEndAsync();
+
+            file.DiscardBufferedData();
+            file.Dispose();
+            input.Dispose();
+
+            JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(textVal);
+
+            Importer? imp = new();
+            _ = await imp.Import(_db, myJson, request.NoteFile);
+
+            GC.Collect();
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect();
+            return new NoRequest();
+        }
+
 
         /// <summary>
         /// Gets the note file index data.

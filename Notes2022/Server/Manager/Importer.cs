@@ -702,6 +702,60 @@ namespace Notes2022.Server
         public virtual void Output(string message)
         {
         }
+
+
+
+        /// <summary>Imports the Give input JsonExport object to the notesfile.</summary>
+        /// <param name="_db">The database.</param>
+        /// <param name="input">The input json text deserialized to a JsonExport object</param>
+        /// <param name="myNotesFile">The notes file. name to import to</param>
+        /// <returns>
+        ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
+        public async Task<bool> Import(NotesDbContext _db, JsonExport input, string myNotesFile)
+        {
+            if (input is null || input.NoteHeaders is null || input.NoteHeaders.List is null || input.NoteHeaders.List.Count < 1)
+                return false;
+
+            NoteFile noteFile = await NoteDataManager.GetFileByName(_db, myNotesFile);
+
+            if (noteFile is null)
+                return false;
+
+            long baseNoteHeaderId;
+
+            foreach ( NoteHeader nh in input.NoteHeaders.List)
+            {
+                NoteHeader newHeader;
+
+                NoteHeader makeHeader = new(nh);
+
+                makeHeader.NoteFileId = noteFile.Id;
+                makeHeader.ArchiveId = 0;
+                makeHeader.AuthorID = Globals.ImportedAuthorId;
+                makeHeader.BaseNoteId = 0;
+                makeHeader.ResponseCount = 0;
+                makeHeader.ResponseOrdinal = 0;
+
+                newHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
+                NoteHeader baseNoteHeader = await GetBaseNoteHeader(_db, newHeader);
+                baseNoteHeaderId = baseNoteHeader.BaseNoteId;
+
+                if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
+                    continue;
+
+                foreach ( NoteHeader rh in nh.Responses.List )
+                {
+                    NoteHeader bnh = await NoteDataManager.GetBaseNoteHeaderById(_db, baseNoteHeaderId);
+                    makeHeader = new(rh);
+                    makeHeader.BaseNoteId = bnh.Id;  //Fix
+                    makeHeader.NoteFileId = noteFile.Id;
+                    makeHeader.ArchiveId = 0;
+                    makeHeader.AuthorID = Globals.ImportedAuthorId;
+                    await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
+                }
+            }
+            return true;
+        }
     }
 
 #pragma warning restore CS8604 // Possible null reference argument.

@@ -291,6 +291,14 @@ namespace Notes2022.Proto {
         __Marshaller_notes2022server_NoRequest);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Notes2022.Proto.ImportRequest, global::Notes2022.Proto.NoRequest> __Method_ImportJson = new grpc::Method<global::Notes2022.Proto.ImportRequest, global::Notes2022.Proto.NoRequest>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ImportJson",
+        __Marshaller_notes2022server_ImportRequest,
+        __Marshaller_notes2022server_NoRequest);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Notes2022.Proto.NoteAccess, global::Notes2022.Proto.NoteAccess> __Method_UpdateAccessItem = new grpc::Method<global::Notes2022.Proto.NoteAccess, global::Notes2022.Proto.NoteAccess>(
         grpc::MethodType.Unary,
         __ServiceName,
@@ -725,13 +733,25 @@ namespace Notes2022.Proto {
       }
 
       /// <summary>
-      /// runs an import given client side file contents as btye[]
+      /// runs an import given client side file contents as byte[]
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.NoRequest> Import(global::Notes2022.Proto.ImportRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// runs an import given client side file contents as json byte[]
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.NoRequest> ImportJson(global::Notes2022.Proto.ImportRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -1877,7 +1897,7 @@ namespace Notes2022.Proto {
         return CallInvoker.AsyncUnaryCall(__Method_DeleteNoteFile, null, options, request);
       }
       /// <summary>
-      /// runs an import given client side file contents as btye[]
+      /// runs an import given client side file contents as byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1890,7 +1910,7 @@ namespace Notes2022.Proto {
         return Import(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// runs an import given client side file contents as btye[]
+      /// runs an import given client side file contents as byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1901,7 +1921,7 @@ namespace Notes2022.Proto {
         return CallInvoker.BlockingUnaryCall(__Method_Import, null, options, request);
       }
       /// <summary>
-      /// runs an import given client side file contents as btye[]
+      /// runs an import given client side file contents as byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1914,7 +1934,7 @@ namespace Notes2022.Proto {
         return ImportAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// runs an import given client side file contents as btye[]
+      /// runs an import given client side file contents as byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1923,6 +1943,54 @@ namespace Notes2022.Proto {
       public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.NoRequest> ImportAsync(global::Notes2022.Proto.ImportRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_Import, null, options, request);
+      }
+      /// <summary>
+      /// runs an import given client side file contents as json byte[]
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.NoRequest ImportJson(global::Notes2022.Proto.ImportRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ImportJson(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// runs an import given client side file contents as json byte[]
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.NoRequest ImportJson(global::Notes2022.Proto.ImportRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ImportJson, null, options, request);
+      }
+      /// <summary>
+      /// runs an import given client side file contents as json byte[]
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.NoRequest> ImportJsonAsync(global::Notes2022.Proto.ImportRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ImportJsonAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// runs an import given client side file contents as json byte[]
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.NoRequest> ImportJsonAsync(global::Notes2022.Proto.ImportRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ImportJson, null, options, request);
       }
       /// <summary>
       /// get a single access item
@@ -3323,6 +3391,7 @@ namespace Notes2022.Proto {
           .AddMethod(__Method_UpdateNoteFile, serviceImpl.UpdateNoteFile)
           .AddMethod(__Method_DeleteNoteFile, serviceImpl.DeleteNoteFile)
           .AddMethod(__Method_Import, serviceImpl.Import)
+          .AddMethod(__Method_ImportJson, serviceImpl.ImportJson)
           .AddMethod(__Method_UpdateAccessItem, serviceImpl.UpdateAccessItem)
           .AddMethod(__Method_DeleteAccessItem, serviceImpl.DeleteAccessItem)
           .AddMethod(__Method_AddAccessItem, serviceImpl.AddAccessItem)
@@ -3378,6 +3447,7 @@ namespace Notes2022.Proto {
       serviceBinder.AddMethod(__Method_UpdateNoteFile, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoteFile, global::Notes2022.Proto.NoteFile>(serviceImpl.UpdateNoteFile));
       serviceBinder.AddMethod(__Method_DeleteNoteFile, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoteFile, global::Notes2022.Proto.NoRequest>(serviceImpl.DeleteNoteFile));
       serviceBinder.AddMethod(__Method_Import, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.ImportRequest, global::Notes2022.Proto.NoRequest>(serviceImpl.Import));
+      serviceBinder.AddMethod(__Method_ImportJson, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.ImportRequest, global::Notes2022.Proto.NoRequest>(serviceImpl.ImportJson));
       serviceBinder.AddMethod(__Method_UpdateAccessItem, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoteAccess, global::Notes2022.Proto.NoteAccess>(serviceImpl.UpdateAccessItem));
       serviceBinder.AddMethod(__Method_DeleteAccessItem, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoteAccess, global::Notes2022.Proto.NoRequest>(serviceImpl.DeleteAccessItem));
       serviceBinder.AddMethod(__Method_AddAccessItem, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoteAccess, global::Notes2022.Proto.NoteAccess>(serviceImpl.AddAccessItem));

@@ -340,6 +340,8 @@ namespace Notes2022.Client.Pages.Admin
 
             parameters.Add("NoteFile", filename);
 
+            parameters.Add("IsJson", selectedFile.Name.ToLower().EndsWith(".json"));
+
             var yModal = Modal.Show<Dialogs.Upload4>("Upload2", parameters);
             await yModal.Result;
 
