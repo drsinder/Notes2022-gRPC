@@ -162,25 +162,26 @@ namespace Notes2022.Server.Data
             //    .HasOne<ApplicationUser>()
             //    .WithMany()
             //    .HasForeignKey(x => x.OwnerId)
-            //    .IsRequired();
+            //    .OnDelete(DeleteBehavior.NoAction);
+
 
             //builder.Entity<NoteHeader>()
             //    .HasOne<ApplicationUser>()
             //    .WithMany()
             //    .HasForeignKey(x => x.AuthorID)
-            //    .IsRequired();
+            //    .OnDelete(DeleteBehavior.NoAction);
 
             //builder.Entity<Sequencer>()
             //    .HasOne<ApplicationUser>()
             //    .WithMany()
             //    .HasForeignKey(x => x.UserId)
-            //    .IsRequired();
+            //    .OnDelete(DeleteBehavior.NoAction);
 
             //builder.Entity<NoteAccess>()
             //    .HasOne<ApplicationUser>()
             //    .WithMany()
             //    .HasForeignKey(x => x.UserID)
-            //    .IsRequired();
+            //    .OnDelete(DeleteBehavior.NoAction);
 
 
 

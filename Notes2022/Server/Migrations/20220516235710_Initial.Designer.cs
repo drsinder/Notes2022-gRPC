@@ -12,8 +12,8 @@ using Notes2022.Server.Data;
 namespace Notes2022.Server.Migrations
 {
     [DbContext(typeof(NotesDbContext))]
-    [Migration("20220516073519_RelationTags")]
-    partial class RelationTags
+    [Migration("20220516235710_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

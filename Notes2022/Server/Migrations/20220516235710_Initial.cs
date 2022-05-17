@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Notes2022.Server.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -72,40 +72,6 @@ namespace Notes2022.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NoteAccess",
-                columns: table => new
-                {
-                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NoteFileId = table.Column<int>(type: "int", nullable: false),
-                    ArchiveId = table.Column<int>(type: "int", nullable: false),
-                    ReadAccess = table.Column<bool>(type: "bit", nullable: false),
-                    Respond = table.Column<bool>(type: "bit", nullable: false),
-                    Write = table.Column<bool>(type: "bit", nullable: false),
-                    SetTag = table.Column<bool>(type: "bit", nullable: false),
-                    DeleteEdit = table.Column<bool>(type: "bit", nullable: false),
-                    ViewAccess = table.Column<bool>(type: "bit", nullable: false),
-                    EditAccess = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NoteAccess", x => new { x.UserID, x.NoteFileId, x.ArchiveId });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NoteContent",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NoteHeaderId = table.Column<long>(type: "bigint", nullable: false),
-                    NoteBody = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NoteContent", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "NoteFile",
                 columns: table => new
                 {
@@ -120,65 +86,6 @@ namespace Notes2022.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NoteFile", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NoteHeader",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NoteFileId = table.Column<int>(type: "int", nullable: false),
-                    ArchiveId = table.Column<int>(type: "int", nullable: false),
-                    BaseNoteId = table.Column<long>(type: "bigint", nullable: false),
-                    NoteOrdinal = table.Column<int>(type: "int", nullable: false),
-                    ResponseOrdinal = table.Column<int>(type: "int", nullable: false),
-                    NoteSubject = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastEdited = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    ThreadLastEdited = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    ResponseCount = table.Column<int>(type: "int", nullable: false),
-                    AuthorID = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LinkGuid = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    RefId = table.Column<long>(type: "bigint", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false),
-                    DirectorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NoteHeader", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sequencer",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NoteFileId = table.Column<int>(type: "int", nullable: false),
-                    Ordinal = table.Column<int>(type: "int", nullable: false),
-                    LastTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    StartTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    Active = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sequencer", x => new { x.UserId, x.NoteFileId });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    NoteHeaderId = table.Column<long>(type: "bigint", nullable: false),
-                    Tag = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NoteFileId = table.Column<int>(type: "int", nullable: false),
-                    ArchiveId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => new { x.Tag, x.NoteHeaderId });
                 });
 
             migrationBuilder.CreateTable(
@@ -287,6 +194,129 @@ namespace Notes2022.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "NoteAccess",
+                columns: table => new
+                {
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NoteFileId = table.Column<int>(type: "int", nullable: false),
+                    ArchiveId = table.Column<int>(type: "int", nullable: false),
+                    ReadAccess = table.Column<bool>(type: "bit", nullable: false),
+                    Respond = table.Column<bool>(type: "bit", nullable: false),
+                    Write = table.Column<bool>(type: "bit", nullable: false),
+                    SetTag = table.Column<bool>(type: "bit", nullable: false),
+                    DeleteEdit = table.Column<bool>(type: "bit", nullable: false),
+                    ViewAccess = table.Column<bool>(type: "bit", nullable: false),
+                    EditAccess = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NoteAccess", x => new { x.UserID, x.NoteFileId, x.ArchiveId });
+                    table.ForeignKey(
+                        name: "FK_NoteAccess_NoteFile_NoteFileId",
+                        column: x => x.NoteFileId,
+                        principalTable: "NoteFile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NoteHeader",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NoteFileId = table.Column<int>(type: "int", nullable: false),
+                    ArchiveId = table.Column<int>(type: "int", nullable: false),
+                    BaseNoteId = table.Column<long>(type: "bigint", nullable: false),
+                    NoteOrdinal = table.Column<int>(type: "int", nullable: false),
+                    ResponseOrdinal = table.Column<int>(type: "int", nullable: false),
+                    NoteSubject = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastEdited = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ThreadLastEdited = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ResponseCount = table.Column<int>(type: "int", nullable: false),
+                    AuthorID = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LinkGuid = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    RefId = table.Column<long>(type: "bigint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    DirectorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NoteHeader", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NoteHeader_NoteFile_NoteFileId",
+                        column: x => x.NoteFileId,
+                        principalTable: "NoteFile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sequencer",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NoteFileId = table.Column<int>(type: "int", nullable: false),
+                    Ordinal = table.Column<int>(type: "int", nullable: false),
+                    LastTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    StartTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sequencer", x => new { x.UserId, x.NoteFileId });
+                    table.ForeignKey(
+                        name: "FK_Sequencer_NoteFile_NoteFileId",
+                        column: x => x.NoteFileId,
+                        principalTable: "NoteFile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    NoteHeaderId = table.Column<long>(type: "bigint", nullable: false),
+                    Tag = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NoteFileId = table.Column<int>(type: "int", nullable: false),
+                    ArchiveId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => new { x.Tag, x.NoteHeaderId });
+                    table.ForeignKey(
+                        name: "FK_Tags_NoteFile_NoteFileId",
+                        column: x => x.NoteFileId,
+                        principalTable: "NoteFile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NoteContent",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NoteHeaderId = table.Column<long>(type: "bigint", nullable: false),
+                    NoteBody = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NoteContent", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NoteContent_NoteHeader_NoteHeaderId",
+                        column: x => x.NoteHeaderId,
+                        principalTable: "NoteHeader",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -327,6 +357,11 @@ namespace Notes2022.Server.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NoteAccess_NoteFileId",
+                table: "NoteAccess",
+                column: "NoteFileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_NoteContent_NoteHeaderId",
                 table: "NoteContent",
                 column: "NoteHeaderId",
@@ -346,6 +381,11 @@ namespace Notes2022.Server.Migrations
                 name: "IX_NoteHeader_NoteFileId_ArchiveId",
                 table: "NoteHeader",
                 columns: new[] { "NoteFileId", "ArchiveId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sequencer_NoteFileId",
+                table: "Sequencer",
+                column: "NoteFileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_NoteFileId",
@@ -382,12 +422,6 @@ namespace Notes2022.Server.Migrations
                 name: "NoteContent");
 
             migrationBuilder.DropTable(
-                name: "NoteFile");
-
-            migrationBuilder.DropTable(
-                name: "NoteHeader");
-
-            migrationBuilder.DropTable(
                 name: "Sequencer");
 
             migrationBuilder.DropTable(
@@ -398,6 +432,12 @@ namespace Notes2022.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "NoteHeader");
+
+            migrationBuilder.DropTable(
+                name: "NoteFile");
         }
     }
 }

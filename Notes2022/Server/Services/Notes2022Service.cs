@@ -1841,6 +1841,12 @@ namespace Notes2022.Server.Services
             return returnval;
         }
 
+        /// <summary>
+        /// Gets the number of base notes.
+        /// </summary>
+        /// <param name="request">Specifies file and archive</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>Number of base notes.</returns>
         [Authorize]
         public override async Task<NoteCount> GetNoteCount(NoteFileRequest request, ServerCallContext context)
         {
