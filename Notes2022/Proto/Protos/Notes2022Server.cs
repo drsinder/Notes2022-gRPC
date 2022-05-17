@@ -4807,6 +4807,9 @@ namespace Notes2022.Proto {
     /// <summary>Field number for the "pref0" field.</summary>
     public const int Pref0FieldNumber = 14;
     private bool pref0_;
+    /// <summary>
+    /// login turned off flag
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool Pref0 {

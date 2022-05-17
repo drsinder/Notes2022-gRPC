@@ -267,13 +267,17 @@ namespace Notes2022.Server.Services
         public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
+            if (user is null)
             {
                 user = await _userManager.FindByNameAsync(request.Email.Replace(" ", "_"));
             }
 
-            if (user != null && await _signInManager.CanSignInAsync(user))
+            if (user is not null && await _signInManager.CanSignInAsync(user))
             {
+                if (user.Pref0) // login turned off
+                {
+                    return new LoginReply() { Status = StatusCodes.Status500InternalServerError, Message = "User Login failed! Login turned off!" };
+                }
                 var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: user.AccessFailedCount > _signInManager.Options.Lockout.MaxFailedAccessAttempts);
 
                 if (!(result.Succeeded))

@@ -222,7 +222,7 @@ message GAppUser {
 	int32 ipref7 = 11;
 	int32 ipref8 = 12;
 	int32 ipref9 = 13;
-	bool pref0 = 14;
+	bool pref0 = 14;		// login turned off flag
 	bool pref1 = 15;
 	bool pref2 = 16;
 	bool pref3 = 17;		// Show Responses by default
