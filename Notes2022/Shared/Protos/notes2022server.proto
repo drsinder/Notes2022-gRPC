@@ -55,7 +55,7 @@ service Notes2022Server {
 	rpc CreateNoteFile(NoteFile) returns (NoteFile);					// create a note file
 	rpc UpdateNoteFile(NoteFile) returns (NoteFile);					// updates note file data
 	rpc DeleteNoteFile(NoteFile) returns (NoRequest);					// deletes a note file
-	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as byte[]
+//	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as byte[]
 	rpc ImportJson(ImportRequest) returns (NoRequest);					// runs an import given client side file contents as json byte[]
 	rpc UpdateAccessItem(NoteAccess) returns (NoteAccess);				// get a single access item
 	rpc DeleteAccessItem(NoteAccess) returns (NoRequest);				// deletes an access item

@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SoluctionItems", "Soluction
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto", "Notes2022\Proto\Proto.csproj", "{3B304282-C132-497C-BEE7-84A7F4182B27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto", "Notes2022\Proto\Proto.csproj", "{3B304282-C132-497C-BEE7-84A7F4182B27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextToJson", "Notes2022\TextToJson\TextToJson.csproj", "{DEF96692-2163-42D4-8F28-831F673D277F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{3B304282-C132-497C-BEE7-84A7F4182B27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B304282-C132-497C-BEE7-84A7F4182B27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B304282-C132-497C-BEE7-84A7F4182B27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEF96692-2163-42D4-8F28-831F673D277F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEF96692-2163-42D4-8F28-831F673D277F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEF96692-2163-42D4-8F28-831F673D277F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEF96692-2163-42D4-8F28-831F673D277F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -76,7 +76,7 @@ namespace Notes2022.Client.Dialogs
                 }
                 else
                 {
-                    _ = await Client.ImportAsync(request, myState.AuthHeader, deadline: DateTime.UtcNow.AddMinutes(10));
+                    //_ = await Client.ImportAsync(request, myState.AuthHeader, deadline: DateTime.UtcNow.AddMinutes(10));
                 }
 
 

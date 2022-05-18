@@ -665,29 +665,29 @@ namespace Notes2022.Server.Services
         //    return new NoRequest();
         //}
 
-        /// <summary>
-        /// Imports the specified request.
-        /// </summary>
-        /// <param name="request">The request. Contains entire contents to import!</param>
-        /// <param name="context">The context.</param>
-        /// <returns>NoRequest.</returns>
-        [Authorize(Roles = "Admin")]
-        public override async Task<NoRequest> Import(ImportRequest request, ServerCallContext context)
-        {
-            MemoryStream? input = new(request.Payload.ToArray());
-            StreamReader file = new(input);
+        ///// <summary>
+        ///// Imports the specified request.
+        ///// </summary>
+        ///// <param name="request">The request. Contains entire contents to import!</param>
+        ///// <param name="context">The context.</param>
+        ///// <returns>NoRequest.</returns>
+        //[Authorize(Roles = "Admin")]
+        //public override async Task<NoRequest> Import(ImportRequest request, ServerCallContext context)
+        //{
+        //    MemoryStream? input = new(request.Payload.ToArray());
+        //    StreamReader file = new(input);
 
-            Importer? imp = new();
-            _ = await imp.Import(_db, file, request.NoteFile);
+        //    Importer? imp = new();
+        //    _ = await imp.Import(_db, file, request.NoteFile);
 
-            file.DiscardBufferedData();
-            file.Dispose();
-            input.Dispose();
-            GC.Collect();
-            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect();
-            return new NoRequest();
-        }
+        //    file.DiscardBufferedData();
+        //    file.Dispose();
+        //    input.Dispose();
+        //    GC.Collect();
+        //    GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        //    GC.Collect();
+        //    return new NoRequest();
+        //}
 
 
         [Authorize(Roles = "Admin")]
