@@ -689,10 +689,25 @@ namespace Notes2022.Server.Services
         //    return new NoRequest();
         //}
 
-
-        [Authorize(Roles = "Admin")]
+        /// <summary>
+        /// rpc Import(ImportRequest) returns (NoRequest);  
+        /// Runs a Json import given client side file contents as byte[]
+        /// Caller must have Write access to the target note file.
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>NoRequest</returns>
+        [Authorize]
         public override async Task<NoRequest> ImportJson(ImportRequest request, ServerCallContext context)
         {
+            NoteFile? nf = await _db.NoteFile.SingleOrDefaultAsync(p => p.NoteFileName == request.NoteFile);
+            if (nf is null)
+                return new NoRequest();
+
+            ApplicationUser appUser = await GetAppUser(context);
+            NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, nf.Id, 0);
+            if (!na.Write)
+                return new NoRequest();
 
             MemoryStream? input = new(request.Payload.ToArray());
             StreamReader file = new(input);
