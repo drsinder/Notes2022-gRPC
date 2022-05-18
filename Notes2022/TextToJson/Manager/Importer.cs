@@ -42,20 +42,24 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
-namespace Notes2022.Server
+namespace Notes2022.TextToJson.Manager
 {
-    enum FileType
+    /// <summary>
+    /// Enum FileType.  file sources we can process
+    /// </summary>
+    enum FileType   
     {
         NovaNet,
-        WebNotes,
+        WebNotes,   // not tested in a while
         PlatoNotes
     }
 
     /// <summary>
-    /// Does the import of a text file from an old plato/novanet system notefile
+    /// Does the conversion of a text file exported from an old 
+    /// plato/novanet system notefile to .json format
     /// There be messy stuff in here!!!
     /// </summary>
-    public class Importer
+    public partial class Importer
     {
         /// <summary>
         /// The ff
@@ -72,7 +76,7 @@ namespace Notes2022.Server
 
 
         /// <summary>
-        /// Import the file stream from a server file or from a file uploaded from client
+        /// Import/Convert the file from .txt to .json format.
         /// </summary>
         /// <param name="_db">The database</param>
         /// <param name="file">File name to read from</param>
@@ -80,17 +84,13 @@ namespace Notes2022.Server
         /// <returns><c>true</c> if success, <c>false</c> otherwise.</returns>
         public async Task<bool> Import(string filename, string outputNotesFile)
         {
+            // get the input file
             FileStream fs = File.OpenRead(filename);
-            //fs.Seek(0, SeekOrigin.Begin);
             file = new StreamReader(fs);
-
-            // get the target file
-
             outp = new JsonExport();
             outp.NoteHeaders = new();
 
             // Some initial setup
-            //int id = noteFile.Id;
             bool isResp = false;
             char[] spaceTrim = new char[] { ' ' };
             char[] slash = new char[] { '/' };
@@ -100,7 +100,6 @@ namespace Notes2022.Server
             string platoBaseYear = "";
 
             StringBuilder sb = new();
-            //long baseNoteHeaderId = 0;
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             NoteContent newContent = null;
             NoteHeader makeHeader = null;
@@ -155,14 +154,12 @@ namespace Notes2022.Server
                         if (line.Length > 52)  // Possible Note Header
                         {
                             string head = line[46..];
-                            if (counter > 258)
-                                ;
                             if (head.StartsWith("  Note ")) //new note found
                             {
                                 if (newContent is not null)  // have a note to write
                                 {
                                     newContent.NoteBody = sb.ToString();
-                                    sb = new StringBuilder();
+                                    sb.Clear();  // = new StringBuilder();
                                     newContent.NoteBody = newContent.NoteBody.Replace("\r\n", "<br />");
 
                                     if (!isResp) // base note
@@ -213,7 +210,6 @@ namespace Notes2022.Server
                                     line = await CheckFf(line, file);
                                 }
 
-
                                 // get date, time, author
                                 // first date
                                 string date = line[..10].TrimEnd(spaceTrim);
@@ -254,7 +250,7 @@ namespace Notes2022.Server
                                 line = await CheckFf(line, file);
                             }
                         }
-                        // append line to current note
+                        // append line to current note body
                         sb.AppendLine(line);
                     }  // end NovaNET
 
@@ -269,7 +265,7 @@ namespace Notes2022.Server
                                 {
                                     sb.Append(' ');
                                     newContent.NoteBody = sb.ToString();
-                                    sb = new StringBuilder();
+                                    sb.Clear();  // = new StringBuilder();
 
                                     if (!isResp) // base note
                                     {
@@ -358,7 +354,7 @@ namespace Notes2022.Server
                             if (newContent is not null)  // have a note to write
                             {
                                 newContent.NoteBody = sb.ToString();
-                                sb = new StringBuilder();
+                                sb.Clear();   // = new StringBuilder();
                                 newContent.NoteBody = newContent.NoteBody.Replace("\r\n", "<br />");
 
                                 if (!isResp) // base note
@@ -566,15 +562,20 @@ namespace Notes2022.Server
         /// Outputs the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public void Output(string message)
+        public virtual void Output(string message)
         {
             Console.WriteLine(message);
         }
 
+        /// <summary>
+        /// Get line as an asynchronous operation.
+        /// Centralized to for line counting.
+        /// </summary>
+        /// <returns>Line read from input file.</returns>
         private async Task<string> GetLineAsync()
         {
             counter++;
-            //Console.WriteLine($"Line: {counter}");
+            //Output($"Line: {counter}");   // debugging
             return await file.ReadLineAsync();
         }
 
@@ -582,6 +583,13 @@ namespace Notes2022.Server
         private long currentId = 0;
         private long baseId = 0;
 
+
+        /// <summary>
+        /// Creates the note.  Adds a base note to the NoteHeader.List
+        /// </summary>
+        /// <param name="makeHeader">The basic header to add.</param>
+        /// <param name="NoteBody">The note body.</param>
+        /// <returns>NoteHeader.</returns>
         private NoteHeader CreateNote(NoteHeader makeHeader, string NoteBody)
         {
             makeHeader.NoteOrdinal = ++currentOrd;
@@ -603,6 +611,11 @@ namespace Notes2022.Server
             return ret;
         }
 
+        /// <summary>
+        /// Creates the response.  Adds a Response item to the most recent base note.
+        /// </summary>
+        /// <param name="makeHeader">The make header.</param>
+        /// <param name="NoteBody">The note body.</param>
         private void CreateResponse(NoteHeader makeHeader, string NoteBody)
         {
             NoteHeader currbase = outp.NoteHeaders.List.Single(p => p.Id == baseId);
@@ -625,14 +638,11 @@ namespace Notes2022.Server
             currbase.Responses.List.Add(makeHeader);
 
             //Output($"-----------------After Note = {currentOrd}, {currbase.ResponseCount}");
-
         }
-
     }
 
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
 
 }

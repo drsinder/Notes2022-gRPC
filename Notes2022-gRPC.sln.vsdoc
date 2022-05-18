@@ -1387,5 +1387,6 @@ message NoteCount {
     <add key="VBdocman_Notes2022.Server"><![CDATA[default]]></add>
     <add key="VBdocman_Notes2022.Shared"><![CDATA[default]]></add>
     <add key="VBdocman_Proto"><![CDATA[default]]></add>
+    <add key="VBdocman_TextToJson"><![CDATA[default]]></add>
   </appSettings>
 </configuration>
