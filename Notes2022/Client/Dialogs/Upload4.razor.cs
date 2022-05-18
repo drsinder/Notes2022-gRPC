@@ -56,8 +56,8 @@ namespace Notes2022.Client.Dialogs
         [Parameter]
         public byte[] UploadFile { get; set; }
 
-        [Parameter]
-        public bool IsJson { get; set; }
+        //[Parameter]
+        //public bool IsJson { get; set; }
 
         /// <summary>
         /// On after render as an asynchronous operation.
@@ -70,16 +70,7 @@ namespace Notes2022.Client.Dialogs
             {
                 var request = new ImportRequest() { NoteFile = NoteFile, Payload = Google.Protobuf.ByteString.CopyFrom(UploadFile) };
 
-                if (IsJson)
-                {
-                    _ = await Client.ImportJsonAsync(request, myState.AuthHeader, deadline: DateTime.UtcNow.AddMinutes(10));
-                }
-                else
-                {
-                    //_ = await Client.ImportAsync(request, myState.AuthHeader, deadline: DateTime.UtcNow.AddMinutes(10));
-                }
-
-
+                _ = await Client.ImportJsonAsync(request, myState.AuthHeader, deadline: DateTime.UtcNow.AddMinutes(10));
 
                 await ModalInstance.CancelAsync();
             }
