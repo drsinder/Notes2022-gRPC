@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\WeatherForecastController.cs" />
+    <Compile Remove="Manager\ImporterSaved.cs" />
     <Compile Remove="Services\AuthService.cs" />
   </ItemGroup>
 
