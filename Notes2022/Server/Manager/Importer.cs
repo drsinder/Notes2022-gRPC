@@ -702,6 +702,8 @@ namespace Notes2022.Server
             // base note loop
             foreach ( NoteHeader nh in input.NoteHeaders.List)
             {
+                string theTags = string.Empty;
+
                 NoteHeader makeHeader = new(nh);
 
                 makeHeader.NoteFileId = noteFile.Id;
@@ -710,8 +712,12 @@ namespace Notes2022.Server
                 makeHeader.BaseNoteId = 0;
                 makeHeader.ResponseCount = 0;
                 makeHeader.ResponseOrdinal = 0;
+                if (nh.Tags is not null && nh.Tags.List is not null && nh.Tags.List.Count > 0)
+                {
+                    theTags = Tags.ListToString(nh.Tags.List.ToList());
+                }
 
-                NoteHeader baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
+                NoteHeader baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
                 long baseNoteHeaderId = baseNoteHeader.BaseNoteId;
 
                 if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
@@ -732,6 +738,10 @@ namespace Notes2022.Server
                     makeHeader.NoteFileId = noteFile.Id;
                     makeHeader.ArchiveId = 0;
                     makeHeader.AuthorID = Globals.ImportedAuthorId;
+                    if (rh.Tags is not null && rh.Tags.List is not null && rh.Tags.List.Count > 0)
+                    {
+                        theTags = Tags.ListToString(rh.Tags.List.ToList());
+                    }
 
                     if (rh.RefId > 0)
                     {
@@ -748,7 +758,7 @@ namespace Notes2022.Server
                         }
                     }
 
-                    NoteHeader respHeader = await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
+                    NoteHeader respHeader = await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
                     newString.Add(respHeader);
                 }
             }
