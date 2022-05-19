@@ -558,8 +558,17 @@ namespace Notes2022.Server.Services
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                     if (user.FindFirst(ClaimTypes.NameIdentifier) is not null && user.FindFirst(ClaimTypes.NameIdentifier).Value != null)
                     {
-                        ApplicationUser appUser = await GetAppUser(context);
-                        homepageModel.UserData = appUser.GetGAppUser();
+                        ApplicationUser appUser;
+                        try
+                        {
+
+                            appUser = await GetAppUser(context);
+                            homepageModel.UserData = appUser.GetGAppUser();
+                        }
+                        catch (Exception)
+                        {
+                            return homepageModel;
+                        }
 
                         List<NoteFile> allFiles = _db.NoteFile.ToList().OrderBy(p => p.NoteFileTitle).ToList();
                         List<NoteAccess> myAccesses = _db.NoteAccess.Where(p => p.UserID == appUser.Id).ToList();
@@ -691,7 +700,7 @@ namespace Notes2022.Server.Services
 
         /// <summary>
         /// rpc Import(ImportRequest) returns (NoRequest);  
-        /// Runs a Json import given client side file contents as byte[]
+        /// Runs a Json import given client side file contents
         /// Caller must have Write access to the target note file.
         /// </summary>
         /// <param name="request">The request received from the client.</param>
@@ -700,18 +709,25 @@ namespace Notes2022.Server.Services
         [Authorize]
         public override async Task<NoRequest> ImportJson(ImportRequest request, ServerCallContext context)
         {
-            NoteFile? nf = await _db.NoteFile.SingleOrDefaultAsync(p => p.NoteFileName == request.NoteFile);
-            if (nf is null)
+            JsonExport? myJson;
+
+            try
+            {
+                NoteFile? nf = await _db.NoteFile.SingleOrDefaultAsync(p => p.NoteFileName == request.NoteFile);
+                if (nf is null || string.IsNullOrEmpty(request.Payload))
+                    return new NoRequest();
+
+                ApplicationUser appUser = await GetAppUser(context);
+                NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, nf.Id, 0);
+                if (!na.Write)
+                    return new NoRequest();
+ 
+                myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
+            }
+            catch (Exception)
+            {
                 return new NoRequest();
-
-            ApplicationUser appUser = await GetAppUser(context);
-            NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, nf.Id, 0);
-            if (!na.Write)
-                return new NoRequest();
-
-            string textVal = Encoding.Default.GetString(request.Payload.ToArray());
-
-            JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(textVal);
+            }
 
             Importer? imp = new();
             _ = await imp.Import(_db, myJson, request.NoteFile);

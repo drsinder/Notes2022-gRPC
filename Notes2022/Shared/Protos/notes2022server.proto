@@ -336,7 +336,7 @@ message HomePageModel {
 
 message ImportRequest {
 	string noteFile = 1;			// file name to import to
-	bytes payload = 2;				// import contents
+	string payload = 2;				// import contents
 }
 
 // used to display the note file index

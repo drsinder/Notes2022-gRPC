@@ -321,7 +321,6 @@ namespace Notes2022.Client.Pages.Admin
 
         protected FileSelect fileSelect;
 
-        protected byte[] fileBytes;
 
         protected string filename;
 
@@ -331,16 +330,16 @@ namespace Notes2022.Client.Pages.Admin
         {
 
             var selectedFile = selectedFiles[0];
-            // alternatively, load all the bytes at once
-            fileBytes = await fileSelect.GetFileBytesAsync(selectedFile.Name);
 
-            var parameters = new ModalParameters();
+            Stream myFile = await fileSelect.OpenFileStreamAsync(selectedFile.Name);    // open a stream on the file
+            StreamReader sr = new StreamReader(myFile);                                 // get a reader
+            string myText = await sr.ReadToEndAsync();                                  // read entire file as a string
 
-            parameters.Add("UploadFile", fileBytes);
+            ModalParameters? parameters = new ModalParameters();
+
+            parameters.Add("UploadText", myText);
 
             parameters.Add("NoteFile", filename);
-
-            //parameters.Add("IsJson", selectedFile.Name.ToLower().EndsWith(".json"));
 
             var yModal = Modal.Show<Dialogs.Upload4>("Upload2", parameters);
             await yModal.Result;

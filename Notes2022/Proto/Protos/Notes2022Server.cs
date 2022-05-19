@@ -95,7 +95,7 @@ namespace Notes2022.Proto {
             "c3NMaXN0Eg8KB21lc3NhZ2UYAyABKAkSKwoIdXNlckRhdGEYBCABKAsyGS5u",
             "b3RlczIwMjJzZXJ2ZXIuR0FwcFVzZXISMwoMdXNlckRhdGFMaXN0GAUgASgL",
             "Mh0ubm90ZXMyMDIyc2VydmVyLkdBcHBVc2VyTGlzdCIyCg1JbXBvcnRSZXF1",
-            "ZXN0EhAKCG5vdGVGaWxlGAEgASgJEg8KB3BheWxvYWQYAiABKAwingMKFU5v",
+            "ZXN0EhAKCG5vdGVGaWxlGAEgASgJEg8KB3BheWxvYWQYAiABKAkingMKFU5v",
             "dGVEaXNwbGF5SW5kZXhNb2RlbBIrCghub3RlRmlsZRgBIAEoCzIZLm5vdGVz",
             "MjAyMnNlcnZlci5Ob3RlRmlsZRINCgVhcmNJZBgCIAEoBRItCghteUFjY2Vz",
             "cxgDIAEoCzIbLm5vdGVzMjAyMnNlcnZlci5Ob3RlQWNjZXNzEhAKCGlzTWFy",
@@ -9000,13 +9000,13 @@ namespace Notes2022.Proto {
 
     /// <summary>Field number for the "payload" field.</summary>
     public const int PayloadFieldNumber = 2;
-    private pb::ByteString payload_ = pb::ByteString.Empty;
+    private string payload_ = "";
     /// <summary>
     /// import contents
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pb::ByteString Payload {
+    public string Payload {
       get { return payload_; }
       set {
         payload_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
@@ -9063,7 +9063,7 @@ namespace Notes2022.Proto {
       }
       if (Payload.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteBytes(Payload);
+        output.WriteString(Payload);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -9081,7 +9081,7 @@ namespace Notes2022.Proto {
       }
       if (Payload.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteBytes(Payload);
+        output.WriteString(Payload);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -9097,7 +9097,7 @@ namespace Notes2022.Proto {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(NoteFile);
       }
       if (Payload.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Payload);
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Payload);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -9137,7 +9137,7 @@ namespace Notes2022.Proto {
             break;
           }
           case 18: {
-            Payload = input.ReadBytes();
+            Payload = input.ReadString();
             break;
           }
         }
@@ -9160,7 +9160,7 @@ namespace Notes2022.Proto {
             break;
           }
           case 18: {
-            Payload = input.ReadBytes();
+            Payload = input.ReadString();
             break;
           }
         }
