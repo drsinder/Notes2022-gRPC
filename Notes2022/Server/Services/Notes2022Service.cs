@@ -709,14 +709,7 @@ namespace Notes2022.Server.Services
             if (!na.Write)
                 return new NoRequest();
 
-            MemoryStream? input = new(request.Payload.ToArray());
-            StreamReader file = new(input);
-
-            string textVal =  await file.ReadToEndAsync();
-
-            file.DiscardBufferedData();
-            file.Dispose();
-            input.Dispose();
+            string textVal = Encoding.Default.GetString(request.Payload.ToArray());
 
             JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(textVal);
 
