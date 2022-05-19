@@ -717,6 +717,13 @@ namespace Notes2022.Server
                 if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
                     continue;
 
+                List<NoteHeader> currentString = new List<NoteHeader>();
+                currentString.Add(nh);
+                currentString.AddRange(nh.Responses.List);
+
+                List<NoteHeader> newString = new List<NoteHeader>();
+                newString.Add(baseNoteHeader);
+
                 // response loop
                 foreach ( NoteHeader rh in nh.Responses.List )
                 {
@@ -726,7 +733,23 @@ namespace Notes2022.Server
                     makeHeader.ArchiveId = 0;
                     makeHeader.AuthorID = Globals.ImportedAuthorId;
 
-                    await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
+                    if (rh.RefId > 0)
+                    {
+                        // find this Id in currentString
+                        NoteHeader? refH = currentString.Find(p => p.Id == rh.RefId);
+                        if (refH is not null)
+                        {
+                            // find the ResponseOrdinal in newString
+                            NoteHeader? temp = newString.Find(p => p.ResponseOrdinal == refH.ResponseOrdinal);
+                            if (temp is not null)
+                            {
+                                makeHeader.RefId = temp.Id;
+                            }
+                        }
+                    }
+
+                    NoteHeader respHeader = await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, string.Empty, makeHeader.DirectorMessage, false, false);
+                    newString.Add(respHeader);
                 }
             }
             return true;
