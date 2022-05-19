@@ -44,6 +44,7 @@ using Syncfusion.Blazor.LinearGauge;
 using Syncfusion.Blazor.Navigations;
 using System.Net.Http.Json;
 using System.Text;
+using W8lessLabs.Blazor.LocalFiles;
 
 namespace Notes2022.Client.Menus
 {
@@ -176,6 +177,10 @@ namespace Notes2022.Client.Menus
                 menuItems.Add(item2);
 
                 menuItems.Add(new MenuItem() { Id = "SearchFromIndex", Text = "Search" });
+
+                if ( Model.MyAccess.Write)
+                    menuItems.Add(new MenuItem() { Id = "Import", Text = "Import" });
+
                 menuItems.Add(new MenuItem() { Id = "ListHelp", Text = "Z for HELP" });
                 if (Model.MyAccess.EditAccess || Model.MyAccess.ViewAccess)
                 {
@@ -261,6 +266,10 @@ namespace Notes2022.Client.Menus
 
                 case "SearchFromIndex":
                     await SetSearch();
+                    break;
+
+                case "Import":
+                    await ImportNoteFile2();
                     break;
 
                 default:
@@ -475,15 +484,45 @@ namespace Notes2022.Client.Menus
             DoExport(true, true, true, emailaddr);
         }
 
-        ///// <summary>
-        ///// Shows the message.
-        ///// </summary>
-        ///// <param name="message">The message.</param>
-        //private void ShowMessage(string message)
-        //{
-        //    var parameters = new ModalParameters();
-        //    parameters.Add("MessageInput", message);
-        //    Modal.Show<MessageBox>("", parameters);
-        //}
+
+        protected FileSelect fileSelect;
+
+
+        protected string filename;
+
+        protected int fileId;
+
+        async Task FilesSelectedHandler(SelectedFile[] selectedFiles)
+        {
+
+            var selectedFile = selectedFiles[0];
+
+            Stream myFile = await fileSelect.OpenFileStreamAsync(selectedFile.Name);    // open a stream on the file
+            StreamReader sr = new StreamReader(myFile);                                 // get a reader
+            string myText = await sr.ReadToEndAsync();                                  // read entire file as a string
+
+            ModalParameters? parameters = new ModalParameters();
+
+            parameters.Add("UploadText", myText);
+
+            parameters.Add("NoteFile", filename);
+
+            var yModal = Modal.Show<Dialogs.Upload4>("Upload2", parameters);
+            await yModal.Result;
+
+            Navigation.NavigateTo("noteindex/" + Model.NoteFile.Id, true);
+        }
+
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        async Task ImportNoteFile2()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        {
+            NoteFile file = Model.NoteFile;
+            filename = file.NoteFileName;
+            fileId = file.Id;
+
+            fileSelect.SelectFiles();
+        }
+
     }
 }

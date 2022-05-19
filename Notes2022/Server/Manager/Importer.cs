@@ -39,8 +39,6 @@
 
 using Notes2022.Server.Data;
 using Notes2022.Proto;
-//using System.Text;
-//using System.Text.RegularExpressions;
 
 namespace Notes2022.Server
 {

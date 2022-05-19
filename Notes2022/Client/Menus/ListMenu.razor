@@ -31,6 +31,10 @@
     </SfMenu>
     
 </div>
+
+
+    <FileSelect @ref="fileSelect" FilesSelected="FilesSelectedHandler" Accept=".json"></FileSelect>
+
     @if(IsPrinting)
     {
         <div class="control-section keep-center">
