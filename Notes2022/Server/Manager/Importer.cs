@@ -692,58 +692,61 @@ namespace Notes2022.Server
         public async Task<bool> Import(NotesDbContext _db, JsonExport input, string myNotesFile)
         {
             if (input is null || input.NoteHeaders is null || input.NoteHeaders.List is null || input.NoteHeaders.List.Count < 1)
-                return false;
+                return false;   // nothing to import
 
             NoteFile noteFile = await NoteDataManager.GetFileByName(_db, myNotesFile);
 
             if (noteFile is null)
-                return false;
+                return false;   // no such note file
 
             // base note loop
             foreach ( NoteHeader nh in input.NoteHeaders.List)
             {
                 string theTags = string.Empty;
 
-                NoteHeader makeHeader = new(nh);
+                NoteHeader makeHeader = new(nh);                    // make a copy of the note
 
-                makeHeader.NoteFileId = noteFile.Id;
-                makeHeader.ArchiveId = 0;
-                makeHeader.AuthorID = Globals.ImportedAuthorId;
-                makeHeader.BaseNoteId = 0;
-                makeHeader.ResponseCount = 0;
-                makeHeader.ResponseOrdinal = 0;
+                makeHeader.NoteFileId = noteFile.Id;                // put it in target file
+                makeHeader.ArchiveId = 0;                           // must always import to active file
+                makeHeader.AuthorID = Globals.ImportedAuthorId;     // Author may not exist - use "*imported*"
+                makeHeader.BaseNoteId = 0;                          // should already be 0 - make sure
+                makeHeader.ResponseCount = 0;                       // no responses in target yet.
+                makeHeader.ResponseOrdinal = 0;                     // base note
                 if (nh.Tags is not null && nh.Tags.List is not null && nh.Tags.List.Count > 0)
                 {
-                    theTags = Tags.ListToString(nh.Tags.List.ToList());
+                    theTags = Tags.ListToString(nh.Tags.List.ToList()); // convert tag list to a string
                 }
 
+                // Create the base note
                 NoteHeader baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
                 long baseNoteHeaderId = baseNoteHeader.BaseNoteId;
 
                 if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
-                    continue;
+                    continue;       // no responses - do next base note
 
+                // used this to seqrch for RefId targets
                 List<NoteHeader> currentString = new List<NoteHeader>();
-                currentString.Add(nh);
-                currentString.AddRange(nh.Responses.List);
+                currentString.Add(nh);                              // add the base note first
+                currentString.AddRange(nh.Responses.List);          // then all responses
 
+                // keep track of note string in target file
                 List<NoteHeader> newString = new List<NoteHeader>();
-                newString.Add(baseNoteHeader);
+                newString.Add(baseNoteHeader);              // start with base note added above
 
                 // response loop
                 foreach ( NoteHeader rh in nh.Responses.List )
                 {
-                    makeHeader = new(rh);
-                    makeHeader.BaseNoteId = baseNoteHeaderId;
-                    makeHeader.NoteFileId = noteFile.Id;
-                    makeHeader.ArchiveId = 0;
-                    makeHeader.AuthorID = Globals.ImportedAuthorId;
+                    makeHeader = new(rh);                           // make a copy of the response
+                    makeHeader.BaseNoteId = baseNoteHeaderId;       // connect it to the target file base note
+                    makeHeader.NoteFileId = noteFile.Id;            // put it in the target file
+                    makeHeader.ArchiveId = 0;                       // must be imported to active file
+                    makeHeader.AuthorID = Globals.ImportedAuthorId; // Author may not exist - use "*imported*"
                     if (rh.Tags is not null && rh.Tags.List is not null && rh.Tags.List.Count > 0)
                     {
-                        theTags = Tags.ListToString(rh.Tags.List.ToList());
+                        theTags = Tags.ListToString(rh.Tags.List.ToList()); // convert tag list to a string
                     }
 
-                    if (rh.RefId > 0)
+                    if (rh.RefId > 0)                               // if this response references another note find it
                     {
                         // find this Id in currentString
                         NoteHeader? refH = currentString.Find(p => p.Id == rh.RefId);
@@ -753,11 +756,12 @@ namespace Notes2022.Server
                             NoteHeader? temp = newString.Find(p => p.ResponseOrdinal == refH.ResponseOrdinal);
                             if (temp is not null)
                             {
-                                makeHeader.RefId = temp.Id;
+                                makeHeader.RefId = temp.Id;         // use the Id in target file
                             }
                         }
                     }
 
+                    // Create the response
                     NoteHeader respHeader = await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
                     newString.Add(respHeader);
                 }
