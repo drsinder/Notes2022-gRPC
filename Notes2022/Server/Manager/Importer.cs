@@ -39,6 +39,7 @@
 
 using Notes2022.Server.Data;
 using Notes2022.Proto;
+using Microsoft.EntityFrameworkCore;
 
 namespace Notes2022.Server
 {
@@ -46,14 +47,53 @@ namespace Notes2022.Server
     /// Does the import of a text file from an old plato/novanet system notefile
     /// There be messy stuff in here!!!
     /// </summary>
-    public partial class Importer
+    public class Importer
     {
+
+        private NotesDbContext _db;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Importer"/> class.
+        /// </summary>
+        /// <param name="db">The database.</param>
+        public Importer(NotesDbContext db)
+        {
+            _db = db;
+        }
+
+
+
         /// <summary>
         /// Outputs the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public virtual void Output(string message)
+        public void Output(string message)
         {
+            Console.WriteLine(message);
+        }
+
+
+        /// <summary>
+        /// Imports the specified file path.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="myNotesFile">My notes file.</param>
+        /// <returns><c>true</c> if success, <c>false</c> otherwise.</returns>
+        public async Task<bool> Import(string filePath, string myNotesFile)
+        {
+            FileStream file = File.OpenRead(filePath);
+            StreamReader sr = new StreamReader(file);
+            string payload = await sr.ReadToEndAsync();
+            sr.Close();
+            file.Close();
+
+            JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(payload);
+
+            bool retval = await Import(myJson, myNotesFile);
+
+            File.Delete(filePath);
+
+            return retval;
         }
 
         /// <summary>Imports the given input JsonExport object to the notesfile.</summary>
@@ -62,7 +102,7 @@ namespace Notes2022.Server
         /// <param name="myNotesFile">The notes file. name to import to</param>
         /// <returns>
         ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
-        public async Task<bool> Import(NotesDbContext _db, JsonExport input, string myNotesFile)
+        public async Task<bool> Import(JsonExport input, string myNotesFile)
         {
             if (input is null || input.NoteHeaders is null || input.NoteHeaders.List is null || input.NoteHeaders.List.Count < 1)
                 return false;   // nothing to import

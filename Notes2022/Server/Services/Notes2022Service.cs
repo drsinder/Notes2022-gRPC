@@ -33,6 +33,7 @@
 // <summary></summary>
 
 using Grpc.Core;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -721,20 +722,29 @@ namespace Notes2022.Server.Services
                 NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, nf.Id, 0);
                 if (!na.Write)
                     return new NoRequest();
- 
-                myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
+
+                //myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
             }
             catch (Exception)
             {
                 return new NoRequest();
             }
 
-            Importer? imp = new();
-            _ = await imp.Import(_db, myJson, request.NoteFile);
+            string tempFile = Globals.ImportRoot + Path.GetRandomFileName();
 
-            GC.Collect();
-            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect();
+            FileStream theStream = File.OpenWrite(tempFile);
+            StreamWriter sw = new StreamWriter(theStream);
+            await sw.WriteAsync(request.Payload);
+            sw.Close();
+            theStream.Close();
+
+            Importer imp = new Importer(_db);
+
+            //_ = await imp.Import(myJson, request.NoteFile);
+
+            BackgroundJob.Enqueue(() => imp.Import(tempFile, request.NoteFile));
+
+
             return new NoRequest();
         }
 

@@ -20,6 +20,8 @@ using Notes2022.Server.Data;
 using Notes2022.Server.Services;
 using Notes2022.Server;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Hangfire;
+using Hangfire.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -28,6 +30,24 @@ var connectionString = configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<NotesDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+// Add Hangfire services.
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+    {
+        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+        QueuePollInterval = TimeSpan.Zero,
+        UseRecommendedIsolationLevel = true,
+        DisableGlobalLocks = true
+    }));
+
+// Add the processing server as IHostedService
+builder.Services.AddHangfireServer();
+
 
 // For Identity
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -91,7 +111,6 @@ builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
 
 //builder.Services.AddControllers();
 //builder.Services.AddRazorPages();
-
 
 Globals.SendGridApiKey = builder.Configuration["SendGridApiKey"];
 Globals.SendGridEmail = builder.Configuration["SendGridEmail"];
