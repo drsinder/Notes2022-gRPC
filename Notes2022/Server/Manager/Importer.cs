@@ -61,8 +61,6 @@ namespace Notes2022.Server
             _db = db;
         }
 
-
-
         /// <summary>
         /// Outputs the specified message.
         /// </summary>
@@ -79,19 +77,16 @@ namespace Notes2022.Server
         /// <param name="filePath">The file path.</param>
         /// <param name="myNotesFile">My notes file.</param>
         /// <returns><c>true</c> if success, <c>false</c> otherwise.</returns>
-        public async Task<bool> Import(string filePath, string myNotesFile)
+        public async Task<bool> Import(int fileId, string myNotesFile)
         {
-            FileStream file = File.OpenRead(filePath);
-            StreamReader sr = new StreamReader(file);
-            string payload = await sr.ReadToEndAsync();
-            sr.Close();
-            file.Close();
+            JsonData it = await _db.JsonData.SingleAsync(p => p.Id == fileId);
 
-            JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(payload);
+            JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(it.JsonText);
 
             bool retval = await Import(myJson, myNotesFile);
 
-            File.Delete(filePath);
+            _db.JsonData.Remove(it);
+            await _db.SaveChangesAsync();    
 
             return retval;
         }

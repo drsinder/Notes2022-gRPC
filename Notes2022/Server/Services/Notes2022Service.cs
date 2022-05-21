@@ -723,27 +723,36 @@ namespace Notes2022.Server.Services
                 if (!na.Write)
                     return new NoRequest();
 
-                myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
+                //myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
             }
             catch (Exception)
             {
                 return new NoRequest();
             }
 
-            string tempFile = Globals.ImportRoot + Path.GetRandomFileName();
+            //string tempFile = Globals.ImportRoot + Path.GetRandomFileName();
 
-            FileStream theStream = File.OpenWrite(tempFile);
-            StreamWriter sw = new StreamWriter(theStream);
-            await sw.WriteAsync(request.Payload);
-            sw.Close();
-            theStream.Close();
+            //FileStream theStream = File.OpenWrite(tempFile);
+            //StreamWriter sw = new StreamWriter(theStream);
+            //await sw.WriteAsync(request.Payload);
+            //sw.Close();
+            //theStream.Close();
+
 
             Importer imp = new Importer(_db);
 
-            _ = await imp.Import(myJson, request.NoteFile);
+            //_ = await imp.Import(myJson, request.NoteFile);
 
-            //BackgroundJob.Enqueue(() => imp.Import(tempFile, request.NoteFile));
+            int fileId = 0;
 
+            JsonData data = new JsonData();
+            data.JsonText = request.Payload;
+            var ent =_db.JsonData.Add(data);
+            await _db.SaveChangesAsync();
+
+            fileId = (int)ent.Member("Id").CurrentValue;
+
+            BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile));
 
             return new NoRequest();
         }

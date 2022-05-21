@@ -62,6 +62,8 @@ namespace Notes2022.Server.Data
         /// <value>The sequencer.</value>
         public DbSet<Sequencer> Sequencer { get; set; }
 
+        public DbSet<JsonData> JsonData { get; set; }
+
 
 
         /// <summary>
@@ -92,6 +94,11 @@ namespace Notes2022.Server.Data
 
             builder.Entity<NoteContent>()
                 .HasIndex(new string[] { "NoteHeaderId" });
+
+
+            builder.Entity<JsonData>()
+                .HasKey(new string[] { "Id" });
+
 
 
             builder.Entity<NoteAccess>()
