@@ -723,7 +723,7 @@ namespace Notes2022.Server.Services
                 if (!na.Write)
                     return new NoRequest();
 
-                //myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
+                myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
             }
             catch (Exception)
             {
@@ -740,9 +740,9 @@ namespace Notes2022.Server.Services
 
             Importer imp = new Importer(_db);
 
-            //_ = await imp.Import(myJson, request.NoteFile);
+            _ = await imp.Import(myJson, request.NoteFile);
 
-            BackgroundJob.Enqueue(() => imp.Import(tempFile, request.NoteFile));
+            //BackgroundJob.Enqueue(() => imp.Import(tempFile, request.NoteFile));
 
 
             return new NoRequest();
