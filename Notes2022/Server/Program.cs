@@ -99,7 +99,12 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-builder.Services.AddGrpc();
+builder.Services.AddGrpc()
+        .AddServiceOptions<Notes2022Service>(options =>
+        {
+            options.MaxReceiveMessageSize = 8 * 1024 * 1024; // 8 MB
+            options.MaxSendMessageSize = 5 * 1024 * 1024; // 5 MB
+        });
 
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
 {
