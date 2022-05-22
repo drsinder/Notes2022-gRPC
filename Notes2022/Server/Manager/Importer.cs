@@ -40,6 +40,7 @@
 using Notes2022.Server.Data;
 using Notes2022.Proto;
 using Microsoft.EntityFrameworkCore;
+using Notes2022.Server.Services;
 
 namespace Notes2022.Server
 {
@@ -76,7 +77,7 @@ namespace Notes2022.Server
         /// <param name="myNotesFile">My notes file.</param>
         /// <returns>
         ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
-        public async Task<bool> Import(int fileId, string myNotesFile)
+        public async Task<bool> Import(int fileId, string myNotesFile, string email)
         {
             JsonData it = await _db.JsonData.SingleAsync(p => p.Id == fileId);
 
@@ -85,7 +86,10 @@ namespace Notes2022.Server
             bool retval = await Import(myJson, myNotesFile);
 
             _db.JsonData.Remove(it);
-            await _db.SaveChangesAsync();    
+            await _db.SaveChangesAsync();
+
+            EmailSender ems = new EmailSender();
+            await ems.SendEmailAsync(email, "Import Completed!", "Your import to " + myNotesFile + " has completed successfully.");
 
             return retval;
         }

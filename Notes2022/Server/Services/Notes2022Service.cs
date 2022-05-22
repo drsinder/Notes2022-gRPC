@@ -712,13 +712,15 @@ namespace Notes2022.Server.Services
         {
             JsonExport? myJson;
 
+            ApplicationUser appUser;
+
             try
             {
                 NoteFile? nf = await _db.NoteFile.SingleOrDefaultAsync(p => p.NoteFileName == request.NoteFile);
                 if (nf is null || string.IsNullOrEmpty(request.Payload))
                     return new NoRequest();
 
-                ApplicationUser appUser = await GetAppUser(context);
+                appUser = await GetAppUser(context);
                 NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, nf.Id, 0);
                 if (!na.Write)
                     return new NoRequest();
@@ -741,7 +743,7 @@ namespace Notes2022.Server.Services
 
             int fileId = (int)ent.Member("Id").CurrentValue;
 
-            BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile));
+            BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile, appUser.Email));
 
             Thread.Sleep(2000);
 
