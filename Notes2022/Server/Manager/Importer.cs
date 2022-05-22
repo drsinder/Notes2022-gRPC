@@ -79,6 +79,10 @@ namespace Notes2022.Server
         ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
         public async Task<bool> Import(int fileId, string myNotesFile, string email)
         {
+
+            EmailSender ems = new EmailSender();
+            await ems.SendEmailAsync(email, "Import Started!", "Your import to " + myNotesFile + " has started.");
+
             JsonData it = await _db.JsonData.SingleAsync(p => p.Id == fileId);
 
             JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(it.JsonText);
@@ -88,7 +92,6 @@ namespace Notes2022.Server
             _db.JsonData.Remove(it);
             await _db.SaveChangesAsync();
 
-            EmailSender ems = new EmailSender();
             await ems.SendEmailAsync(email, "Import Completed!", "Your import to " + myNotesFile + " has completed successfully.");
 
             return retval;
