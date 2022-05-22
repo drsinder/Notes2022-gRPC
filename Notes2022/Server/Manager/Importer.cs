@@ -79,15 +79,20 @@ namespace Notes2022.Server
         ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
         public async Task<bool> Import(int fileId, string myNotesFile, string email)
         {
-
             EmailSender ems = new EmailSender();
-            await ems.SendEmailAsync(email, "Import Started!", "Your import to " + myNotesFile + " has started.");
+
+            JsonData tracker = _db.JsonData.Single(p => p.Id.Equals(fileId));
+            if (tracker.HandledBase == 0)
+                await ems.SendEmailAsync(email, "Import Started!", "Your import to " + myNotesFile + " has started.");
+            else
+                await ems.SendEmailAsync(email, "Import Restarted!", "Your import to " + myNotesFile + " was interrupted and has been restarted.");
+
 
             JsonData it = await _db.JsonData.SingleAsync(p => p.Id == fileId);
 
             JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(it.JsonText);
 
-            bool retval = await Import(myJson, myNotesFile);
+            bool retval = await Import(myJson, myNotesFile, fileId);
 
             _db.JsonData.Remove(it);
             await _db.SaveChangesAsync();
@@ -103,7 +108,7 @@ namespace Notes2022.Server
         /// <param name="myNotesFile">The notes file. name to import to</param>
         /// <returns>
         ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
-        public async Task<bool> Import(JsonExport input, string myNotesFile)
+        public async Task<bool> Import(JsonExport input, string myNotesFile, int rowId)
         {
             if (input is null || input.NoteHeaders is null || input.NoteHeaders.List is null || input.NoteHeaders.List.Count < 1)
                 return false;   // nothing to import
@@ -113,9 +118,17 @@ namespace Notes2022.Server
             if (noteFile is null)
                 return false;   // no such note file
 
+            JsonData tracker = _db.JsonData.Single(p => p.Id.Equals(rowId));
+
+            int currentBase = 0;
+
+
             // base note loop
-            foreach ( NoteHeader nh in input.NoteHeaders.List)
+            foreach (NoteHeader nh in input.NoteHeaders.List)
             {
+                if (currentBase++ < tracker.HandledBase)
+                    continue;
+
                 string theTags = string.Empty;
 
                 NoteHeader makeHeader = new(nh);                    // make a copy of the note
@@ -131,9 +144,16 @@ namespace Notes2022.Server
                     theTags = Tags.ListToString(nh.Tags.List.ToList()); // convert tag list to a string
                 }
 
+                NoteHeader? baseNoteHeader = null;
+                long baseNoteHeaderId = 0;
+
                 // Create the base note
-                NoteHeader baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
-                long baseNoteHeaderId = baseNoteHeader.BaseNoteId;
+                baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
+                baseNoteHeaderId = baseNoteHeader.BaseNoteId;
+
+                tracker.HandledBase = currentBase;
+                _db.Entry(tracker).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
 
                 if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
                     continue;       // no responses - do next base note
@@ -178,7 +198,7 @@ namespace Notes2022.Server
                     // Create the response
                     NoteHeader respHeader = await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
                     newString.Add(respHeader);
-                }
+                 }
             }
             return true;
         }

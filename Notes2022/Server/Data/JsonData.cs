@@ -14,6 +14,8 @@ namespace Notes2022.Server.Data
         public int Id { get; set; }    
 
         public string JsonText { get; set; }
+
+        public int HandledBase { get; set; }
         
     }
 }
