@@ -510,7 +510,7 @@ namespace Notes2022.Client.Menus
             var yModal = Modal.Show<Dialogs.Upload4>("Upload2", parameters);
             await yModal.Result;
 
-            Navigation.NavigateTo("noteindex/" + Model.NoteFile.Id, true);
+            //Navigation.NavigateTo("noteindex/" + Model.NoteFile.Id, true);
         }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

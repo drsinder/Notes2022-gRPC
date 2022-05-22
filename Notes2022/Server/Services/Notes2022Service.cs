@@ -730,29 +730,20 @@ namespace Notes2022.Server.Services
                 return new NoRequest();
             }
 
-            //string tempFile = Globals.ImportRoot + Path.GetRandomFileName();
-
-            //FileStream theStream = File.OpenWrite(tempFile);
-            //StreamWriter sw = new StreamWriter(theStream);
-            //await sw.WriteAsync(request.Payload);
-            //sw.Close();
-            //theStream.Close();
-
-
             Importer imp = new Importer(_db);
 
             //_ = await imp.Import(myJson, request.NoteFile);
 
-            int fileId = 0;
-
             JsonData data = new JsonData();
             data.JsonText = request.Payload;
-            var ent =_db.JsonData.Add(data);
+            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<JsonData>? ent =_db.JsonData.Add(data);
             await _db.SaveChangesAsync();
 
-            fileId = (int)ent.Member("Id").CurrentValue;
+            int fileId = (int)ent.Member("Id").CurrentValue;
 
             BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile));
+
+            Thread.Sleep(2000);
 
             return new NoRequest();
         }

@@ -71,12 +71,11 @@ namespace Notes2022.Server
         }
 
 
-        /// <summary>
-        /// Imports the specified file path.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
+        /// <summary>Imports the specified file identifier.</summary>
+        /// <param name="fileId">The DB file/row identifier.</param>
         /// <param name="myNotesFile">My notes file.</param>
-        /// <returns><c>true</c> if success, <c>false</c> otherwise.</returns>
+        /// <returns>
+        ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
         public async Task<bool> Import(int fileId, string myNotesFile)
         {
             JsonData it = await _db.JsonData.SingleAsync(p => p.Id == fileId);
