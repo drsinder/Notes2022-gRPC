@@ -241,106 +241,112 @@ namespace Notes2022.Server
         /// <returns>NoteHeader.</returns>
         public static async Task<NoteHeader> CreateNote(NotesDbContext db, NoteHeader nh, string body, string tags, string dMessage, bool send, bool linked, bool editing = false)
         {
-            long editingId = nh.Id;
+            NoteHeader newHeader;
 
-            nh.Id = 0;
-            if (nh.ResponseOrdinal == 0 && !editing)  // base note
+            //using (var dbTran = db.Database.BeginTransaction())
             {
-                // get the next available note Ordinal
-                nh.NoteOrdinal = await NextBaseNoteOrdinal(db, nh.NoteFileId, nh.ArchiveId);
-            }
+                long editingId = nh.Id;
 
-            if (!linked && !editing)    // create a GUID for use over link
-            {
-                nh.LinkGuid = Guid.NewGuid().ToString();
-            }
+                nh.Id = 0;
+                if (nh.ResponseOrdinal == 0 && !editing)  // base note
+                {
+                    // get the next available note Ordinal
+                    nh.NoteOrdinal = await NextBaseNoteOrdinal(db, nh.NoteFileId, nh.ArchiveId);
+                }
 
-            if (!send) // indicates an import operation / adjust time to UCT / assume original was CST = UCT-06, so add 6 hours
-            {
-                //int offset = 6;
-                //if (nh.LastEdited.ToDateTime().IsDaylightSavingTime())
-                //    offset--;       // five if DST
+                if (!linked && !editing)    // create a GUID for use over link
+                {
+                    nh.LinkGuid = Guid.NewGuid().ToString();
+                }
 
-                // throw in an added random time in ms
-                Random rand = new();
-                int ms = rand.Next(999);
+                if (!send) // indicates an import operation / adjust time to UCT / assume original was CST = UCT-06, so add 6 hours
+                {
+                    //int offset = 6;
+                    //if (nh.LastEdited.ToDateTime().IsDaylightSavingTime())
+                    //    offset--;       // five if DST
 
-                nh.LastEdited = nh.LastEdited + Google.Protobuf.WellKnownTypes.TimeExtensions.ToDuration(new TimeSpan(0, 0, 0, 0, ms));  //nh.LastEdited.ToDateTime().AddHours(offset).AddMilliseconds(ms);
-                nh.CreateDate = nh.LastEdited;
-                nh.ThreadLastEdited = nh.CreateDate;
-            }
+                    // throw in an added random time in ms
+                    Random rand = new();
+                    int ms = rand.Next(999);
 
-            NoteFile nf = await db.NoteFile.SingleAsync(p => p.Id == nh.NoteFileId);
+                    nh.LastEdited = nh.LastEdited + Google.Protobuf.WellKnownTypes.TimeExtensions.ToDuration(new TimeSpan(0, 0, 0, 0, ms));  //nh.LastEdited.ToDateTime().AddHours(offset).AddMilliseconds(ms);
+                    nh.CreateDate = nh.LastEdited;
+                    nh.ThreadLastEdited = nh.CreateDate;
+                }
 
-            nf.LastEdited = nh.CreateDate;
-            db.Entry(nf).State = EntityState.Modified;
-            db.NoteHeader.Add(nh);
-            await db.SaveChangesAsync();
+                NoteFile nf = await db.NoteFile.SingleAsync(p => p.Id == nh.NoteFileId);
 
-            NoteHeader newHeader = nh;
+                nf.LastEdited = nh.CreateDate;
+                db.Entry(nf).State = EntityState.Modified;
+                db.NoteHeader.Add(nh);
+                await db.SaveChangesAsync();
 
-            if (newHeader.ResponseOrdinal == 0) // base note
-            {
-                newHeader.BaseNoteId = newHeader.Id;
-                db.Entry(newHeader).State = EntityState.Modified;
+                newHeader = nh;
+
+                if (newHeader.ResponseOrdinal == 0) // base note
+                {
+                    newHeader.BaseNoteId = newHeader.Id;
+                    db.Entry(newHeader).State = EntityState.Modified;
+
+                    if (editing)
+                    {
+                        // update BaseNoteId for all responses
+                        List<NoteHeader> rhl = db.NoteHeader.Where(p => p.BaseNoteId == editingId && p.ResponseOrdinal > 0).ToList();
+                        foreach (NoteHeader ln in rhl)
+                        {
+                            ln.BaseNoteId = newHeader.Id;
+                            db.Entry(ln).State = EntityState.Modified;
+                        }
+                    }
+
+                    await db.SaveChangesAsync();
+                }
+                else    // response
+                {
+                    NoteHeader? baseNote = await db.NoteHeader
+                        .Where(p => p.NoteFileId == newHeader.NoteFileId && p.ArchiveId == newHeader.ArchiveId && p.NoteOrdinal == newHeader.NoteOrdinal && p.ResponseOrdinal == 0)
+                        .FirstOrDefaultAsync();
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                    newHeader.BaseNoteId = baseNote.Id;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    db.Entry(newHeader).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                }
 
                 if (editing)
                 {
-                    // update BaseNoteId for all responses
-                    List<NoteHeader> rhl = db.NoteHeader.Where(p => p.BaseNoteId == editingId && p.ResponseOrdinal > 0).ToList();
+                    // update RefId
+                    List<NoteHeader> rhl = db.NoteHeader.Where(p => p.RefId == editingId).ToList();
                     foreach (NoteHeader ln in rhl)
                     {
-                        ln.BaseNoteId = newHeader.Id;
+                        ln.RefId = newHeader.Id;
                         db.Entry(ln).State = EntityState.Modified;
                     }
-                }
-
-                await db.SaveChangesAsync();
-            }
-            else    // response
-            {
-                NoteHeader? baseNote = await db.NoteHeader
-                    .Where(p => p.NoteFileId == newHeader.NoteFileId && p.ArchiveId == newHeader.ArchiveId && p.NoteOrdinal == newHeader.NoteOrdinal && p.ResponseOrdinal == 0)
-                    .FirstOrDefaultAsync();
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                newHeader.BaseNoteId = baseNote.Id;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-                db.Entry(newHeader).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-            }
-
-            if (editing)
-            {
-                // update RefId
-                List<NoteHeader> rhl = db.NoteHeader.Where(p => p.RefId == editingId).ToList();
-                foreach (NoteHeader ln in rhl)
-                {
-                    ln.RefId = newHeader.Id;
-                    db.Entry(ln).State = EntityState.Modified;
-                }
-                await db.SaveChangesAsync();
-            }
-
-            NoteContent newContent = new()
-            {
-                NoteHeaderId = newHeader.Id,
-                NoteBody = body
-            };
-            db.NoteContent.Add(newContent);
-            await db.SaveChangesAsync();
-
-            // deal with tags
-
-            if (tags is not null && tags.Length > 1)
-            {
-                var theTags = Tags.StringToList(tags, newHeader.Id, newHeader.NoteFileId, newHeader.ArchiveId);
-
-                if (theTags.Count > 0)
-                {
-                    await db.Tags.AddRangeAsync(theTags);
                     await db.SaveChangesAsync();
                 }
+
+                NoteContent newContent = new()
+                {
+                    NoteHeaderId = newHeader.Id,
+                    NoteBody = body
+                };
+                db.NoteContent.Add(newContent);
+                await db.SaveChangesAsync();
+
+                // deal with tags
+
+                if (tags is not null && tags.Length > 1)
+                {
+                    var theTags = Tags.StringToList(tags, newHeader.Id, newHeader.NoteFileId, newHeader.ArchiveId);
+
+                    if (theTags.Count > 0)
+                    {
+                        await db.Tags.AddRangeAsync(theTags);
+                        await db.SaveChangesAsync();
+                    }
+                }
+//                dbTran.Commit();
             }
 
             // Check for linked notefile(s)
@@ -388,6 +394,8 @@ namespace Notes2022.Server
         /// <returns>NoteHeader.</returns>
         public static async Task<NoteHeader> CreateResponse(NotesDbContext db, NoteHeader nh, string body, string tags, string dMessage, bool send, bool linked, bool editing = false)
         {
+            NoteHeader nrh;
+
             // do setup and call CreateNote
             NoteHeader mine = await GetBaseNoteHeader(db, nh.BaseNoteId);
             db.Entry(mine).State = EntityState.Unchanged;
@@ -401,7 +409,10 @@ namespace Notes2022.Server
 
             nh.ResponseOrdinal = mine.ResponseCount;
             nh.NoteOrdinal = mine.NoteOrdinal;
-            return await CreateNote(db, nh, body, tags, dMessage, send, linked, editing);
+
+            nrh = await CreateNote(db, nh, body, tags, dMessage, send, linked, editing);
+
+            return nrh;
         }
 
         /// <summary>
@@ -445,21 +456,30 @@ namespace Notes2022.Server
             // clone nh
             NoteHeader dh = nh.Clone();
 
-            int nvers = await db.NoteHeader.CountAsync(p => p.NoteFileId == dh.NoteFileId && p.NoteOrdinal == dh.NoteOrdinal
+            NoteHeader nnh;
+
+            using (var dbTran = db.Database.BeginTransaction())
+            {
+                int nvers = await db.NoteHeader.CountAsync(p => p.NoteFileId == dh.NoteFileId && p.NoteOrdinal == dh.NoteOrdinal
                 && p.ResponseOrdinal == dh.ResponseOrdinal && p.ArchiveId == dh.ArchiveId);
 
-            NoteHeader oh = await db.NoteHeader.SingleAsync(p => p.Id == dh.Id);     //.Where(p => p.Id == nh.Id);
-            oh.Version = nvers;
-            db.Entry(oh).State = EntityState.Modified;
+                NoteHeader oh = await db.NoteHeader.SingleAsync(p => p.Id == dh.Id);     //.Where(p => p.Id == nh.Id);
+                oh.Version = nvers;
+                db.Entry(oh).State = EntityState.Modified;
 
-            await db.SaveChangesAsync();
+                await db.SaveChangesAsync();
 
-            dh.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                dh.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
-            // then create new note
+                // then create new note
+
+                nnh = await CreateNote(db, dh, nc.NoteBody, tags, nh.DirectorMessage, true, false, true);
+
+                dbTran.Commit();
+            }
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            return await CreateNote(db, dh, nc.NoteBody, tags, nh.DirectorMessage, true, false, true);
+            return nnh;
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 

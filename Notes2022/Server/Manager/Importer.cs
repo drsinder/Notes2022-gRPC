@@ -129,76 +129,84 @@ namespace Notes2022.Server
                 if (currentBase++ < tracker.HandledBase)
                     continue;
 
-                string theTags = string.Empty;
-
-                NoteHeader makeHeader = new(nh);                    // make a copy of the note
-
-                makeHeader.NoteFileId = noteFile.Id;                // put it in target file
-                makeHeader.ArchiveId = 0;                           // must always import to active file
-                makeHeader.AuthorID = Globals.ImportedAuthorId;     // Author may not exist - use "*imported*"
-                makeHeader.BaseNoteId = 0;                          // should already be 0 - make sure
-                makeHeader.ResponseCount = 0;                       // no responses in target yet.
-                makeHeader.ResponseOrdinal = 0;                     // base note
-                if (nh.Tags is not null && nh.Tags.List is not null && nh.Tags.List.Count > 0)
+                using (var dbTran = _db.Database.BeginTransaction())
                 {
-                    theTags = Tags.ListToString(nh.Tags.List.ToList()); // convert tag list to a string
-                }
 
-                NoteHeader? baseNoteHeader = null;
-                long baseNoteHeaderId = 0;
+                    string theTags = string.Empty;
 
-                // Create the base note
-                baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
-                baseNoteHeaderId = baseNoteHeader.BaseNoteId;
+                    NoteHeader makeHeader = new(nh);                    // make a copy of the note
 
-                tracker.HandledBase = currentBase;
-                _db.Entry(tracker).State = EntityState.Modified;
-                await _db.SaveChangesAsync();
-
-                if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
-                    continue;       // no responses - do next base note
-
-                // used this to seqrch for RefId targets
-                List<NoteHeader> currentString = new List<NoteHeader>();
-                currentString.Add(nh);                              // add the base note first
-                currentString.AddRange(nh.Responses.List);          // then all responses
-
-                // keep track of note string in target file
-                List<NoteHeader> newString = new List<NoteHeader>();
-                newString.Add(baseNoteHeader);              // start with base note added above
-
-                // response loop
-                foreach ( NoteHeader rh in nh.Responses.List )
-                {
-                    makeHeader = new(rh);                           // make a copy of the response
-                    makeHeader.BaseNoteId = baseNoteHeaderId;       // connect it to the target file base note
-                    makeHeader.NoteFileId = noteFile.Id;            // put it in the target file
-                    makeHeader.ArchiveId = 0;                       // must be imported to active file
-                    makeHeader.AuthorID = Globals.ImportedAuthorId; // Author may not exist - use "*imported*"
-                    if (rh.Tags is not null && rh.Tags.List is not null && rh.Tags.List.Count > 0)
+                    makeHeader.NoteFileId = noteFile.Id;                // put it in target file
+                    makeHeader.ArchiveId = 0;                           // must always import to active file
+                    makeHeader.AuthorID = Globals.ImportedAuthorId;     // Author may not exist - use "*imported*"
+                    makeHeader.BaseNoteId = 0;                          // should already be 0 - make sure
+                    makeHeader.ResponseCount = 0;                       // no responses in target yet.
+                    makeHeader.ResponseOrdinal = 0;                     // base note
+                    if (nh.Tags is not null && nh.Tags.List is not null && nh.Tags.List.Count > 0)
                     {
-                        theTags = Tags.ListToString(rh.Tags.List.ToList()); // convert tag list to a string
+                        theTags = Tags.ListToString(nh.Tags.List.ToList()); // convert tag list to a string
                     }
 
-                    if (rh.RefId > 0)                               // if this response references another note find it
+                    NoteHeader? baseNoteHeader = null;
+                    long baseNoteHeaderId = 0;
+
+                    // Create the base note
+                    baseNoteHeader = await NoteDataManager.CreateNote(_db, makeHeader, nh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
+                    baseNoteHeaderId = baseNoteHeader.BaseNoteId;
+
+                    tracker.HandledBase = currentBase;
+                    _db.Entry(tracker).State = EntityState.Modified;
+                    await _db.SaveChangesAsync();
+
+                    if (nh.Responses is null || nh.Responses.List is null || nh.Responses.List.Count < 1)
                     {
-                        // find this Id in currentString
-                        NoteHeader? refH = currentString.Find(p => p.Id == rh.RefId);
-                        if (refH is not null)
+                        dbTran.Commit();
+                        continue;       // no responses - do next base note
+                    }
+
+                    // used this to seqrch for RefId targets
+                    List<NoteHeader> currentString = new List<NoteHeader>();
+                    currentString.Add(nh);                              // add the base note first
+                    currentString.AddRange(nh.Responses.List);          // then all responses
+
+                    // keep track of note string in target file
+                    List<NoteHeader> newString = new List<NoteHeader>();
+                    newString.Add(baseNoteHeader);              // start with base note added above
+
+                    // response loop
+                    foreach (NoteHeader rh in nh.Responses.List)
+                    {
+                        makeHeader = new(rh);                           // make a copy of the response
+                        makeHeader.BaseNoteId = baseNoteHeaderId;       // connect it to the target file base note
+                        makeHeader.NoteFileId = noteFile.Id;            // put it in the target file
+                        makeHeader.ArchiveId = 0;                       // must be imported to active file
+                        makeHeader.AuthorID = Globals.ImportedAuthorId; // Author may not exist - use "*imported*"
+                        if (rh.Tags is not null && rh.Tags.List is not null && rh.Tags.List.Count > 0)
                         {
-                            // find the ResponseOrdinal in newString
-                            NoteHeader? temp = newString.Find(p => p.ResponseOrdinal == refH.ResponseOrdinal);
-                            if (temp is not null)
+                            theTags = Tags.ListToString(rh.Tags.List.ToList()); // convert tag list to a string
+                        }
+
+                        if (rh.RefId > 0)                               // if this response references another note find it
+                        {
+                            // find this Id in currentString
+                            NoteHeader? refH = currentString.Find(p => p.Id == rh.RefId);
+                            if (refH is not null)
                             {
-                                makeHeader.RefId = temp.Id;         // use the Id in target file
+                                // find the ResponseOrdinal in newString
+                                NoteHeader? temp = newString.Find(p => p.ResponseOrdinal == refH.ResponseOrdinal);
+                                if (temp is not null)
+                                {
+                                    makeHeader.RefId = temp.Id;         // use the Id in target file
+                                }
                             }
                         }
-                    }
 
-                    // Create the response
-                    NoteHeader respHeader = await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
-                    newString.Add(respHeader);
-                 }
+                        // Create the response
+                        NoteHeader respHeader = await NoteDataManager.CreateResponse(_db, makeHeader, rh.Content.NoteBody, theTags, makeHeader.DirectorMessage, false, false);
+                        newString.Add(respHeader);
+                    }
+                    dbTran.Commit();
+                }
             }
             return true;
         }

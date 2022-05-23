@@ -1246,16 +1246,19 @@ namespace Notes2022.Server.Services
             };
 
             NoteHeader created;
-
-            if (tvm.BaseNoteHeaderID == 0)  // a base note
+            using (var dbTran = _db.Database.BeginTransaction())
             {
-                created = await NoteDataManager.CreateNote(_db, nheader, tvm.MyNote, tvm.TagLine, tvm.DirectorMessage, true, false);
-            }
-            else        // a response
-            {
-                nheader.BaseNoteId = tvm.BaseNoteHeaderID;
-                nheader.RefId = tvm.RefId;
-                created = await NoteDataManager.CreateResponse(_db, nheader, tvm.MyNote, tvm.TagLine, tvm.DirectorMessage, true, false);
+                if (tvm.BaseNoteHeaderID == 0)  // a base note
+                {
+                    created = await NoteDataManager.CreateNote(_db, nheader, tvm.MyNote, tvm.TagLine, tvm.DirectorMessage, true, false);
+                }
+                else        // a response
+                {
+                    nheader.BaseNoteId = tvm.BaseNoteHeaderID;
+                    nheader.RefId = tvm.RefId;
+                    created = await NoteDataManager.CreateResponse(_db, nheader, tvm.MyNote, tvm.TagLine, tvm.DirectorMessage, true, false);
+                }
+                dbTran.Commit();
             }
 
             //// Process any linked note file
@@ -1543,104 +1546,109 @@ namespace Notes2022.Server.Services
             bool whole = Model.WholeString;
             NoteFile noteFile = await _db.NoteFile.SingleAsync(p => p.Id == fileId);
 
-            // Just the note
-            if (!whole)
+            using (var dbTran = _db.Database.BeginTransaction())
             {
-                NoteContent cont = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == Header.Id);
-                //cont.NoteHeader = null;
-                List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == Header.Id).ToListAsync();
-
-                string Body = string.Empty;
-                Body = MakeHeader(Header, noteFile);
-                Body += cont.NoteBody;
-
-                Header = Header.CloneForLink();
-
-                Header.Id = 0;
-                Header.ArchiveId = 0;
-                Header.LinkGuid = string.Empty;
-                Header.NoteOrdinal = 0;
-                Header.ResponseCount = 0;
-                Header.NoteFileId = fileId;
-                Header.BaseNoteId = 0;
-                //Header.NoteFile = null;
-                Header.AuthorID = appUser.Id;
-                Header.AuthorName = appUser.DisplayName;
-
-                Header.CreateDate = Header.ThreadLastEdited = Header.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-
-                _ = await NoteDataManager.CreateNote(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
-            }
-            else    // whole note string
-            {
-                // get base note first
-                NoteHeader BaseHeader;
-                BaseHeader = await _db.NoteHeader.SingleAsync(p => p.NoteFileId == Header.NoteFileId
-                    && p.ArchiveId == Header.ArchiveId
-                    && p.NoteOrdinal == Header.NoteOrdinal
-                    && p.ResponseOrdinal == 0);
-
-                Header = BaseHeader.CloneForLink();
-
-                NoteContent cont = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == Header.Id);
-                //cont.NoteHeader = null;
-                List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == Header.Id).ToListAsync();
-
-                string Body = string.Empty;
-                Body = MakeHeader(Header, noteFile);
-                Body += cont.NoteBody;
-
-                Header.Id = 0;
-                Header.ArchiveId = 0;
-                Header.LinkGuid = string.Empty;
-                Header.NoteOrdinal = 0;
-                Header.ResponseCount = 0;
-                Header.NoteFileId = fileId;
-                Header.BaseNoteId = 0;
-                //Header.NoteFile = null;
-                Header.AuthorID = appUser.Id;
-                Header.AuthorName = appUser.DisplayName;
-
-                Header.CreateDate = Header.ThreadLastEdited = Header.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-
-                Header.Content = null;
-
-                NoteHeader NewHeader = await NoteDataManager.CreateNote(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
-
-                // now deal with any responses
-                for (int i = 1; i <= BaseHeader.ResponseCount; i++)
+                // Just the note
+                if (!whole)
                 {
-                    NoteHeader RHeader = await _db.NoteHeader.SingleAsync(p => p.NoteFileId == BaseHeader.NoteFileId
-                        && p.ArchiveId == BaseHeader.ArchiveId
-                        && p.NoteOrdinal == BaseHeader.NoteOrdinal
-                        && p.ResponseOrdinal == i);
+                    NoteContent cont = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == Header.Id);
+                    //cont.NoteHeader = null;
+                    List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == Header.Id).ToListAsync();
 
-                    Header = RHeader.CloneForLinkR();
+                    string Body = string.Empty;
+                    Body = MakeHeader(Header, noteFile);
+                    Body += cont.NoteBody;
 
-                    cont = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == Header.Id);
-                    tags = await _db.Tags.Where(p => p.NoteHeaderId == Header.Id).ToListAsync();
+                    Header = Header.CloneForLink();
 
-                    Body = string.Empty;
+                    Header.Id = 0;
+                    Header.ArchiveId = 0;
+                    Header.LinkGuid = string.Empty;
+                    Header.NoteOrdinal = 0;
+                    Header.ResponseCount = 0;
+                    Header.NoteFileId = fileId;
+                    Header.BaseNoteId = 0;
+                    //Header.NoteFile = null;
+                    Header.AuthorID = appUser.Id;
+                    Header.AuthorName = appUser.DisplayName;
+
+                    Header.CreateDate = Header.ThreadLastEdited = Header.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                    _ = await NoteDataManager.CreateNote(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
+                }
+                else    // whole note string
+                {
+                    // get base note first
+                    NoteHeader BaseHeader;
+                    BaseHeader = await _db.NoteHeader.SingleAsync(p => p.NoteFileId == Header.NoteFileId
+                        && p.ArchiveId == Header.ArchiveId
+                        && p.NoteOrdinal == Header.NoteOrdinal
+                        && p.ResponseOrdinal == 0);
+
+                    Header = BaseHeader.CloneForLink();
+
+                    NoteContent cont = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == Header.Id);
+                    //cont.NoteHeader = null;
+                    List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == Header.Id).ToListAsync();
+
+                    string Body = string.Empty;
                     Body = MakeHeader(Header, noteFile);
                     Body += cont.NoteBody;
 
                     Header.Id = 0;
                     Header.ArchiveId = 0;
                     Header.LinkGuid = string.Empty;
-                    Header.NoteOrdinal = NewHeader.NoteOrdinal;
+                    Header.NoteOrdinal = 0;
                     Header.ResponseCount = 0;
                     Header.NoteFileId = fileId;
-                    Header.BaseNoteId = NewHeader.Id;
+                    Header.BaseNoteId = 0;
                     //Header.NoteFile = null;
-                    Header.ResponseOrdinal = 0;
                     Header.AuthorID = appUser.Id;
                     Header.AuthorName = appUser.DisplayName;
 
                     Header.CreateDate = Header.ThreadLastEdited = Header.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
-                    _ = await NoteDataManager.CreateResponse(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
+                    Header.Content = null;
+
+                    NoteHeader NewHeader = await NoteDataManager.CreateNote(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
+
+                    // now deal with any responses
+                    for (int i = 1; i <= BaseHeader.ResponseCount; i++)
+                    {
+                        NoteHeader RHeader = await _db.NoteHeader.SingleAsync(p => p.NoteFileId == BaseHeader.NoteFileId
+                            && p.ArchiveId == BaseHeader.ArchiveId
+                            && p.NoteOrdinal == BaseHeader.NoteOrdinal
+                            && p.ResponseOrdinal == i);
+
+                        Header = RHeader.CloneForLinkR();
+
+                        cont = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == Header.Id);
+                        tags = await _db.Tags.Where(p => p.NoteHeaderId == Header.Id).ToListAsync();
+
+                        Body = string.Empty;
+                        Body = MakeHeader(Header, noteFile);
+                        Body += cont.NoteBody;
+
+                        Header.Id = 0;
+                        Header.ArchiveId = 0;
+                        Header.LinkGuid = string.Empty;
+                        Header.NoteOrdinal = NewHeader.NoteOrdinal;
+                        Header.ResponseCount = 0;
+                        Header.NoteFileId = fileId;
+                        Header.BaseNoteId = NewHeader.Id;
+                        //Header.NoteFile = null;
+                        Header.ResponseOrdinal = 0;
+                        Header.AuthorID = appUser.Id;
+                        Header.AuthorName = appUser.DisplayName;
+
+                        Header.CreateDate = Header.ThreadLastEdited = Header.LastEdited = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                        _ = await NoteDataManager.CreateResponse(_db, Header, Body, Tags.ListToString(tags), Header.DirectorMessage, true, false);
+                    }
                 }
+                dbTran.Commit();
             }
+
             return new NoRequest();
         }
 
