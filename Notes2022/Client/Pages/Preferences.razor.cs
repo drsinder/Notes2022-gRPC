@@ -47,6 +47,9 @@ namespace Notes2022.Client.Pages
         /// </summary>
         /// <value>The size of the page.</value>
         private string pageSize { get; set; }
+
+        private string NewCheck { get; set; }
+
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
@@ -57,6 +60,7 @@ namespace Notes2022.Client.Pages
         {
             UserData = await Client.GetUserDataAsync(new NoRequest(), myState.AuthHeader);
             pageSize = UserData.Ipref2.ToString();
+            NewCheck = UserData.Ipref0.ToString();
             MySizes = new List<LocalModel2> { new LocalModel2("0", "All"), new LocalModel2("5"), new LocalModel2("10"), new LocalModel2("12"), new LocalModel2("20") };
             currentText = " ";
         }
@@ -67,6 +71,7 @@ namespace Notes2022.Client.Pages
         private async Task OnSubmit()
         {
             UserData.Ipref2 = int.Parse(pageSize);
+            Globals.Interval = UserData.Ipref0 = int.Parse(NewCheck);
             await Client.UpdateUserDataAsync(UserData, myState.AuthHeader);
             Navigation.NavigateTo("");
         }

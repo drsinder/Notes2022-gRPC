@@ -964,10 +964,15 @@ namespace Notes2022.Client.Pages
             {
                 myState.OnChange += OnParametersSet; // get notified of login status changes
 
-                Reloader = new Timer(5 * 60000);    // check for new notes every five minutes
-                Reloader.Elapsed += Reload;
-                Reloader.Enabled = true;
-                Reloader.Start();
+                int interval = Globals.Interval;
+                if (interval > 0)
+                {
+
+                    Reloader = new Timer(interval * 60000);    // check for new notes every interval minutes
+                    Reloader.Elapsed += Reload;
+                    Reloader.Enabled = true;
+                    Reloader.Start();
+                }
             }
         }
 

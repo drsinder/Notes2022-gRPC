@@ -161,6 +161,8 @@ namespace Notes2022.Client.Pages
 
                 hpModel = await Client.GetHomePageModelAsync(new NoRequest(), myState.AuthHeader);
 
+                Globals.Interval = hpModel.UserData.Ipref0;
+
                 //if (hpModel.NoteFiles == null)
                 //    return;
 

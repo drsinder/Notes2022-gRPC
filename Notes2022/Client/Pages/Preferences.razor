@@ -48,6 +48,9 @@ else
                     }
                 </select>
                 <br />
+                <p>Check for new notes in a file every N minutes.  0 means don't check.</p>
+                <SfTextBox @bind-Value="@NewCheck" class="short-input"></SfTextBox>
+                <br />
                 <SfSwitch @bind-Checked="@UserData.Pref7"></SfSwitch> Show Content on index by default when expanded
                 <br />
                 <SfSwitch @bind-Checked="@UserData.Pref5"></SfSwitch> Show Response Content on index by default when expanded

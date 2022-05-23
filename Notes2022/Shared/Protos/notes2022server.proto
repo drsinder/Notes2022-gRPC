@@ -212,7 +212,7 @@ message GAppUser {
 	string id = 1;			// = Subject in Jwt
 	string displayName = 2;	// users name for display
 	int32 timeZoneID = 3;	// obsolete
-	int32 ipref0 = 4;
+	int32 ipref0 = 4;		// minutes between new notes check - 0 means don't check
 	int32 ipref1 = 5;
 	int32 ipref2 = 6;		// page size for note file index
 	int32 ipref3 = 7;

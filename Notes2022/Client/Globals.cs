@@ -59,6 +59,8 @@ namespace Notes2022.Client
         /// <value>The goto note.</value>
         public static long GotoNote { get; set; } = 0;
 
+        public static int Interval { get; set; } = 0;
+
         /// <summary>
         /// Base64 Encodes the plain text.
         /// </summary>

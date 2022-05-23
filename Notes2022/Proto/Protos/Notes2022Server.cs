@@ -4682,6 +4682,9 @@ namespace Notes2022.Proto {
     /// <summary>Field number for the "ipref0" field.</summary>
     public const int Ipref0FieldNumber = 4;
     private int ipref0_;
+    /// <summary>
+    /// minutes between new notes check - 0 means don't check
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int Ipref0 {
