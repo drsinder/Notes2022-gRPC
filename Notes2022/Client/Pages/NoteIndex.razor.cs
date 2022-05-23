@@ -49,9 +49,11 @@ using Syncfusion.Blazor.Inputs;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using System.Timers;
 
 using Google.Protobuf.WellKnownTypes;
 using Notes2022.Client.Panels;
+using Timer = System.Timers.Timer;
 
 //using SearchOption = Notes2022.Shared.SearchOption;
 
@@ -936,6 +938,8 @@ namespace Notes2022.Client.Pages
         }
 #pragma warning restore CS8604 // Possible null reference argument.
 
+        private Timer Reloader;
+
         /// <summary>
         /// On after render as an asynchronous operation.
         /// </summary>
@@ -959,6 +963,32 @@ namespace Notes2022.Client.Pages
             else
             {
                 myState.OnChange += OnParametersSet; // get notified of login status changes
+
+                Reloader = new Timer(5 * 60000);    // check for new notes every five minutes
+                Reloader.Elapsed += Reload;
+                Reloader.Enabled = true;
+                Reloader.Start();
+            }
+        }
+
+        protected async void Reload(Object source, ElapsedEventArgs e)
+        {
+            Reloader.Enabled = true;
+            Reloader.Start();
+
+            int x = Model.AllNotes.Count;
+            int y = Model.Notes.Count;
+            Model = await Client.GetNoteFileIndexDataAsync(new NoteFileRequest() { NoteFileId = NotesfileId }, myState.AuthHeader);
+            
+            if (y != Model.Notes.Count)
+            {
+                ShowMessage("New Note(s) in " + Model.NoteFile.NoteFileTitle);
+                StateHasChanged();
+            }
+            else if (x != Model.AllNotes.Count)
+            {
+                ShowMessage("New Response(s) in " + Model.NoteFile.NoteFileTitle);
+                StateHasChanged();
             }
         }
     }
