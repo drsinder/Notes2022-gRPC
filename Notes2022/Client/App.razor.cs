@@ -37,6 +37,7 @@ using Microsoft.JSInterop;
 using Notes2022.Proto;
 using Syncfusion.Licensing;
 using System.Text.Json;
+using System.Timers;
 
 namespace Notes2022.Client
 {
@@ -60,6 +61,8 @@ namespace Notes2022.Client
         /// </summary>
         private IJSObjectReference? module;         // for calling javascript
 
+        private System.Timers.Timer pinger { get; set; }
+
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
         /// <summary>
@@ -82,6 +85,11 @@ namespace Notes2022.Client
         /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task OnParametersSetAsync()
         {
+            pinger = new (60000);       // ping server every 60 seconds to keep it alive
+            pinger.Elapsed += Ping;
+            pinger.Enabled = true;
+            pinger.Start();
+
             AString key = await Client.GetTextFileAsync(new AString()
             { Val = "syncfusionkey.rsghjjsrsrj43632353" });
             SyncfusionLicenseProvider.RegisterLicense(key.Val);
@@ -113,6 +121,11 @@ namespace Notes2022.Client
             catch (Exception)
             {
             }
+        }
+
+        protected void Ping(Object source, ElapsedEventArgs e)
+        {
+            _ = Client.NoOpAsync(new NoRequest()).GetAwaiter().GetResult();
         }
 
         /// <summary>
