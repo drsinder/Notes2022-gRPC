@@ -1,5 +1,9 @@
 ﻿@using System.Web
 @using System.Text.Json
-@inject IJSRuntime JS
+@using Notes2022RCL.Shared
 
+@implements IAsyncDisposable
+
+@inject Notes2022Server.Notes2022ServerClient Client
+@inject IJSRuntime JS;
 

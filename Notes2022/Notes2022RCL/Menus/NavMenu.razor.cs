@@ -27,6 +27,7 @@ using Syncfusion.Blazor.SplitButtons;
 using Syncfusion.Blazor.Calendars;
 using System.Timers;
 using Notes2022RCL.Dialogs;
+using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
 
 namespace Notes2022RCL.Menus
 {

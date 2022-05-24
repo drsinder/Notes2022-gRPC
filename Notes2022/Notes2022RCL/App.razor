@@ -1,12 +1,13 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 @using Notes2022RCL.Shared
 
-@implements IAsyncDisposable
-
+@*@implements IAsyncDisposable
+*@
 @inject Notes2022Server.Notes2022ServerClient Client
 @inject IJSRuntime JS;
 
 <Blazored.Modal.CascadingBlazoredModal HideCloseButton="true" DisableBackgroundCancel="true" HideHeader="true" Class="blazored-custom-modal">
+    <CookieStateAgent></CookieStateAgent>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />

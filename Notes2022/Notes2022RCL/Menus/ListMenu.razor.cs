@@ -29,6 +29,8 @@ using Notes2022RCL.Pages;
 using Syncfusion.Blazor.Popups;
 using System.Text;
 using Notes2022RCL.Dialogs;
+using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
+using Email = Notes2022RCL.Dialogs.Email;
 
 namespace Notes2022RCL.Menus
 {

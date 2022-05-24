@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Notes2022RCL;
 using Notes2022.Proto;
 using Syncfusion.Blazor;
+using Notes2022RCL.Comp;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -29,7 +30,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddSingleton<App>();       // for login state mgt = "myState" injection in _imports.razor
+builder.Services.AddSingleton<CookieStateAgent>();       // for login state mgt = "myState" injection in _imports.razor
 
 builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
 

@@ -28,6 +28,7 @@ using Syncfusion.Blazor.Calendars;
 using Syncfusion.Blazor.Popups;
 using Notes2022RCL.Dialogs;
 using Notes2022RCL.Pages;
+using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
 
 namespace Notes2022RCL.Menus
 {
