@@ -1,0 +1,8 @@
+﻿@page "/editnote/{NoteId:long}"
+
+<Notes2022RCL.Pages.EditNote NoteId="@NoteId"></Notes2022RCL.Pages.EditNote>
+
+@code 
+{
+    [Parameter] public long NoteId { get; set; }
+}

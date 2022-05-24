@@ -1,0 +1,7 @@
+﻿@page "/authentication/confirmemail/{payload}"
+
+<Notes2022RCL.Pages.Authentication.ConfirmEmail payload="@payload"></Notes2022RCL.Pages.Authentication.ConfirmEmail>
+@code{
+        [Parameter]
+        public string? payload { get; set; }
+}
