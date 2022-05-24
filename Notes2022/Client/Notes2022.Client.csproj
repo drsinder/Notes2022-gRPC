@@ -19,6 +19,7 @@
     <Content Remove="Dialogs\Upload3.razor" />
     <Content Remove="Pages\Counter.razor" />
     <Content Remove="Pages\FetchData.razor" />
+    <Content Remove="Pages\Reload.razor" />
     <Content Remove="Shared\NavMenu.razor" />
     <Content Remove="wwwroot\service-worker.js" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿@page "/authentication/logout"
+﻿@*@page "/authentication/logout"*@
 
 @using Microsoft.AspNetCore.Components
 @using Grpc.Core
@@ -14,13 +14,4 @@
 
 <h3>Logout</h3>
 
-@code {
 
-
-    protected override async Task OnInitializedAsync()
-    {
-        await AuthClient.LogoutAsync(new NoRequest(), myState.AuthHeader);
-        myState.LoginReply = null;
-        Navigation.NavigateTo("");
-    }
-}

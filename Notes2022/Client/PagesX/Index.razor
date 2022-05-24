@@ -1,12 +1,11 @@
-﻿
-@*--------------------------------------------------------------------------
+﻿@*--------------------------------------------------------------------------
     **
     **  Copyright © 2022, Dale Sinder
     **
-    **  Name: License.razor
+    **  Name: Index.razor
     **
     **  Description:
-    **      Copy of GNU License
+    **      Root of the app
     **
     **  This program is free software: you can redistribute it and/or modify
     **  it under the terms of the GNU General Public License version 3 as
@@ -23,16 +22,6 @@
     **
     **--------------------------------------------------------------------------*@
 
-@*@page "/license"*@
+@page "/"
 
-@inject Notes2022Server.Notes2022ServerClient Client
-
-@((MarkupString)@text)
-
-@code{
-    private string text = string.Empty;
-    protected override async Task OnParametersSetAsync()
-    {
-        text = (await Client.GetTextFileAsync(new AString() { Val = "license.html" })).Val;
-    }
-}
+<Notes2022.Client.Pages.Index></Notes2022.Client.Pages.Index>

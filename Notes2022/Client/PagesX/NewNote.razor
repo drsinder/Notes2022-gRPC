@@ -1,0 +1,21 @@
+﻿@page "/newnote/{NotesfileId:int}/{BaseNoteHeaderId:long}/{RefId:long}"
+
+<Notes2022.Client.Pages.NewNote NotesfileId="@NotesfileId" BaseNoteHeaderId="@BaseNoteHeaderId" RefId="@RefId" ></Notes2022.Client.Pages.NewNote>
+
+@code{
+       /// <summary>
+       /// Gets or sets the notesfile identifier.
+       /// </summary>
+       /// <value>The notesfile identifier.</value>
+       [Parameter] public int NotesfileId { get; set; }
+       /// <summary>
+       /// Gets or sets the base note header identifier.
+       /// </summary>
+       /// <value>The base note header identifier.</value>
+       [Parameter] public long BaseNoteHeaderId { get; set; }   //  base note we are responding to
+       /// <summary>
+       /// Gets or sets the reference identifier.
+       /// </summary>
+       /// <value>The reference identifier.</value>
+       [Parameter] public long RefId { get; set; }   //  what we are responding to
+}
