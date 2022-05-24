@@ -1,12 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
     <Compile Remove="Dialogs\Upload1.razor.cs" />
     <Compile Remove="Dialogs\Upload2.razor.cs" />
     <Compile Remove="Dialogs\Upload3.razor.cs" />
@@ -19,6 +20,7 @@
     <Content Remove="Pages\Counter.razor" />
     <Content Remove="Pages\FetchData.razor" />
     <Content Remove="Shared\NavMenu.razor" />
+    <Content Remove="wwwroot\service-worker.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +64,7 @@
     <None Include="Panels\NotePanel.razor" />
     <None Include="Panels\Responses.razor" />
     <None Include="Panels\Versions.razor" />
+    <None Include="wwwroot\service-worker.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -88,4 +91,8 @@
     <ProjectReference Include="..\Shared\Notes2022.Shared.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+	</ItemGroup>
+	
 </Project>
