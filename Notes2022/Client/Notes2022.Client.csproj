@@ -89,7 +89,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Notes2022.Shared.csproj" />
+    <ProjectReference Include="..\Notes2022RCL\Notes2022RCL.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

@@ -1,0 +1,87 @@
+﻿@using Notes2022.Proto
+
+<div class="dialogs">
+    <h3>User Role Editor</h3>
+    <div>
+        @if (Model == null)
+        {
+            <p class="center"><em>Loading...</em></p>
+        }
+        else
+        {
+            @Model.UserData.DisplayName<br />
+            foreach (CheckedUser item in Model.RolesList.List)
+            {
+                <SfCheckBox @bind-Checked="@item.IsMember" Label="@item.TheRole.RoleName"></SfCheckBox><span>&nbsp;&nbsp;&nbsp;</span>
+            }
+  
+            <br /><br />
+            <button type="button" @onclick="@Submit">Submit</button>
+          
+            <button type="button" @onclick="@Done">Close</button>
+        }
+    </div>
+</div>
+			
+
+@code {
+        /// <summary>
+        /// Gets or sets the modal instance.
+        /// </summary>
+        /// <value>The modal instance.</value>
+        [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user identifier.
+        /// </summary>
+        /// <value>The user identifier.</value>
+        [Parameter] public string UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the model.
+        /// </summary>
+        /// <value>The model.</value>
+        protected EditUserViewModel Model { get; set; }
+
+        /// <summary>
+        /// Gets or sets the client.
+        /// </summary>
+        /// <value>The client.</value>
+        [Inject] Notes2022Server.Notes2022ServerClient Client { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserEdit"/> class.
+        /// </summary>
+        public UserEdit()
+        {
+        }
+
+        /// <summary>
+        /// On parameters set as an asynchronous operation.
+        /// </summary>
+        /// <returns>A Task representing the asynchronous operation.</returns>
+        protected override async Task OnParametersSetAsync()
+        {
+            Model = await Client.GetUserRolesAsync(new AppUserRequest() { Subject = UserId }, myState.AuthHeader);
+        }
+
+        /// <summary>
+        /// Submits this instance.
+        /// </summary>
+        private async Task Submit()
+        {
+            await Client.UpdateUserRolesAsync(Model, myState.AuthHeader);
+            await ModalInstance.CancelAsync();
+        }
+
+
+        /// <summary>
+        /// Dones this instance.
+        /// </summary>
+        private async Task Done()
+        {
+            await ModalInstance.CancelAsync();
+        }
+
+
+}
