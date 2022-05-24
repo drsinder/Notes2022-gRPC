@@ -62,8 +62,8 @@ namespace Notes2022RCL.Dialogs
         /// Gets or sets the last edited.
         /// </summary>
         /// <value>The last edited.</value>
-        [Parameter]
-        public DateTime LastEdited { get; set; }
+        //[Parameter]
+        //public DateTime LastEdited { get; set; }
 
         /// <summary>
         /// Gets or sets the number archives.

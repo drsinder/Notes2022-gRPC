@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto", "Notes2022\Proto\Pr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextToJson", "Notes2022\TextToJson\TextToJson.csproj", "{DEF96692-2163-42D4-8F28-831F673D277F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes2022RCL", "Notes2022\Notes2022RCL\Notes2022RCL.csproj", "{A7883CA7-D4AF-4DFE-9078-0937F023D19B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2022RCL", "Notes2022\Notes2022RCL\Notes2022RCL.csproj", "{A7883CA7-D4AF-4DFE-9078-0937F023D19B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

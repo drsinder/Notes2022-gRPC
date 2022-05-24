@@ -6,6 +6,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Component1.razor.cs" />
+    <Compile Remove="ExampleJsInterop.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Component1.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Component1.razor.css" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />

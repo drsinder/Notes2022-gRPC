@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 
+using Notes2022RCL.Menus;
 using Notes2022RCL.Pages.Admin;
 using Notes2022RCL.Shared;
 using System.Text;

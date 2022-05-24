@@ -18,7 +18,7 @@ using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Notes2022.Client;
+using Notes2022RCL;
 using Notes2022.Proto;
 using Syncfusion.Blazor;
 

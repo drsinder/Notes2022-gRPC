@@ -7,64 +7,49 @@
 	<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
 
-	<ItemGroup>
-    <Compile Remove="Dialogs\Upload1.razor.cs" />
-    <Compile Remove="Dialogs\Upload2.razor.cs" />
-    <Compile Remove="Dialogs\Upload3.razor.cs" />
+  <ItemGroup>
+    <Compile Remove="Comp\**" />
+    <Compile Remove="Dialogs\**" />
+    <Compile Remove="Menus\**" />
+    <Compile Remove="PagesX\**" />
+    <Compile Remove="Pages\**" />
+    <Compile Remove="Panels\**" />
+    <Compile Remove="Shared\**" />
+    <Content Remove="Comp\**" />
+    <Content Remove="Dialogs\**" />
+    <Content Remove="Menus\**" />
+    <Content Remove="PagesX\**" />
+    <Content Remove="Pages\**" />
+    <Content Remove="Panels\**" />
+    <Content Remove="Shared\**" />
+    <EmbeddedResource Remove="Comp\**" />
+    <EmbeddedResource Remove="Dialogs\**" />
+    <EmbeddedResource Remove="Menus\**" />
+    <EmbeddedResource Remove="PagesX\**" />
+    <EmbeddedResource Remove="Pages\**" />
+    <EmbeddedResource Remove="Panels\**" />
+    <EmbeddedResource Remove="Shared\**" />
+    <None Remove="Comp\**" />
+    <None Remove="Dialogs\**" />
+    <None Remove="Menus\**" />
+    <None Remove="PagesX\**" />
+    <None Remove="Pages\**" />
+    <None Remove="Panels\**" />
+    <None Remove="Shared\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Dialogs\Upload1.razor" />
-    <Content Remove="Dialogs\Upload2.razor" />
-    <Content Remove="Dialogs\Upload3.razor" />
-    <Content Remove="Pages\Counter.razor" />
-    <Content Remove="Pages\FetchData.razor" />
-    <Content Remove="Pages\Reload.razor" />
-    <Content Remove="Shared\NavMenu.razor" />
+    <Compile Remove="App.razor.cs" />
+    <Compile Remove="Globals.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="App.razor" />
     <Content Remove="wwwroot\service-worker.js" />
+    <Content Remove="_Imports.razor" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Shared\NavMenu.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Comp\Clock.razor" />
-    <None Include="Comp\CookieStateAgent.razor" />
-    <None Include="Comp\FileButton.razor" />
-    <None Include="Comp\SCheckBox.razor" />
-    <None Include="Comp\TrackerMover.razor" />
-    <None Include="Dialogs\AccessCheckBox.razor" />
-    <None Include="Dialogs\AccessDeleteButton.razor" />
-    <None Include="Dialogs\AccessList.razor" />
-    <None Include="Dialogs\AddAccessDlg.razor" />
-    <None Include="Dialogs\CodeFormat.razor" />
-    <None Include="Dialogs\Copy.razor" />
-    <None Include="Dialogs\CreateNoteFile.razor" />
-    <None Include="Dialogs\DeleteNoteFile.razor" />
-    <None Include="Dialogs\EditNoteFile.razor" />
-    <None Include="Dialogs\Email.razor" />
-    <None Include="Dialogs\ExportJson.razor" />
-    <None Include="Dialogs\ExportJsonString.razor" />
-    <None Include="Dialogs\ExportUtil1.razor" />
-    <None Include="Dialogs\Forward.razor" />
-    <None Include="Dialogs\HelpDialog.razor" />
-    <None Include="Dialogs\HelpDialog2.razor" />
-    <None Include="Dialogs\MessageBox.razor" />
-    <None Include="Dialogs\NoteFileDetails.razor" />
-    <None Include="Dialogs\PrintDlg.razor" />
-    <None Include="Dialogs\SearchDlg.razor" />
-    <None Include="Dialogs\Upload4.razor" />
-    <None Include="Dialogs\UserEdit.razor" />
-    <None Include="Dialogs\YesNo.razor" />
-    <None Include="Pages\Authentication\ConfirmEmail.razor" />
-    <None Include="Pages\Authentication\Login.razor" />
-    <None Include="Pages\Authentication\Logout.razor" />
-    <None Include="Pages\Authentication\Register.razor" />
-    <None Include="Panels\NoteEditor.razor" />
-    <None Include="Panels\NotePanel.razor" />
-    <None Include="Panels\Responses.razor" />
-    <None Include="Panels\Versions.razor" />
     <None Include="wwwroot\service-worker.js" />
   </ItemGroup>
 
