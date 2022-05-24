@@ -39,7 +39,7 @@ namespace Notes2022Maui
             builder.Services.AddSingleton(services =>
             {
                 HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
-                var baseUri = "https://www.drsinder.com:448";  /*services.GetRequiredService<NavigationManager>().BaseUri;*/
+                var baseUri = "https://localhost:7133/"; // "https://www.drsinder.com:448";  /*services.GetRequiredService<NavigationManager>().BaseUri;*/
                 var channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
                 return new Notes2022Server.Notes2022ServerClient(channel);
             });
