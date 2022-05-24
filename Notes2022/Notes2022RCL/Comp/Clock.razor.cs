@@ -63,7 +63,7 @@ namespace Notes2022RCL.Comp
         protected void TimerTick2(Object source, ElapsedEventArgs e)
         {
             mytime = DateTime.Now;
-            StateHasChanged();
+            //StateHasChanged();
         }
     }
 }

@@ -50,9 +50,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Shared\MainLayout.razor" />
-	  <None Include="Shared\NavMenu.razor" />
-	  <None Include="Shared\SurveyPrompt.razor" />
+	  <AndroidResource Remove="Pages\**" />
+	  <AndroidResource Remove="Shared\**" />
+	  <Compile Remove="Pages\**" />
+	  <Compile Remove="Shared\**" />
+	  <Content Remove="Pages\**" />
+	  <Content Remove="Shared\**" />
+	  <EmbeddedResource Remove="Pages\**" />
+	  <EmbeddedResource Remove="Shared\**" />
+	  <MauiXaml Remove="Pages\**" />
+	  <MauiXaml Remove="Shared\**" />
+	  <None Remove="Pages\**" />
+	  <None Remove="Shared\**" />
 	</ItemGroup>
 
 	<ItemGroup>

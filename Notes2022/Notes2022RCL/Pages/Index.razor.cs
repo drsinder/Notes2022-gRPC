@@ -204,7 +204,7 @@ namespace Notes2022RCL.Pages
                 timer2.Interval = 15000;
             Globals.LoginDisplay?.Reload();
             Globals.NavMenu?.Reload().GetAwaiter();
-            StateHasChanged();
+            //StateHasChanged();
         }
 
         /// <summary>

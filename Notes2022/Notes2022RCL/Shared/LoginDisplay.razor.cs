@@ -84,7 +84,7 @@ namespace Notes2022RCL.Shared
         /// </summary>
         public void Reload()
         {
-            StateHasChanged();
+            //StateHasChanged();
         }
     }
 }

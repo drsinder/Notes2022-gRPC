@@ -62,6 +62,8 @@ namespace Notes2022RCL
 
         public static int Interval { get; set; } = 0;
 
+        public static bool IsMaui { get; set; } = false;
+
         /// <summary>
         /// Base64 Encodes the plain text.
         /// </summary>

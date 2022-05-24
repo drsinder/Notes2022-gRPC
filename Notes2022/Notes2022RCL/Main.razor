@@ -1,8 +1,9 @@
 ﻿
+
 <Blazored.Modal.CascadingBlazoredModal HideCloseButton="true" DisableBackgroundCancel="true" HideHeader="true" Class="blazored-custom-modal">
 <Notes2022RCL.Comp.CookieStateAgent></Notes2022RCL.Comp.CookieStateAgent>
 
-<Router AppAssembly="@typeof(Notes2022RCL.App).Assembly">
+<Router AppAssembly="@typeof(Main).Assembly">
 	<Found Context="routeData">
 		<RouteView RouteData="@routeData" DefaultLayout="@typeof(Notes2022RCL.Shared.MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
