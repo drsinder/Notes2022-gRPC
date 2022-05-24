@@ -144,7 +144,11 @@ namespace Notes2022RCL.Dialogs
             parameters.Add("NoteFileId", fileId);
             var xx = Modal.Show<AddAccessDlg>("", parameters);
             await xx.Result;
-            StateHasChanged();
+            try
+            {
+                await this.InvokeAsync(() =>  this.StateHasChanged());
+            }
+            catch (Exception) { }
             await MyGrid.Refresh();
         }
 
@@ -158,7 +162,11 @@ namespace Notes2022RCL.Dialogs
             NoteAccessList myLists = await Client.GetAccessListAsync(new AccessAndUserListRequest()
             {FileId = fileId, ArcId = arcId, UserId = myState.UserInfo?.Subject}, myState.AuthHeader);
             myList = myLists.List.ToList();
-            StateHasChanged();
+            try
+            {
+                await this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
             await MyGrid.Refresh();
         }
     }

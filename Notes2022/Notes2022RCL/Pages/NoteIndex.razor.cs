@@ -238,7 +238,11 @@ namespace Notes2022RCL.Pages
         {
             sessionStorage.SetItemAsync("IndexPage", sfGrid1.PageSettings.CurrentPage).GetAwaiter();
             CurrentNoteId = args.Data.Id;
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -248,7 +252,11 @@ namespace Notes2022RCL.Pages
         public void GotoNote(long Id)
         {
             CurrentNoteId = Id;
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -257,7 +265,11 @@ namespace Notes2022RCL.Pages
         public void Listing()
         {
             CurrentNoteId = 0;
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -654,7 +666,11 @@ namespace Notes2022RCL.Pages
             await sessionStorage.SetItemAsync<int>("SearchIndex", 0);
             await sessionStorage.SetItemAsync<List<NoteHeader>>("SearchList", results);
             CurrentNoteId = mode;
-            StateHasChanged();
+            try
+            {
+                await this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -709,7 +725,11 @@ namespace Notes2022RCL.Pages
             seq.Active = true;
             await Client.UpdateSequencerAsync(seq, myState.AuthHeader);
             CurrentNoteId = currHeader.Id;
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -812,7 +832,11 @@ namespace Notes2022RCL.Pages
                             if (headerId != 0)
                             {
                                 CurrentNoteId = headerId;
-                                StateHasChanged();
+                                try
+                                {
+                                    await this.InvokeAsync(() => this.StateHasChanged());
+                                }
+                                catch (Exception) { }
                                 return;
                             }
                             else
@@ -838,7 +862,11 @@ namespace Notes2022RCL.Pages
                             if (headerId != 0)
                             {
                                 CurrentNoteId = headerId;
-                                StateHasChanged();
+                                try
+                                {
+                                    await this.InvokeAsync(() => this.StateHasChanged());
+                                }
+                                catch (Exception) { }
                                 return;
                             }
                             else
@@ -931,12 +959,20 @@ namespace Notes2022RCL.Pages
             if (y != Model.Notes.Count)
             {
                 ShowMessage("New Note(s) in " + Model.NoteFile.NoteFileTitle);
-                StateHasChanged();
+                try
+                {
+                    await this.InvokeAsync(() => this.StateHasChanged());
+                }
+                catch (Exception) { }
             }
             else if (x != Model.AllNotes.Count)
             {
                 ShowMessage("New Response(s) in " + Model.NoteFile.NoteFileTitle);
-                StateHasChanged();
+                try
+                {
+                    await this.InvokeAsync(() => this.StateHasChanged());
+                }
+                catch (Exception) { }
             }
         }
     }

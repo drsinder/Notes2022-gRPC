@@ -113,7 +113,11 @@ namespace Notes2022RCL.Dialogs
             readonlyPrint = false;
             this.RteObj.ExecuteCommand(CommandName.InsertHTML, PrintStuff);
             readonlyPrint = true;
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>

@@ -96,7 +96,11 @@ namespace Notes2022RCL.Pages.Admin
         public async Task Reload()
         {
             await GetStuff();
-            StateHasChanged();
+            try
+            {
+                await this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -195,7 +199,11 @@ namespace Notes2022RCL.Pages.Admin
         /// <param name = "Id">The identifier.</param>
         async void CreateNoteFile(int Id)
         {
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
             var parameters = new ModalParameters();
             parameters.Add("FileId", Id);
             var xModal = Modal.Show<Dialogs.CreateNoteFile>("Create Notefile", parameters);
@@ -232,7 +240,11 @@ namespace Notes2022RCL.Pages.Admin
             NoteFile file = files.List.ToList().Find(x => x.Id == Id);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
-            StateHasChanged();
+            try
+            {
+                await this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
             var parameters = new ModalParameters();
             parameters.Add("FileId", Id);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.

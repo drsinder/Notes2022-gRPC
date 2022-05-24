@@ -238,7 +238,11 @@ namespace Notes2022RCL.Menus
         /// </summary>
         public async Task Reload()
         {
-            StateHasChanged();
+            try
+            {
+                await this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
             await UpdateMenu();
         }
 

@@ -131,8 +131,11 @@
             {
                 GetData().GetAwaiter();
                 ResetShown = false;
-                StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
             }
+            catch (Exception) { }            }
             @if (IsRootNote && model is not null &&  model.Header.RefId != 0 && !model.Header.IsDeleted)
             {
                 <span><strong>Show References</strong></span><SfSwitch @bind-Checked="ShowChild" TChecked="bool"></SfSwitch>

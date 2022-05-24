@@ -375,7 +375,11 @@ namespace Notes2022RCL.Menus
         /// </summary>
         public void Replot()
         {
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>

@@ -96,7 +96,11 @@ namespace Notes2022RCL.Pages
                 }
             }
 
-            StateHasChanged();
+            try
+            {
+                await this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>

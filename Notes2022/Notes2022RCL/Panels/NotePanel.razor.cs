@@ -658,7 +658,11 @@ namespace Notes2022RCL.Panels
                             {
                                 NoteId = headerId2;
                                 await GetData();
-                                StateHasChanged();
+                                try
+                                {
+                                    await this.InvokeAsync(() => this.StateHasChanged());
+                                }
+                                catch (Exception) { }
                             }
                             else
                                 ShowMessage("Could not find note : " + NavString);
@@ -671,7 +675,11 @@ namespace Notes2022RCL.Panels
                         {
                             NoteId = headerId;
                             await GetData();
-                            StateHasChanged();
+                            try
+                            {
+                                await this.InvokeAsync(() => this.StateHasChanged());
+                            }
+                            catch (Exception) { }
                         }
                         else
                             ShowMessage("Could not find note : " + NavString);
@@ -706,7 +714,11 @@ namespace Notes2022RCL.Panels
                             {
                                 NoteId = headerId2;
                                 await GetData();
-                                StateHasChanged();
+                                try
+                                {
+                                    await this.InvokeAsync(() => this.StateHasChanged());
+                                }
+                                catch (Exception) { }
                             }
                             else
                                 ShowMessage("Could not find note : " + NavString);
@@ -717,7 +729,11 @@ namespace Notes2022RCL.Panels
                         {
                             NoteId = headerId;
                             await GetData();
-                            StateHasChanged();
+                            try
+                            {
+                                await this.InvokeAsync(() => this.StateHasChanged());
+                            }
+                            catch (Exception) { }
                         }
                         else
                             ShowMessage("Could not find note : " + NavString);
@@ -744,7 +760,11 @@ namespace Notes2022RCL.Panels
                 await sessionStorage.SetItemAsync<int>("SearchIndex", SearchIndex);
                 NoteId = mode;
                 await GetData();
-                StateHasChanged();
+                try
+                {
+                    await this.InvokeAsync(() => this.StateHasChanged());
+                }
+                catch (Exception) { }
             }
             else
             {
@@ -771,7 +791,11 @@ namespace Notes2022RCL.Panels
                 await sessionStorage.SetItemAsync("CurrentSeqHeader", currHeader);
                 NoteId = currHeader.Id;
                 await GetData();
-                StateHasChanged();
+                try
+                {
+                    await this.InvokeAsync(() => this.StateHasChanged());
+                }
+                catch (Exception) { }
             }
             else
             {

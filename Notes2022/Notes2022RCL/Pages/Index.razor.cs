@@ -136,7 +136,11 @@ namespace Notes2022RCL.Pages
         protected override void OnParametersSet()
         {
             OnParametersSetAsync().GetAwaiter(); // notified of login status change
-            StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -205,6 +209,12 @@ namespace Notes2022RCL.Pages
             Globals.LoginDisplay?.Reload();
             Globals.NavMenu?.Reload().GetAwaiter();
             //StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch(Exception) { }
+
         }
 
         /// <summary>

@@ -85,6 +85,11 @@ namespace Notes2022RCL.Shared
         public void Reload()
         {
             //StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
     }
 }

@@ -64,6 +64,11 @@ namespace Notes2022RCL.Comp
         {
             mytime = DateTime.Now;
             //StateHasChanged();
+            try
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+            catch (Exception) { }
         }
     }
 }
