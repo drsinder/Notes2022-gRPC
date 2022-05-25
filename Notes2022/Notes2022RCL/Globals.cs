@@ -64,6 +64,8 @@ namespace Notes2022RCL
 
         public static bool IsMaui { get; set; } = false;
 
+        public static string ServerAddress { get; set; } = string.Empty;
+
         /// <summary>
         /// Base64 Encodes the plain text.
         /// </summary>
