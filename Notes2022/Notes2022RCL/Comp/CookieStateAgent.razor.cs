@@ -20,13 +20,6 @@ namespace Notes2022RCL.Comp
         private System.Timers.Timer pinger { get; set; }
 
 
-        public CookieStateAgent()
-        {
-
-        }
-
-
-
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
 
@@ -58,10 +51,12 @@ namespace Notes2022RCL.Comp
             AString key = await Client.GetTextFileAsync(new AString()
             { Val = "syncfusionkey.rsghjjsrsrj43632353" });
 
+            SyncfusionLicenseProvider.RegisterLicense(key.Val);
+
+
             if (Globals.IsMaui)
                 return;
 
-            SyncfusionLicenseProvider.RegisterLicense(key.Val);
             AString cookiename = await Client.GetTextFileAsync(new AString()
             { Val = "CookieName" });
             Globals.Cookie = cookiename.Val;
@@ -88,8 +83,8 @@ namespace Notes2022RCL.Comp
 
         protected void Ping(Object source, ElapsedEventArgs e)
         {
-            if (Globals.IsMaui)
-                return;
+            //if (Globals.IsMaui)
+            //    return;
 
             _ = Client.NoOpAsync(new NoRequest()).GetAwaiter().GetResult();
         }

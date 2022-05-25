@@ -34,18 +34,21 @@
                     <div class="error">
                         <strong>@Message</strong>
                     </div>
-                    <div class="form-floating form-control medium-input-minus" >
-                        <br />
-                        <strong>Stay logged in:</strong>
-                        <SfRadioButton Label="No" Name="options" Value="0" @bind-Checked="Input.RememberHours"></SfRadioButton>
-                        <SfRadioButton Label="1 hour" Name="options" Value="1" @bind-Checked="Input.RememberHours"></SfRadioButton>
-                        <SfRadioButton Label="2 hours" Name="options" Value="2" @bind-Checked="Input.RememberHours"></SfRadioButton>
-                        <SfRadioButton Label="1 day" Name="options" Value="24" @bind-Checked="Input.RememberHours"></SfRadioButton>
-                        <SfRadioButton Label="7 days" Name="options" Value="168" @bind-Checked="Input.RememberHours"></SfRadioButton>
-                        <SfRadioButton Label="30 days" Name="options" Value="720" @bind-Checked="Input.RememberHours"></SfRadioButton>
-                        <SfRadioButton Label="1 year" Name="options" Value="8760" @bind-Checked="Input.RememberHours"></SfRadioButton>
-                    </div>
-                    <div>
+                    @if (!Globals.IsMaui)
+                    {
+                        <div class="form-floating form-control medium-input-minus" >
+                            <br />
+                            <strong>Stay logged in:</strong>
+                            <SfRadioButton Label="No" Name="options" Value="0" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                            <SfRadioButton Label="1 hour" Name="options" Value="1" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                            <SfRadioButton Label="2 hours" Name="options" Value="2" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                            <SfRadioButton Label="1 day" Name="options" Value="24" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                            <SfRadioButton Label="7 days" Name="options" Value="168" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                            <SfRadioButton Label="30 days" Name="options" Value="720" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                            <SfRadioButton Label="1 year" Name="options" Value="8760" @bind-Checked="Input.RememberHours"></SfRadioButton>
+                        </div>
+                    }
+                <div>
                         <br/>
                         <SfButton @onclick="GotoLogin" class="logbutton">Login</SfButton>
                     </div>

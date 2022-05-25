@@ -50,16 +50,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Data\**" />
 	  <AndroidResource Remove="Pages\**" />
 	  <AndroidResource Remove="Shared\**" />
+	  <Compile Remove="Data\**" />
 	  <Compile Remove="Pages\**" />
 	  <Compile Remove="Shared\**" />
+	  <Content Remove="Data\**" />
 	  <Content Remove="Pages\**" />
 	  <Content Remove="Shared\**" />
+	  <EmbeddedResource Remove="Data\**" />
 	  <EmbeddedResource Remove="Pages\**" />
 	  <EmbeddedResource Remove="Shared\**" />
+	  <MauiXaml Remove="Data\**" />
 	  <MauiXaml Remove="Pages\**" />
 	  <MauiXaml Remove="Shared\**" />
+	  <None Remove="Data\**" />
 	  <None Remove="Pages\**" />
 	  <None Remove="Shared\**" />
 	</ItemGroup>

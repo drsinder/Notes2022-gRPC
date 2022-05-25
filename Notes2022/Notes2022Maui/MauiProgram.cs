@@ -4,7 +4,6 @@ using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using Notes2022.Proto;
-using Notes2022Maui.Data;
 using Notes2022RCL.Comp;
 using Syncfusion.Blazor;
 
@@ -27,7 +26,9 @@ namespace Notes2022Maui
 		builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
 
-            builder.Services.AddSingleton<WeatherForecastService>();
+            Notes2022RCL.Globals.IsMaui = true;
+
+            //builder.Services.AddSingleton<WeatherForecastService>();
 
             builder.Services.AddBlazoredModal();
             builder.Services.AddBlazoredSessionStorage();

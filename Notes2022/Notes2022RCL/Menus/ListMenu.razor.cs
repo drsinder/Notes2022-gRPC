@@ -137,28 +137,52 @@ namespace Notes2022RCL.Menus
 
             if (Model.MyAccess.ReadAccess)
             {
-                MenuItem item2 = new()
-                {Id = "OutPutMenu", Text = "Output", Items = new List<MenuItem>{new()
-                {Id = "eXport", Text = "eXport"}, new()
-                {Id = "HtmlFromIndex", Text = "Html (expandable)"}, new()
-                {Id = "htmlFromIndex", Text = "html (flat)"}, new()
-                {Id = "mailFromIndex", Text = "mail"}, //item2.Items.Add(new MenuItem() { Id = "MarkMine", Text = "Mark my notes for output" });
-                new MenuItem()
-                {Id = "PrintFile", Text = "Print entire file"}, //if (Model.isMarked)
-                //{
-                //    item2.Items.Add(new MenuItem() { Id = "OutputMarked", Text = "Output marked notes" });
-                //}
-                //new (){ Id = "JsonExport", Text = "Json Export" },
-                new()
-                {Id = "JsonExport2", Text = "Json Export"}, new()
-                {Id = "Excel", Text = "Excel Export"}, new()
-                {Id = "Pdf", Text = "Pdf Export"}}};
+                MenuItem item2;
+
+                if (Globals.IsMaui)
+                {
+                    item2 = item2 = new()
+                    {
+                        Id = "OutPutMenu",
+                        Text = "Output",
+                        Items = new List<MenuItem>{new()
+                        {Id = "mailFromIndex", Text = "mail"}
+                        }
+                    };
+                }
+                else
+                {
+                    item2 = new()
+                    {
+                        Id = "OutPutMenu",
+                        Text = "Output",
+                        Items = new List<MenuItem>{new()
+                        {Id = "mailFromIndex", Text = "mail"},  new()
+                        {Id = "eXport", Text = "eXport"}, new()
+                        {Id = "HtmlFromIndex", Text = "Html (expandable)"}, new()
+                        {Id = "htmlFromIndex", Text = "html (flat)"}, new()
+                        {Id = "PrintFile", Text = "Print entire file"}, //if (Model.isMarked)
+                        //{
+                        //    item2.Items.Add(new MenuItem() { Id = "OutputMarked", Text = "Output marked notes" });
+                        //}
+                        //new (){ Id = "JsonExport", Text = "Json Export" },
+                        new()
+                        {Id = "JsonExport2", Text = "Json Export"}, new()
+                        {Id = "Excel", Text = "Excel Export"}, new()
+                        {Id = "Pdf", Text = "Pdf Export"}
+                        }
+                    };
+                }
                 menuItems.Add(item2);
                 menuItems.Add(new MenuItem()
                 {Id = "SearchFromIndex", Text = "Search"});
-                if (Model.MyAccess.Write)
+                
+                
+                if (Model.MyAccess.Write && !Globals.IsMaui)
                     menuItems.Add(new MenuItem()
                     {Id = "Import", Text = "Import"});
+
+
                 menuItems.Add(new MenuItem()
                 {Id = "ListHelp", Text = "Z for HELP"});
                 if (Model.MyAccess.EditAccess || Model.MyAccess.ViewAccess)

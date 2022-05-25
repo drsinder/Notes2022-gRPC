@@ -117,15 +117,36 @@ namespace Notes2022RCL.Menus
             menuItems.Add(item);
             if (Model.Access.ReadAccess)
             {
-                MenuItem item2 = new()
-                {Id = "OutPutMenu", Text = "Output", Items = new List<MenuItem>{new()
-                {Id = "Forward", Text = "Forward"}, new()
-                {Id = "Copy", Text = "Copy"}, new()
-                {Id = "mail", Text = "mail"}, //item2.Items.Add(new MenuItem() { Id = "Mark", Text = "Mark for output" });
-                new()
-                {Id = "Html", Text = "Html (expandable)"}, new()
-                {Id = "html", Text = "html (flat)"}, new()
-                {Id = "Json", Text = "Json"}}};
+                MenuItem item2;
+
+                if (Globals.IsMaui)
+                {
+                    item2 = new()
+                    {
+                        Id = "OutPutMenu",
+                        Text = "Output",
+                        Items = new List<MenuItem>{new()
+                        {Id = "Forward", Text = "Forward"}, new()
+                        {Id = "Copy", Text = "Copy"}, new()
+                        {Id = "mail", Text = "mail"}}
+                    };
+                }
+                else
+                {
+                    item2 = new()
+                    {
+                        Id = "OutPutMenu",
+                        Text = "Output",
+                        Items = new List<MenuItem>{new()
+                        {Id = "Forward", Text = "Forward"}, new()
+                        {Id = "Copy", Text = "Copy"}, new()
+                        {Id = "mail", Text = "mail"},
+                        new()
+                        {Id = "Html", Text = "Html (expandable)"}, new()
+                        {Id = "html", Text = "html (flat)"}, new()
+                        {Id = "Json", Text = "Json"}}
+                    };
+                }
                 menuItems.Add(item2);
                 if (Model.Access.Respond)
                 {
