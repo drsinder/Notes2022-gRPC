@@ -7,11 +7,12 @@ namespace Notes2022MauiLib
     // All the code in this file is included in all platforms.
     public class MauiFileActions
     {
-        public async Task<string> SaveToFileAndClipBoard(string filename, byte[] data)
+        public async Task<string> SaveToFileAndClipBoard(string filename, byte[] data, bool cliptoo)
         {
             string textData = Encoding.Default.GetString(data);
 
-            await Clipboard.Default.SetTextAsync(textData);
+            if (cliptoo)
+                await Clipboard.Default.SetTextAsync(textData);
 
             string file = Path.Combine(FileSystem.Current.AppDataDirectory, filename);
 

@@ -4823,6 +4823,9 @@ namespace Notes2022.Proto {
     /// <summary>Field number for the "pref1" field.</summary>
     public const int Pref1FieldNumber = 15;
     private bool pref1_;
+    /// <summary>
+    /// Maui write clipboad flag
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool Pref1 {

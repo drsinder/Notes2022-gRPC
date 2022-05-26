@@ -223,7 +223,7 @@ message GAppUser {
 	int32 ipref8 = 12;
 	int32 ipref9 = 13;
 	bool pref0 = 14;		// login turned off flag
-	bool pref1 = 15;
+	bool pref1 = 15;		// Maui write clipboad flag
 	bool pref2 = 16;
 	bool pref3 = 17;		// Show Responses by default
 	bool pref4 = 18;		// Flip Response order by default

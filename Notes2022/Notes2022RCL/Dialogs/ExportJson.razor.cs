@@ -162,8 +162,9 @@ namespace Notes2022RCL.Dialogs
         {
             if (Globals.IsMaui)
             {
+                GAppUser ui = await Client.GetUserDataAsync(new(), myState.AuthHeader);
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
-                string fn = await mauiFileActions.SaveToFileAndClipBoard(filename, data);
+                string fn = await mauiFileActions.SaveToFileAndClipBoard(filename, data, ui.Pref1 );
                 model.myMenu.ExportDone(fn);
             }
             else

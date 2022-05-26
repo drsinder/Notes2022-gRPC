@@ -427,7 +427,16 @@ namespace Notes2022RCL.Menus
         public void ExportDone(string fn)
         {
             if (Globals.IsMaui)
-                ShowMessage("Export has been placed in clipboard! And to file\n<br />" + fn);
+            {
+                bool cliptoo = Model.UserData.Pref1;
+                string mess = "Export has been written to file:<br />" + fn + "<br />";
+                if (cliptoo)
+                    mess += "Export is also in the clipboard.";
+                else
+                    mess += "( See preferences to also write to clipboad in the future. )";
+
+                ShowMessage(mess);
+            }
         }
 
         /// <summary>

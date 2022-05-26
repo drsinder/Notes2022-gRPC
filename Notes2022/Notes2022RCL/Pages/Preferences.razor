@@ -58,6 +58,11 @@ else
                 <SfSwitch @bind-Checked="@UserData.Pref3"></SfSwitch> Show Responses by default
                 <br />
                 <SfSwitch @bind-Checked="@UserData.Pref4"></SfSwitch> Flip Response order by default
+                @if (Globals.IsMaui)
+                {
+                    <br />
+                    <SfSwitch @bind-Checked="@UserData.Pref1"></SfSwitch><span> Export to Clipboard as well as file (Maui only!)</span>
+                }
                 <br />
                 <button type="button" @onclick="OnSubmit" class="btn btn-info btn-sm">Submit</button>&nbsp;&nbsp;
                 <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
