@@ -1,34 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Blazored;
 using Blazored.Modal;
 using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using Notes2022.Proto;
-using Notes2022RCL.Menus;
-using System.Text;
 using Notes2022RCL.Dialogs;
+using Notes2022RCL.Menus;
 using Notes2022RCL.Pages;
+using Syncfusion.Blazor.Inputs;
+using System.Text;
 using MouseEventArgs = Microsoft.AspNetCore.Components.Web.MouseEventArgs;
 
 namespace Notes2022RCL.Panels
@@ -101,7 +81,7 @@ namespace Notes2022RCL.Panels
         /// List of responses
         /// </summary>
         /// <value>The resp headers.</value>
-        
+
 #pragma warning disable IDE1006 // Naming Styles
 
         protected List<NoteHeader> respHeaders { get; set; }
@@ -280,7 +260,7 @@ namespace Notes2022RCL.Panels
             // Get data from the server - just the content -
             // we already have the header in the container (index)
             model = await Client.GetNoteContentAsync(new DisplayModelRequest()
-            {Vers = Vers, NoteId = NoteId}, myState.AuthHeader);
+            { Vers = Vers, NoteId = NoteId }, myState.AuthHeader);
             model = model is not null ? model : new();
             // set text to be displayed re responses
             respX = respY = "";
@@ -305,7 +285,7 @@ namespace Notes2022RCL.Panels
                         respHeaders = respHeaders.OrderByDescending(x => x.ResponseOrdinal).ToList();
                     else if (IsRootNote && RespShown)
                         respHeaders = respHeaders.OrderBy(x => x.ResponseOrdinal).ToList();
-                //StateHasChanged();
+                    //StateHasChanged();
                 }
             }
         }
@@ -323,7 +303,7 @@ namespace Notes2022RCL.Panels
         /// Handle change of responses shown switch
         /// </summary>
         /// <param name = "args">The arguments.</param>
-        
+
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
         private async Task ShowRespChange(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool> args)
@@ -397,8 +377,8 @@ namespace Notes2022RCL.Panels
 
             StringBuilder sb = new();
             sb.Append("<h4 class=\"text-center\">" + Model.NoteFile.NoteFileTitle + "</h4>");
-            reloop: // come back here to do another note
-                respX = "";
+        reloop: // come back here to do another note
+            respX = "";
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
             if (currentHeader.ResponseCount > 0)
@@ -415,7 +395,7 @@ namespace Notes2022RCL.Panels
             sb.Append(currentHeader.AuthorName + "    ");
             sb.Append(currentHeader.LastEdited.ToDateTime().ToLocalTime().ToLongDateString() + " " + currentHeader.LastEdited.ToDateTime().ToLocalTime().ToShortTimeString());
             NoteContent currentContent = await Client.GetExport2Async(new NoteId()
-            {Id = currentHeader.Id}, myState.AuthHeader);
+            { Id = currentHeader.Id }, myState.AuthHeader);
             if (!string.IsNullOrEmpty(currentHeader.DirectorMessage))
             {
                 sb.Append("<br /><span>Director Message: ");
@@ -863,8 +843,8 @@ namespace Notes2022RCL.Panels
                 if (ResetShown)
                 {
                     ResetShown = false;
-                //RespShown = true;
-                //StateHasChanged();
+                    //RespShown = true;
+                    //StateHasChanged();
                 }
 
                 // have to wait a bit before putting focus in textbox

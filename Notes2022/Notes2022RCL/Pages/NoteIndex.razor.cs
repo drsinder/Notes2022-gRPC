@@ -1,37 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Blazored;
 using Blazored.Modal;
 using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
-using Notes2022RCL.Panels;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Notes2022.Proto;
+using Notes2022RCL.Dialogs;
+using Notes2022RCL.Menus;
+using Notes2022RCL.Panels;
 using Syncfusion.Blazor.Data;
 using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.Buttons;
-using Notes2022RCL.Menus;
-using System.Runtime.Serialization;
+using Syncfusion.Blazor.Inputs;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Notes2022RCL.Dialogs;
+using System.Runtime.Serialization;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -196,7 +176,7 @@ namespace Notes2022RCL.Pages
 
                 // Get the notefile data
                 Model = await Client.GetNoteFileIndexDataAsync(new NoteFileRequest()
-                {NoteFileId = NotesfileId}, myState.AuthHeader);
+                { NoteFileId = NotesfileId }, myState.AuthHeader);
                 if (!string.IsNullOrEmpty(Model.Message))
                     return;
                 // Set preferences for user
@@ -528,8 +508,8 @@ namespace Notes2022RCL.Pages
                 default:
                     break;
             }
-        //message = null;
-        //StateHasChanged();
+            //message = null;
+            //StateHasChanged();
         }
 
         /// <summary>
@@ -640,7 +620,7 @@ namespace Notes2022RCL.Pages
             {
                 //DisplayModel dm = await DAL.GetNoteContent(Http, nh.Id);
                 DisplayModel dm = await Client.GetNoteContentAsync(new DisplayModelRequest()
-                {NoteId = nh.Id}, myState.AuthHeader);
+                { NoteId = nh.Id }, myState.AuthHeader);
                 NoteContent nc = dm.Content;
                 bool isMatch = false;
                 switch (target.Option)
@@ -955,7 +935,7 @@ namespace Notes2022RCL.Pages
             int x = Model.AllNotes.Count;
             int y = Model.Notes.Count;
             Model = await Client.GetNoteFileIndexDataAsync(new NoteFileRequest()
-            {NoteFileId = NotesfileId}, myState.AuthHeader);
+            { NoteFileId = NotesfileId }, myState.AuthHeader);
             if (y != Model.Notes.Count)
             {
                 ShowMessage("New Note(s) in " + Model.NoteFile.NoteFileTitle);

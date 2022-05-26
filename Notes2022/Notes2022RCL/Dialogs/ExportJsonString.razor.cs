@@ -1,33 +1,8 @@
-using System.Linq;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Notes2022.Proto;
-using Blazored;
 using Blazored.Modal;
-using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
-using Notes2022.Shared;
-using System.IO;
+using Notes2022.Proto;
 using System.Text;
 
 namespace Notes2022RCL.Dialogs
@@ -73,7 +48,7 @@ namespace Notes2022RCL.Dialogs
             StringContent stringContent;
             JsonExport wrapper = new JsonExport();
             wrapper.NoteFile = await Client.GetNoteFileAsync(new NoteFileRequest()
-            {NoteFileId = model.NoteFileId}, myState.AuthHeader);
+            { NoteFileId = model.NoteFileId }, myState.AuthHeader);
             wrapper.NoteHeaders = await Client.GetNoteHeadersAsync(model, myState.AuthHeader);
             stringContent = new StringContent(JsonConvert.SerializeObject(wrapper, Newtonsoft.Json.Formatting.Indented), Encoding.UTF8, "application/json");
             Stream ms0 = await stringContent.ReadAsStreamAsync();

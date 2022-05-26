@@ -1,32 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Notes2022.Proto;
-using Blazored;
 using Blazored.Modal;
 using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
-using System.Timers;
+using Microsoft.AspNetCore.Components;
+using Notes2022.Proto;
 using Notes2022RCL.Dialogs;
+using Syncfusion.Blazor.Navigations;
+using System.Timers;
 using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
 
 namespace Notes2022RCL.Menus
@@ -180,7 +158,7 @@ namespace Notes2022RCL.Menus
         /// This could potentially be called from other places...
         /// </summary>
         /// <param name = "id">The identifier.</param>
-        
+
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
         private async Task ExecMenu(string id)
@@ -259,7 +237,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Enable only items available to logged in user
         /// </summary>
-        
+
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0005:Component parameter should not be set outside of its component.", Justification = "<Pending>")]
@@ -281,24 +259,24 @@ namespace Notes2022RCL.Menus
                 menuItemsTop = new List<MenuItem>();
                 MenuItem item;
                 item = new()
-                {Id = "Recent", Text = "Recent Notes"};
+                { Id = "Recent", Text = "Recent Notes" };
                 menuItemsTop.Add(item);
                 MenuItem item3 = new()
-                {Id = "Manage", Text = "Manage"};
+                { Id = "Manage", Text = "Manage" };
                 item3.Items = new List<MenuItem>{new()
                 {Id = "MRecent", Text = "Recent"}, //new () { Id = "Subscriptions", Text = "Subscriptions" },
                 new()
                 {Id = "Preferences", Text = "Preferences"}};
                 menuItemsTop.Add(item3);
                 item = new()
-                {Id = "Help", Text = "Help"};
+                { Id = "Help", Text = "Help" };
                 item.Items = new List<MenuItem>{new()
                 {Id = "MainHelp", Text = "Help"}, new()
                 {Id = "About", Text = "About"}, new()
                 {Id = "License", Text = "License"}};
                 menuItemsTop.Add(item);
                 item = new MenuItem()
-                {Id = "Admin", Text = "Admin"};
+                { Id = "Admin", Text = "Admin" };
                 item.Items = new List<MenuItem>{new()
                 {Id = "NoteFiles", Text = "NoteFiles"}, new()
                 {Id = "Roles", Text = "Roles"}//new () { Id = "Linked", Text = "Linked" }

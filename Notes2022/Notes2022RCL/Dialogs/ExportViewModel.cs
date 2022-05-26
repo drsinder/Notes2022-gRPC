@@ -11,8 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Notes2022RCL.Menus;
 using Notes2022.Proto;
+using Notes2022RCL.Menus;
 
 namespace Notes2022RCL.Dialogs
 {

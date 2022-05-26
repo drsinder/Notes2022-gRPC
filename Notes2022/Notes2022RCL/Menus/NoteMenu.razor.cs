@@ -1,33 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Notes2022.Proto;
-using Blazored;
 using Blazored.Modal;
 using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
-using Syncfusion.Blazor.Popups;
+using Microsoft.AspNetCore.Components;
+using Notes2022.Proto;
 using Notes2022RCL.Dialogs;
 using Notes2022RCL.Pages;
+using Syncfusion.Blazor.Navigations;
 using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
 
 namespace Notes2022RCL.Menus
@@ -59,7 +36,7 @@ namespace Notes2022RCL.Menus
         /// Menu structure
         /// </summary>
         /// <value>The menu items.</value>
-        
+
 #pragma warning disable IDE1006 // Naming Styles
 
         private static List<MenuItem> menuItems { get; set; }
@@ -101,19 +78,19 @@ namespace Notes2022RCL.Menus
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
 
             MenuItem item = new()
-            {Id = "ListNotes", Text = "Listing"};
+            { Id = "ListNotes", Text = "Listing" };
             menuItems.Add(item);
             item = new()
-            {Id = "NextBase", Text = "Next Base"};
+            { Id = "NextBase", Text = "Next Base" };
             menuItems.Add(item);
             item = new()
-            {Id = "PreviousBase", Text = "Previous Base"};
+            { Id = "PreviousBase", Text = "Previous Base" };
             menuItems.Add(item);
             item = new()
-            {Id = "NextNote", Text = "Next"};
+            { Id = "NextNote", Text = "Next" };
             menuItems.Add(item);
             item = new()
-            {Id = "PreviousNote", Text = "Previous"};
+            { Id = "PreviousNote", Text = "Previous" };
             menuItems.Add(item);
             if (Model.Access.ReadAccess)
             {
@@ -151,26 +128,26 @@ namespace Notes2022RCL.Menus
                 if (Model.Access.Respond)
                 {
                     item = new()
-                    {Id = "NewResponse", Text = "New Response"};
+                    { Id = "NewResponse", Text = "New Response" };
                     menuItems.Add(item);
                 }
 
                 if (Model.CanEdit)
                 {
                     item = new()
-                    {Id = "Edit", Text = "Edit"};
+                    { Id = "Edit", Text = "Edit" };
                     menuItems.Add(item);
                     if (Model.Access.UserID == Model.Header.AuthorID || Model.IsAdmin)
                     {
                         item = new()
-                        {Id = "Delete", Text = "Delete"};
+                        { Id = "Delete", Text = "Delete" };
                         menuItems.Add(item);
                     }
                 }
 
                 //menuItems.Add(new() { Id = "SearchFromNote", Text = "Search" });
                 menuItems.Add(new()
-                {Id = "NoteHelp", Text = "Z for HELP"});
+                { Id = "NoteHelp", Text = "Z for HELP" });
             }
 
             return Task.CompletedTask;
@@ -254,7 +231,7 @@ namespace Notes2022RCL.Menus
                         if (!await YesNo("Are you sure you want to delete this note?"))
                             return;
                         await Client.DeleteNoteAsync(new NoteId()
-                        {Id = Model.Header.Id}, myState.AuthHeader);
+                        { Id = Model.Header.Id }, myState.AuthHeader);
                         Navigation.NavigateTo("notedisplay/" + Model.Header.Id); //, true);
                     }
                     else
@@ -289,7 +266,7 @@ namespace Notes2022RCL.Menus
         protected void DoJson()
         {
             NoteHeadersRequest request = new()
-            {NoteFileId = Model.NoteFile.Id, ArcId = Model.Header.ArchiveId, NoteOrdinal = Model.Header.NoteOrdinal, ResponseOrdinal = -1, ContentAndTags = true, FileName = Model.NoteFile.NoteFileName + ".note-" + Model.Header.NoteOrdinal + ".json", NestResponses = true};
+            { NoteFileId = Model.NoteFile.Id, ArcId = Model.Header.ArchiveId, NoteOrdinal = Model.Header.NoteOrdinal, ResponseOrdinal = -1, ContentAndTags = true, FileName = Model.NoteFile.NoteFileName + ".note-" + Model.Header.NoteOrdinal + ".json", NestResponses = true };
             if (Model.Header.ResponseOrdinal > 0)
             {
                 request.ResponseOrdinal = Model.Header.ResponseOrdinal;
@@ -312,7 +289,7 @@ namespace Notes2022RCL.Menus
         {
             var parameters = new ModalParameters();
             ForwardViewModel fv = new()
-            {NoteID = Model.Header.Id, FileID = Model.Header.NoteFileId, ArcID = Model.Header.ArchiveId, NoteOrdinal = Model.Header.NoteOrdinal, NoteSubject = Model.Header.NoteSubject, NoteFile = Model.NoteFile};
+            { NoteID = Model.Header.Id, FileID = Model.Header.NoteFileId, ArcID = Model.Header.ArchiveId, NoteOrdinal = Model.Header.NoteOrdinal, NoteSubject = Model.Header.NoteSubject, NoteFile = Model.NoteFile };
             if (Model.Header.ResponseCount > 0 || Model.Header.BaseNoteId > 0)
                 fv.Hasstring = true;
             parameters.Add("ForwardView", fv);
@@ -330,7 +307,7 @@ namespace Notes2022RCL.Menus
         {
             var parameters = new ModalParameters();
             ExportViewModel vm = new()
-            {ArchiveNumber = Model.Header.ArchiveId, isCollapsible = isCollapsible, isDirectOutput = !isEmail, isHtml = isHtml, NoteFile = Model.NoteFile, NoteOrdinal = Model.Header.NoteOrdinal, Email = emailaddr};
+            { ArchiveNumber = Model.Header.ArchiveId, isCollapsible = isCollapsible, isDirectOutput = !isEmail, isHtml = isHtml, NoteFile = Model.NoteFile, NoteOrdinal = Model.Header.NoteOrdinal, Email = emailaddr };
             //vm.myMenu = this;
             parameters.Add("Model", vm);
             parameters.Add("FileName", Model.NoteFile.NoteFileName + (isHtml ? ".html" : ".txt"));

@@ -1,30 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Notes2022.Proto;
-using Blazored;
 using Blazored.Modal;
-using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Notes2022.Proto;
 using System.Text;
 
 namespace Notes2022RCL.Dialogs
@@ -137,7 +114,7 @@ namespace Notes2022RCL.Dialogs
                 System.Text.Encoding enc = System.Text.Encoding.ASCII;
                 string email = enc.GetString(bytes);
                 GEmail stuff = new()
-                {Address = model.Email, Subject = "Notes 2022 - " + model.NoteFile.NoteFileTitle, Body = email};
+                { Address = model.Email, Subject = "Notes 2022 - " + model.NoteFile.NoteFileTitle, Body = email };
                 await Client.SendEmailAuthAsync(stuff, myState.AuthHeader);
             }
 
@@ -326,11 +303,11 @@ namespace Notes2022RCL.Dialogs
             if (isHtml)
             {
                 sb.Append("</h2>");
-            //sb.Append("<h4>");
-            //sb.Append("<a href=\"");
-            //sb.Append(/*ProdUri + */"/NoteDisplay/Create/" + nf.Id +
-            //          "\" target=\"_blank\">New Base Note</a>");
-            //sb.Append("</h4>");
+                //sb.Append("<h4>");
+                //sb.Append("<a href=\"");
+                //sb.Append(/*ProdUri + */"/NoteDisplay/Create/" + nf.Id +
+                //          "\" target=\"_blank\">New Base Note</a>");
+                //sb.Append("</h4>");
             }
 
             await sw.WriteLineAsync(sb.ToString());
@@ -341,7 +318,7 @@ namespace Notes2022RCL.Dialogs
             int NoteOrd = 0;
             if (model.NoteOrdinal == 0)
             {
-            //req = "" + nfid + "." + model.ArchiveNumber + ".0.0";
+                //req = "" + nfid + "." + model.ArchiveNumber + ".0.0";
             }
             else
             {
@@ -351,7 +328,7 @@ namespace Notes2022RCL.Dialogs
 
             JsonExport stuff;
             stuff = await Client.GetExportJsonAsync(new ExportRequest()
-            {FileId = nfid, ArcId = model.ArchiveNumber}, myState.AuthHeader);
+            { FileId = nfid, ArcId = model.ArchiveNumber }, myState.AuthHeader);
             List<NoteHeader> allHeaders = stuff.NoteHeaders.List.ToList();
             List<NoteHeader> baseNotes;
             if (NoteOrd == 0)

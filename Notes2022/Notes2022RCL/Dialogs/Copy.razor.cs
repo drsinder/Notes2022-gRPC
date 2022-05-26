@@ -1,34 +1,6 @@
-using System.Linq;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Notes2022.Proto;
-using Blazored;
 using Blazored.Modal;
-using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Notes2022.Shared;
-using Syncfusion.Blazor.DropDowns;
-using System.IO;
-using System.Text;
+using Microsoft.AspNetCore.Components;
+using Notes2022.Proto;
 
 namespace Notes2022RCL.Dialogs
 {
@@ -73,7 +45,7 @@ namespace Notes2022RCL.Dialogs
         protected async override Task OnInitializedAsync()
         {
             Files = await Client.GetNoteFilesOrderedByNameAsync(new NoRequest(), myState.AuthHeader);
-            Files.List.Insert(0, new NoteFile{Id = 0, NoteFileName = "Select a file"});
+            Files.List.Insert(0, new NoteFile { Id = 0, NoteFileName = "Select a file" });
         }
 
         /// <summary>

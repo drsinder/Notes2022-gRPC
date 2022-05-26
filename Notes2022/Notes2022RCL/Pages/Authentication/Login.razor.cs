@@ -1,34 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Blazored;
-using Blazored.Modal;
-using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
 using Microsoft.AspNetCore.Components;
-using Grpc.Core;
-using Grpc.Net.Client.Web;
-using Notes2022RCL;
 using Notes2022.Proto;
-using Grpc.Net.Client;
-using Google.Protobuf.WellKnownTypes;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Inputs;
 using System.ComponentModel.DataAnnotations;
 
 namespace Notes2022RCL.Pages.Authentication
@@ -80,7 +51,7 @@ namespace Notes2022RCL.Pages.Authentication
         /// <summary>
         /// The input
         /// </summary>
-        protected InputModel Input = new InputModel{Email = string.Empty, Password = string.Empty};
+        protected InputModel Input = new InputModel { Email = string.Empty, Password = string.Empty };
         /// <summary>
         /// The message
         /// </summary>
@@ -93,7 +64,7 @@ namespace Notes2022RCL.Pages.Authentication
             string retUrl = Globals.returnUrl;
             Globals.returnUrl = string.Empty;
             LoginRequest req = new LoginRequest()
-            {Email = Input.Email, Password = Input.Password, Hours = Input.RememberHours};
+            { Email = Input.Email, Password = Input.Password, Hours = Input.RememberHours };
             LoginReply ar = await AuthClient.LoginAsync(req);
             if (ar.Status == 200)
             {

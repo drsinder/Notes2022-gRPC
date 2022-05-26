@@ -1,36 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Notes2022.Proto;
-using Blazored;
 using Blazored.Modal;
 using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
-using Notes2022RCL.Pages;
-using Syncfusion.Blazor.Popups;
-using System.Text;
+using Microsoft.AspNetCore.Components;
+using Notes2022.Proto;
 using Notes2022RCL.Dialogs;
-using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
+using Notes2022RCL.Pages;
+using Syncfusion.Blazor.LinearGauge;
+using Syncfusion.Blazor.Navigations;
+using System.Text;
+using W8lessLabs.Blazor.LocalFiles;
 using Email = Notes2022RCL.Dialogs.Email;
+using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
 
 namespace Notes2022RCL.Menus
 {
@@ -126,12 +105,12 @@ namespace Notes2022RCL.Menus
             // construct the menu based on user access
             menuItems = new List<MenuItem>();
             MenuItem item = new()
-            {Id = "ListNoteFiles", Text = "List Note Files"};
+            { Id = "ListNoteFiles", Text = "List Note Files" };
             menuItems.Add(item);
             if (Model.MyAccess.Write)
             {
                 item = new()
-                {Id = "NewBaseNote", Text = "New Base Note"};
+                { Id = "NewBaseNote", Text = "New Base Note" };
                 menuItems.Add(item);
             }
 
@@ -175,20 +154,20 @@ namespace Notes2022RCL.Menus
                 }
                 menuItems.Add(item2);
                 menuItems.Add(new MenuItem()
-                {Id = "SearchFromIndex", Text = "Search"});
-                
-                
+                { Id = "SearchFromIndex", Text = "Search" });
+
+
                 if (Model.MyAccess.Write && !Globals.IsMaui)
                     menuItems.Add(new MenuItem()
-                    {Id = "Import", Text = "Import"});
+                    { Id = "Import", Text = "Import" });
 
 
                 menuItems.Add(new MenuItem()
-                {Id = "ListHelp", Text = "Z for HELP"});
+                { Id = "ListHelp", Text = "Z for HELP" });
                 if (Model.MyAccess.EditAccess || Model.MyAccess.ViewAccess)
                 {
                     menuItems.Add(new MenuItem()
-                    {Id = "AccessControls", Text = "Access Controls"});
+                    { Id = "AccessControls", Text = "Access Controls" });
                 }
             }
         }
@@ -306,13 +285,13 @@ namespace Notes2022RCL.Menus
             NoteHeader baseHeader = Model.Notes[0];
             NoteHeader currentHeader = Model.Notes[0];
             ExportRequest exportRequest = new()
-            {ArcId = Model.ArcId, FileId = Model.NoteFile.Id, NoteOrdinal = 0};
+            { ArcId = Model.ArcId, FileId = Model.NoteFile.Id, NoteOrdinal = 0 };
             JsonExport? json = await Client.GetExportJsonAsync(exportRequest, myState.AuthHeader);
             List<NoteHeader> allNotes = json.NoteHeaders.List.ToList();
             StringBuilder? sb = new();
             sb.Append("<h4 class=\"text-center\">" + Model.NoteFile.NoteFileTitle + "</h4>");
-            reloop: // come back here to do another note
-                respX = "";
+        reloop: // come back here to do another note
+            respX = "";
             if (currentHeader.ResponseCount > 0)
                 respX = " - " + currentHeader.ResponseCount + " Responses ";
             else if (currentHeader.ResponseOrdinal > 0)
@@ -387,7 +366,7 @@ namespace Notes2022RCL.Menus
         {
             var parameters = new ModalParameters();
             ExportViewModel vm = new()
-            {ArchiveNumber = Model.ArcId, isCollapsible = isCollapsible, isDirectOutput = !isEmail, isHtml = isHtml, NoteFile = Model.NoteFile, NoteOrdinal = 0, Email = emailaddr, myMenu = this};
+            { ArchiveNumber = Model.ArcId, isCollapsible = isCollapsible, isDirectOutput = !isEmail, isHtml = isHtml, NoteFile = Model.NoteFile, NoteOrdinal = 0, Email = emailaddr, myMenu = this };
             currNote = 1;
             parameters.Add("Model", vm);
             parameters.Add("FileName", Model.NoteFile.NoteFileName + (isHtml ? ".html" : ".txt"));
@@ -414,7 +393,7 @@ namespace Notes2022RCL.Menus
         {
             var parameters = new ModalParameters();
             ExportViewModel vm = new()
-            {ArchiveNumber = Model.ArcId, NoteFile = Model.NoteFile, NoteOrdinal = 0, isCollapsible = ext};
+            { ArchiveNumber = Model.ArcId, NoteFile = Model.NoteFile, NoteOrdinal = 0, isCollapsible = ext };
             parameters.Add("model", vm);
             Modal.Show<ExportJson>("", parameters);
         }
@@ -450,7 +429,7 @@ namespace Notes2022RCL.Menus
             parameters.Add("NoteFile", filename);
             var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
             await yModal.Result;
-        //Navigation.NavigateTo("noteindex/" + Model.NoteFile.Id, true);
+            //Navigation.NavigateTo("noteindex/" + Model.NoteFile.Id, true);
         }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

@@ -1,31 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.JSInterop;
-using Notes2022RCL;
-using Blazored;
 using Blazored.Modal;
 using Blazored.Modal.Services;
-using W8lessLabs.Blazor.LocalFiles;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.LinearGauge;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Calendars;
+using Microsoft.AspNetCore.Components;
 using Notes2022.Proto;
-using Notes2022.Shared;
+using Syncfusion.Blazor.Grids;
 
 namespace Notes2022RCL.Dialogs
 {
@@ -49,7 +26,7 @@ namespace Notes2022RCL.Dialogs
         /// File Id we are working on
         /// </summary>
         /// <value>The file identifier.</value>
-        
+
 #pragma warning disable IDE1006 // Naming Styles
 
         [Parameter]
@@ -120,7 +97,7 @@ namespace Notes2022RCL.Dialogs
         {
             arcId = await sessionStorage.GetItemAsync<int>("ArcId");
             AccessAndUserList myLists = await Client.GetAccessAndUserListAsync(new AccessAndUserListRequest()
-            {FileId = fileId, ArcId = arcId, UserId = myState.UserInfo?.Subject}, myState.AuthHeader);
+            { FileId = fileId, ArcId = arcId, UserId = myState.UserInfo?.Subject }, myState.AuthHeader);
             myList = myLists.AccessList.ToList();
             userList = myLists.AppUsers.List.ToList();
             myAccess = myLists.UserAccess;
@@ -146,7 +123,7 @@ namespace Notes2022RCL.Dialogs
             await xx.Result;
             try
             {
-                await this.InvokeAsync(() =>  this.StateHasChanged());
+                await this.InvokeAsync(() => this.StateHasChanged());
             }
             catch (Exception) { }
             await MyGrid.Refresh();
@@ -160,7 +137,7 @@ namespace Notes2022RCL.Dialogs
         {
             arcId = await sessionStorage.GetItemAsync<int>("ArcId");
             NoteAccessList myLists = await Client.GetAccessListAsync(new AccessAndUserListRequest()
-            {FileId = fileId, ArcId = arcId, UserId = myState.UserInfo?.Subject}, myState.AuthHeader);
+            { FileId = fileId, ArcId = arcId, UserId = myState.UserInfo?.Subject }, myState.AuthHeader);
             myList = myLists.List.ToList();
             try
             {
