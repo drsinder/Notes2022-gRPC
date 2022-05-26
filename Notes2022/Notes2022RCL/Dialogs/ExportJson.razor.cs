@@ -163,8 +163,8 @@ namespace Notes2022RCL.Dialogs
             if (Globals.IsMaui)
             {
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
-                await mauiFileActions.SaveFileToClipBoard(data);
-                model.myMenu.ExportDone();
+                string fn = await mauiFileActions.SaveToFileAndClipBoard(filename, data);
+                model.myMenu.ExportDone(fn);
             }
             else
             {

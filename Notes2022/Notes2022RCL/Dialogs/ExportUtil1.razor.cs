@@ -315,7 +315,7 @@ namespace Notes2022RCL.Dialogs
             {
                 model.myMenu.IsPrinting = false;
                 model.myMenu.Replot();
-                model.myMenu.ExportDone();
+                model.myMenu.ExportDone(SavedFileName);
             }
 
             return ms;
@@ -401,6 +401,8 @@ namespace Notes2022RCL.Dialogs
             return true;
         }
 
+        string SavedFileName { get; set; }
+
         /// <summary>
         /// Saves as.
         /// </summary>
@@ -411,7 +413,7 @@ namespace Notes2022RCL.Dialogs
             if (Globals.IsMaui)
             {
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
-                await mauiFileActions.SaveFileToClipBoard(data);
+                SavedFileName = await mauiFileActions.SaveToFileAndClipBoard(filename, data);
                 return;
             }
 

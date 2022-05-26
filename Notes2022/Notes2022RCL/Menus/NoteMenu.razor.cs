@@ -396,5 +396,11 @@ namespace Notes2022RCL.Menus
             parameters.Add("MessageInput", message);
             Modal.Show<MessageBox>("", parameters);
         }
+
+        public void ExportDone(string fn)
+        {
+            if (Globals.IsMaui)
+                ShowMessage("Export has been placed in clipboard! And to file\n<br />" + fn);
+        }
     }
 }

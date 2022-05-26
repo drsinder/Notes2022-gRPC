@@ -424,10 +424,10 @@ namespace Notes2022RCL.Menus
             catch (Exception) { }
         }
 
-        public void ExportDone()
+        public void ExportDone(string fn)
         {
             if (Globals.IsMaui)
-                ShowMessage("Export has been placced in clipboard!");
+                ShowMessage("Export has been placed in clipboard! And to file\n<br />" + fn);
         }
 
         /// <summary>
