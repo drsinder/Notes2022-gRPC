@@ -74,4 +74,8 @@
 	  <ProjectReference Include="..\Notes2022RCL\Notes2022RCL.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Comp\" />
+	</ItemGroup>
+
 </Project>

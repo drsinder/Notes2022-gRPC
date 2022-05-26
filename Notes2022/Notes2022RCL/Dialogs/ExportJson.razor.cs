@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Notes2022.Proto;
+using Notes2022RCL.Comp;
 using System.Text;
 
 namespace Notes2022RCL.Dialogs
@@ -161,7 +162,8 @@ namespace Notes2022RCL.Dialogs
         {
             if (Globals.IsMaui)
             {
-                File.WriteAllBytes(filename, data);  // *sigh* this fails due to access error
+
+                //File.WriteAllBytes(filename, data);  // *sigh* this fails due to access error
             }
             else
             {
