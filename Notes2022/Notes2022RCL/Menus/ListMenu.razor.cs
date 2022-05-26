@@ -184,9 +184,10 @@ namespace Notes2022RCL.Menus
                         //}
                         //new (){ Id = "JsonExport", Text = "Json Export" },
                         new()
-                        {Id = "JsonExport2", Text = "Json Export"}, new()
-                        {Id = "Excel", Text = "Excel Export"}, new()
-                        {Id = "Pdf", Text = "Pdf Export"}
+                        {Id = "JsonExport2", Text = "Json Export"}
+                        //, new()
+                        //{Id = "Excel", Text = "Excel Export"}, new()
+                        //{Id = "Pdf", Text = "Pdf Export"}
                         }
                     };
                 }
