@@ -383,7 +383,7 @@ namespace Notes2022RCL.Pages.Admin
         /// <param name="selectedFiles">The selected files.</param>
         async Task FilesSelectedHandler(SelectedFile[] selectedFiles)
         {
-            var selectedFile = selectedFiles[0];
+            SelectedFile? selectedFile = selectedFiles[0];
             Stream myFile = await fileSelect.OpenFileStreamAsync(selectedFile.Name); // open a stream on the file
             StreamReader sr = new StreamReader(myFile); // get a reader
             string myText = await sr.ReadToEndAsync(); // read entire file as a string
@@ -395,14 +395,11 @@ namespace Notes2022RCL.Pages.Admin
             Navigation.NavigateTo("noteindex/" + fileId);
         }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-
         /// <summary>
         /// Imports the note file2.
         /// </summary>
         /// <param name="Id">The identifier.</param>
         async Task ImportNoteFile2(int Id)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             NoteFile file = files.List.ToList().Single(x => x.Id == Id);
             filename = file.NoteFileName;
@@ -417,6 +414,7 @@ namespace Notes2022RCL.Pages.Admin
                 parameters.Add("NoteFile", filename);
                 var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
                 await yModal.Result;
+                Navigation.NavigateTo("noteindex/" + fileId);
 
                 return;
             }
