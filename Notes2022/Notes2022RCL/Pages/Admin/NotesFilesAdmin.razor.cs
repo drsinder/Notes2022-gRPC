@@ -403,11 +403,24 @@ namespace Notes2022RCL.Pages.Admin
         /// <param name="Id">The identifier.</param>
         async Task ImportNoteFile2(int Id)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-
         {
             NoteFile file = files.List.ToList().Single(x => x.Id == Id);
             filename = file.NoteFileName;
             fileId = file.Id;
+
+            if (Globals.IsMaui)
+            {
+                Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
+                string txt = await mauiFileActions.ReadClipboard();
+                ModalParameters? parameters = new ModalParameters();
+                parameters.Add("UploadText", txt);
+                parameters.Add("NoteFile", filename);
+                var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
+                await yModal.Result;
+
+                return;
+            }
+
             fileSelect.SelectFiles();
         }
     }

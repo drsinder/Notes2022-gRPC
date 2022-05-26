@@ -136,6 +136,13 @@ namespace Notes2022RCL.Dialogs
         /// <param name="data">The data.</param>
         public async Task SaveAs(string filename, byte[] data)
         {
+            if(Globals.IsMaui)
+            {
+                Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
+                await mauiFileActions.SaveFileToClipBoard(data);
+                return;
+            }
+
 #pragma warning disable CS8604 // Possible null reference argument.
 
             await module.InvokeVoidAsync("saveAsFile", filename, Convert.ToBase64String(data));

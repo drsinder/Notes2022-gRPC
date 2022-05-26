@@ -156,7 +156,7 @@ namespace Notes2022RCL.Menus
             {
                 MenuItem item2;
 
-                if (Globals.IsMaui)
+                if (false && Globals.IsMaui)
                 {
                     item2 = item2 = new()
                     {
@@ -195,7 +195,7 @@ namespace Notes2022RCL.Menus
                 { Id = "SearchFromIndex", Text = "Search" });
 
 
-                if (Model.MyAccess.Write && !Globals.IsMaui)
+                if (Model.MyAccess.Write /*&& !Globals.IsMaui*/)
                     menuItems.Add(new MenuItem()
                     { Id = "Import", Text = "Import" });
 
@@ -490,11 +490,24 @@ namespace Notes2022RCL.Menus
         /// </summary>
         async Task ImportNoteFile2()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-
         {
             NoteFile file = Model.NoteFile;
             filename = file.NoteFileName;
             fileId = file.Id;
+
+            if (Globals.IsMaui)
+            {
+                Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
+                string txt = await mauiFileActions.ReadClipboard();
+                ModalParameters? parameters = new ModalParameters();
+                parameters.Add("UploadText", txt);
+                parameters.Add("NoteFile", filename);
+                var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
+                await yModal.Result;
+
+                return;
+            }
+
             fileSelect.SelectFiles();
         }
     }

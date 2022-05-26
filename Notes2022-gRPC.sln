@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2022RCL", "Notes2022\N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2022Maui", "Notes2022\Notes2022Maui\Notes2022Maui.csproj", "{FA4F6C3E-6E85-4BF3-9737-2DCD7CDAA918}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes2022MauiLib", "Notes2022\Notes2022MauiLib\Notes2022MauiLib.csproj", "{24277A62-6F77-4700-B7D9-A25D8D7B8B0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{FA4F6C3E-6E85-4BF3-9737-2DCD7CDAA918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA4F6C3E-6E85-4BF3-9737-2DCD7CDAA918}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FA4F6C3E-6E85-4BF3-9737-2DCD7CDAA918}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{24277A62-6F77-4700-B7D9-A25D8D7B8B0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24277A62-6F77-4700-B7D9-A25D8D7B8B0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24277A62-6F77-4700-B7D9-A25D8D7B8B0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24277A62-6F77-4700-B7D9-A25D8D7B8B0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

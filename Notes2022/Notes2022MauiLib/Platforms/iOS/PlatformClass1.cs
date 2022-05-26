@@ -1,0 +1,7 @@
+﻿namespace Notes2022MauiLib
+{
+    // All the code in this file is only included on iOS.
+    public class PlatformClass1
+    {
+    }
+}

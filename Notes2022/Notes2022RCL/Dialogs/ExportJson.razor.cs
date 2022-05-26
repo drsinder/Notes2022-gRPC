@@ -162,8 +162,8 @@ namespace Notes2022RCL.Dialogs
         {
             if (Globals.IsMaui)
             {
-
-                //File.WriteAllBytes(filename, data);  // *sigh* this fails due to access error
+                Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
+                await mauiFileActions.SaveFileToClipBoard(data);
             }
             else
             {
