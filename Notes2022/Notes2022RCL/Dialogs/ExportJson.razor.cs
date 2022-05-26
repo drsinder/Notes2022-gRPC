@@ -164,6 +164,7 @@ namespace Notes2022RCL.Dialogs
             {
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
                 await mauiFileActions.SaveFileToClipBoard(data);
+                model.myMenu.ExportDone();
             }
             else
             {

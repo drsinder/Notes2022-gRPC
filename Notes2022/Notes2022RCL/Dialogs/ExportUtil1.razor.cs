@@ -315,6 +315,7 @@ namespace Notes2022RCL.Dialogs
             {
                 model.myMenu.IsPrinting = false;
                 model.myMenu.Replot();
+                model.myMenu.ExportDone();
             }
 
             return ms;

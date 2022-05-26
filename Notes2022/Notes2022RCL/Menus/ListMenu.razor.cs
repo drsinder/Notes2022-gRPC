@@ -424,6 +424,12 @@ namespace Notes2022RCL.Menus
             catch (Exception) { }
         }
 
+        public void ExportDone()
+        {
+            if (Globals.IsMaui)
+                ShowMessage("Export has been placced in clipboard!");
+        }
+
         /// <summary>
         /// Prepare Json output
         /// </summary>
@@ -432,7 +438,7 @@ namespace Notes2022RCL.Menus
         {
             var parameters = new ModalParameters();
             ExportViewModel vm = new()
-            { ArchiveNumber = Model.ArcId, NoteFile = Model.NoteFile, NoteOrdinal = 0, isCollapsible = ext };
+            { ArchiveNumber = Model.ArcId, NoteFile = Model.NoteFile, NoteOrdinal = 0, isCollapsible = ext, myMenu = this };
             parameters.Add("model", vm);
             Modal.Show<ExportJson>("", parameters);
         }
@@ -510,6 +516,17 @@ namespace Notes2022RCL.Menus
             }
 
             fileSelect.SelectFiles();
+        }
+
+        /// <summary>
+        /// Handle state change for expand all switch
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private void ShowMessage(string message)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add("MessageInput", message);
+            Modal.Show<MessageBox>("", parameters);
         }
     }
 }
