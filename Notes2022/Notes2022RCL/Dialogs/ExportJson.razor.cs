@@ -134,7 +134,7 @@ namespace Notes2022RCL.Dialogs
         /// once.</remarks>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            if (firstRender && !Globals.IsMaui)
             {
                 module = await JS.InvokeAsync<IJSObjectReference>("import", "./scripts.js");
             }
@@ -159,10 +159,17 @@ namespace Notes2022RCL.Dialogs
         /// <param name="data">The data.</param>
         public async Task SaveAs(string filename, byte[] data)
         {
+            if (Globals.IsMaui)
+            {
+                File.WriteAllBytes(filename, data);  // *sigh* this fails due to access error
+            }
+            else
+            {
 #pragma warning disable CS8604 // Possible null reference argument.
 
-            await module.InvokeVoidAsync("saveAsFile", filename, Convert.ToBase64String(data));
+                await module.InvokeVoidAsync("saveAsFile", filename, Convert.ToBase64String(data));
 #pragma warning restore CS8604 // Possible null reference argument.
+            }
 
         }
     }

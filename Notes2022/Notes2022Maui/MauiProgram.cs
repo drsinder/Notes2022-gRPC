@@ -40,7 +40,7 @@ namespace Notes2022Maui
 
             builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
 
-            string baseUri = "https://localhost:7133/"; // "https://www.drsinder.com:448"; "https://localhost:7133/"; 
+            string baseUri = "https://www.drsinder.com:448"; // "https://www.drsinder.com:448"; "https://localhost:7133/"; 
             Notes2022RCL.Globals.ServerAddress = baseUri;
 
             // Add my gRPC service so it can be injected.
