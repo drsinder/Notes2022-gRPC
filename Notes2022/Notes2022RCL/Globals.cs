@@ -4,13 +4,33 @@
 // Created          : 04-19-2022
 //
 // Last Modified By : Dale Sinder
-// Last Modified On : 05-06-2022
+// Last Modified On : 05-24-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: Globals.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
 // ***********************************************************************
 // <copyright file="Globals.cs" company="Notes2022.Client">
 //     Copyright (c) 2022 Dale Sinder. All rights reserved.
 // </copyright>
-// <summary></summary>
 // ***********************************************************************
+// <summary></summary>
 
 using Notes2022RCL.Menus;
 using Notes2022RCL.Pages.Admin;
@@ -60,10 +80,22 @@ namespace Notes2022RCL
         /// <value>The goto note.</value>
         public static long GotoNote { get; set; } = 0;
 
+        /// <summary>
+        /// Gets or sets the interval.
+        /// </summary>
+        /// <value>The interval.</value>
         public static int Interval { get; set; } = 0;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is maui.
+        /// </summary>
+        /// <value><c>true</c> if this instance is maui; otherwise, <c>false</c>.</value>
         public static bool IsMaui { get; set; } = false;
 
+        /// <summary>
+        /// Gets or sets the server address.
+        /// </summary>
+        /// <value>The server address.</value>
         public static string ServerAddress { get; set; } = string.Empty;
 
         /// <summary>

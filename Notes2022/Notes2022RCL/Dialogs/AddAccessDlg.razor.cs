@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: AddAccessDlg.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="AddAccessDlg.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Blazored.Modal;
 using Microsoft.AspNetCore.Components;
 using Notes2022.Proto;
@@ -5,6 +38,11 @@ using System.Timers;
 
 namespace Notes2022RCL.Dialogs
 {
+    /// <summary>
+    /// Class AddAccessDlg.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class AddAccessDlg
     {
         /// <summary>
@@ -61,7 +99,7 @@ namespace Notes2022RCL.Dialogs
         Blazored.SessionStorage.ISessionStorageService sessionStorage { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref = "AddAccessDlg"/> class.
+        /// Initializes a new instance of the <see cref="AddAccessDlg" /> class.
         /// </summary>
         public AddAccessDlg()
         {
@@ -116,8 +154,8 @@ namespace Notes2022RCL.Dialogs
         /// <summary>
         /// Dones the specified source.
         /// </summary>
-        /// <param name = "source">The source.</param>
-        /// <param name = "e">The <see cref = "ElapsedEventArgs"/> instance containing the event data.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
         public void Done(Object source, ElapsedEventArgs e)
         {
             delay.Enabled = false;

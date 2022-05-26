@@ -1,7 +1,45 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: Preferences.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="Preferences.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Notes2022.Proto;
 
 namespace Notes2022RCL.Pages
 {
+    /// <summary>
+    /// Class Preferences.
+    /// Implements the <see cref="Microsoft.AspNetCore.Components.ComponentBase" />
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
     public partial class Preferences
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -30,6 +68,10 @@ namespace Notes2022RCL.Pages
         /// <value>The size of the page.</value>
         private string pageSize { get; set; }
 
+        /// <summary>
+        /// Creates new check.
+        /// </summary>
+        /// <value>The new check.</value>
         private string NewCheck { get; set; }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -72,9 +114,9 @@ namespace Notes2022RCL.Pages
         public class LocalModel2
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref = "LocalModel2"/> class.
+            /// Initializes a new instance of the <see cref="LocalModel2" /> class.
             /// </summary>
-            /// <param name = "psize">The psize.</param>
+            /// <param name="psize">The psize.</param>
             public LocalModel2(string psize)
             {
                 Psize = psize;
@@ -82,10 +124,10 @@ namespace Notes2022RCL.Pages
             }
 
             /// <summary>
-            /// Initializes a new instance of the <see cref = "LocalModel2"/> class.
+            /// Initializes a new instance of the <see cref="LocalModel2" /> class.
             /// </summary>
-            /// <param name = "psize">The psize.</param>
-            /// <param name = "name">The name.</param>
+            /// <param name="psize">The psize.</param>
+            /// <param name="name">The name.</param>
             public LocalModel2(string psize, string name)
             {
                 Psize = psize;

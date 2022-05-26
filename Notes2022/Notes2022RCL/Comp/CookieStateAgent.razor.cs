@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: CookieStateAgent.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="CookieStateAgent.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Grpc.Core;
 using Microsoft.JSInterop;
 using Notes2022.Proto;
@@ -7,6 +40,13 @@ using System.Timers;
 
 namespace Notes2022RCL.Comp
 {
+    /// <summary>
+    /// Class CookieStateAgent.
+    /// Implements the <see cref="Microsoft.AspNetCore.Components.ComponentBase" />
+    /// Implements the <see cref="System.IAsyncDisposable" />
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+    /// <seealso cref="System.IAsyncDisposable" />
     public partial class CookieStateAgent
     {
         /// <summary>
@@ -17,6 +57,10 @@ namespace Notes2022RCL.Comp
         /// The module for calling javascript
         /// </summary>
         private IJSObjectReference? module; // for calling javascript
+        /// <summary>
+        /// Gets or sets the pinger.
+        /// </summary>
+        /// <value>The pinger.</value>
         private System.Timers.Timer pinger { get; set; }
 
 
@@ -81,6 +125,11 @@ namespace Notes2022RCL.Comp
             }
         }
 
+        /// <summary>
+        /// Pings the specified source.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="e">The <see cref="ElapsedEventArgs"/> instance containing the event data.</param>
         protected void Ping(Object source, ElapsedEventArgs e)
         {
             //if (Globals.IsMaui)
@@ -129,7 +178,7 @@ namespace Notes2022RCL.Comp
         /// <summary>
         /// Read a cookie
         /// </summary>
-        /// <param name = "cookieName">cookie name</param>
+        /// <param name="cookieName">cookie name</param>
         /// <returns>needs to be deserialized)</returns>
         public async Task<string?> ReadCookie(string cookieName)
         {
@@ -153,9 +202,9 @@ namespace Notes2022RCL.Comp
         /// <summary>
         /// Write a Cookie
         /// </summary>
-        /// <param name = "cookieName">Name of the cookie</param>
-        /// <param name = "newCookie">Serialized cookie</param>
-        /// <param name = "hours">expiry</param>
+        /// <param name="cookieName">Name of the cookie</param>
+        /// <param name="newCookie">Serialized cookie</param>
+        /// <param name="hours">expiry</param>
         public async Task WriteCookie(string cookieName, string newCookie, int hours)
         {
             if (Globals.IsMaui)
@@ -180,9 +229,7 @@ namespace Notes2022RCL.Comp
         /// <summary>
         /// Gets or sets the login reply.  Setting also notifies subsrcibers
         /// </summary>
-        /// <value>
-        /// The LoginReply - the current state of login.
-        /// </value>
+        /// <value>The LoginReply - the current state of login.</value>
         public LoginReply? LoginReply
         {
             get

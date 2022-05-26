@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: AccessList.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="AccessList.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
@@ -6,6 +39,11 @@ using Syncfusion.Blazor.Grids;
 
 namespace Notes2022RCL.Dialogs
 {
+    /// <summary>
+    /// Class AccessList.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class AccessList
     {
         /// <summary>
@@ -83,7 +121,7 @@ namespace Notes2022RCL.Dialogs
 #pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
-        /// Initializes a new instance of the <see cref = "AccessList"/> class.
+        /// Initializes a new instance of the <see cref="AccessList" /> class.
         /// </summary>
         public AccessList()
         {
@@ -132,7 +170,7 @@ namespace Notes2022RCL.Dialogs
         /// <summary>
         /// Item deleted - refresh list
         /// </summary>
-        /// <param name = "newMessage">The new message.</param>
+        /// <param name="newMessage">The new message.</param>
         protected async Task ClickHandler(string newMessage)
         {
             arcId = await sessionStorage.GetItemAsync<int>("ArcId");

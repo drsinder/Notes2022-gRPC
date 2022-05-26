@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: ListMenu.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="ListMenu.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
@@ -13,6 +46,11 @@ using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
 
 namespace Notes2022RCL.Menus
 {
+    /// <summary>
+    /// Class ListMenu.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class ListMenu
     {
         /// <summary>
@@ -86,7 +124,7 @@ namespace Notes2022RCL.Menus
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Initializes a new instance of the <see cref = "ListMenu"/> class.
+        /// Initializes a new instance of the <see cref="ListMenu" /> class.
         /// </summary>
         public ListMenu() // needed for injection above...
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -175,7 +213,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// When a Menu item is selected
         /// </summary>
-        /// <param name = "e">The e.</param>
+        /// <param name="e">The e.</param>
         private async Task OnSelect(MenuEventArgs<MenuItem> e)
         {
             await ExecMenu(e.Item.Id);
@@ -184,7 +222,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// The container has a refernce to "this" and can call this method...
         /// </summary>
-        /// <param name = "id">The identifier.</param>
+        /// <param name="id">The identifier.</param>
         public async Task ExecMenu(string id)
         {
             switch (id)
@@ -358,10 +396,10 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Export a file
         /// </summary>
-        /// <param name = "isHtml">true if in html format - else text</param>
-        /// <param name = "isCollapsible">collapsible/expandable html?</param>
-        /// <param name = "isEmail">Should we mail it?</param>
-        /// <param name = "emailaddr">Where to mail it</param>
+        /// <param name="isHtml">true if in html format - else text</param>
+        /// <param name="isCollapsible">collapsible/expandable html?</param>
+        /// <param name="isEmail">Should we mail it?</param>
+        /// <param name="emailaddr">Where to mail it</param>
         private void DoExport(bool isHtml, bool isCollapsible, bool isEmail = false, string emailaddr = "")
         {
             var parameters = new ModalParameters();
@@ -388,7 +426,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Prepare Json output
         /// </summary>
-        /// <param name = "ext">if set to <c>true</c> [ext].</param>
+        /// <param name="ext">if set to <c>true</c> [ext].</param>
         private void DoJson(bool ext = false)
         {
             var parameters = new ModalParameters();
@@ -415,9 +453,22 @@ namespace Notes2022RCL.Menus
             DoExport(true, true, true, emailaddr);
         }
 
+        /// <summary>
+        /// The file select
+        /// </summary>
         protected FileSelect fileSelect;
+        /// <summary>
+        /// The filename
+        /// </summary>
         protected string filename;
+        /// <summary>
+        /// The file identifier
+        /// </summary>
         protected int fileId;
+        /// <summary>
+        /// Fileses the selected handler.
+        /// </summary>
+        /// <param name="selectedFiles">The selected files.</param>
         async Task FilesSelectedHandler(SelectedFile[] selectedFiles)
         {
             var selectedFile = selectedFiles[0];
@@ -434,6 +485,9 @@ namespace Notes2022RCL.Menus
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
+        /// <summary>
+        /// Imports the note file2.
+        /// </summary>
         async Task ImportNoteFile2()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 

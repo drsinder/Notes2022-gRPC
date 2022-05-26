@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: NoteIndex.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="NoteIndex.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
@@ -17,6 +50,11 @@ using Timer = System.Timers.Timer;
 
 namespace Notes2022RCL.Pages
 {
+    /// <summary>
+    /// Class NoteIndex.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class NoteIndex
     {
         /// <summary>
@@ -46,6 +84,10 @@ namespace Notes2022RCL.Pages
         /// <value>My menu.</value>
         protected ListMenu MyMenu { get; set; }
 
+        /// <summary>
+        /// Gets or sets my note panel.
+        /// </summary>
+        /// <value>My note panel.</value>
         public NotePanel MyNotePanel { get; set; }
 
         /// <summary>
@@ -135,7 +177,7 @@ namespace Notes2022RCL.Pages
         Blazored.SessionStorage.ISessionStorageService sessionStorage { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref = "NoteIndex"/> class.
+        /// Initializes a new instance of the <see cref="NoteIndex" /> class.
         /// </summary>
         public NoteIndex()
         {
@@ -213,7 +255,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Note selected for display
         /// </summary>
-        /// <param name = "args">The arguments.</param>
+        /// <param name="args">The arguments.</param>
         protected void DisplayIt(RowSelectEventArgs<NoteHeader> args)
         {
             sessionStorage.SetItemAsync("IndexPage", sfGrid1.PageSettings.CurrentPage).GetAwaiter();
@@ -228,7 +270,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Goto a specific note
         /// </summary>
-        /// <param name = "Id">The identifier.</param>
+        /// <param name="Id">The identifier.</param>
         public void GotoNote(long Id)
         {
             CurrentNoteId = Id;
@@ -255,7 +297,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Get the next base note header given the current one
         /// </summary>
-        /// <param name = "oh">The oh.</param>
+        /// <param name="oh">The oh.</param>
         /// <returns>System.Int64.</returns>
         public long GetNextBaseNote(NoteHeader oh)
         {
@@ -271,7 +313,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Get the nest note given the current one
         /// </summary>
-        /// <param name = "oh">The oh.</param>
+        /// <param name="oh">The oh.</param>
         /// <returns>System.Int64.</returns>
         public long GetNextNote(NoteHeader oh)
         {
@@ -288,7 +330,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Get the previous base note
         /// </summary>
-        /// <param name = "oh">The oh.</param>
+        /// <param name="oh">The oh.</param>
         /// <returns>System.Int64.</returns>
         public long GetPreviousBaseNote(NoteHeader oh)
         {
@@ -302,7 +344,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Get the previous note
         /// </summary>
-        /// <param name = "oh">The oh.</param>
+        /// <param name="oh">The oh.</param>
         /// <returns>System.Int64.</returns>
         public long GetPreviousNote(NoteHeader oh)
         {
@@ -319,7 +361,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Get just the response headers for the given noteid
         /// </summary>
-        /// <param name = "headerId">The header identifier.</param>
+        /// <param name="headerId">The header identifier.</param>
         /// <returns>List&lt;NoteHeader&gt;.</returns>
         public List<NoteHeader> GetResponseHeaders(long headerId)
         {
@@ -338,8 +380,8 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Get note header Id given note ordinal and response ordinal
         /// </summary>
-        /// <param name = "noteOrd">The note ord.</param>
-        /// <param name = "respOrd">The resp ord.</param>
+        /// <param name="noteOrd">The note ord.</param>
+        /// <param name="respOrd">The resp ord.</param>
         /// <returns>System.Int64.</returns>
         public long GetNoteHeaderId(int noteOrd, int respOrd)
         {
@@ -383,12 +425,33 @@ namespace Notes2022RCL.Pages
         /// </summary>
         public enum SearchOption
         {
+            /// <summary>
+            /// The author
+            /// </summary>
             Author,
+            /// <summary>
+            /// The title
+            /// </summary>
             Title,
+            /// <summary>
+            /// The content
+            /// </summary>
             Content,
+            /// <summary>
+            /// The tag
+            /// </summary>
             Tag,
+            /// <summary>
+            /// The dir mess
+            /// </summary>
             DirMess,
+            /// <summary>
+            /// The time is after
+            /// </summary>
             TimeIsAfter,
+            /// <summary>
+            /// The time is before
+            /// </summary>
             TimeIsBefore
         }
 
@@ -480,7 +543,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Starts the search.
         /// </summary>
-        /// <param name = "target">The target.</param>
+        /// <param name="target">The target.</param>
         public async Task StartSearch(Search target)
         {
             //message = "Searching... Please Wait...";
@@ -515,7 +578,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Searches the tags.
         /// </summary>
-        /// <param name = "target">The target.</param>
+        /// <param name="target">The target.</param>
         protected async Task SearchTags(Search target)
         {
             if (Model.Tags == null || Model.Tags.Count == 0)
@@ -560,7 +623,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Searches the header.
         /// </summary>
-        /// <param name = "target">The target.</param>
+        /// <param name="target">The target.</param>
         protected async Task SearchHeader(Search target)
         {
             results = new List<NoteHeader>();
@@ -611,7 +674,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Searches the contents.
         /// </summary>
-        /// <param name = "target">The target.</param>
+        /// <param name="target">The target.</param>
         protected async Task SearchContents(Search target)
         {
             results = new List<NoteHeader>();
@@ -715,7 +778,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Actions the complete handler.
         /// </summary>
-        /// <param name = "args">The arguments.</param>
+        /// <param name="args">The arguments.</param>
         public async void ActionCompleteHandler(ActionEventArgs<NoteHeader> args)
         {
             await sessionStorage.SetItemAsync("IndexPage", sfGrid1.PageSettings.CurrentPage);
@@ -725,7 +788,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Potential navigation event when ever a key up occurs
         /// </summary>
-        /// <param name = "args">The <see cref = "KeyboardEventArgs"/> instance containing the event data.</param>
+        /// <param name="args">The <see cref="KeyboardEventArgs" /> instance containing the event data.</param>
         private async Task KeyUpHandler(KeyboardEventArgs args)
         {
             // handle single key press events
@@ -862,7 +925,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Accumulate input
         /// </summary>
-        /// <param name = "args">The <see cref = "InputEventArgs"/> instance containing the event data.</param>
+        /// <param name="args">The <see cref="InputEventArgs" /> instance containing the event data.</param>
         private async void NavInputHandler(InputEventArgs args)
         {
             NavString = args.Value;
@@ -885,7 +948,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Handle state change for expand all switch
         /// </summary>
-        /// <param name = "message">The message.</param>
+        /// <param name="message">The message.</param>
         private void ShowMessage(string message)
         {
             var parameters = new ModalParameters();
@@ -895,12 +958,19 @@ namespace Notes2022RCL.Pages
 
 #pragma warning restore CS8604 // Possible null reference argument.
 
+        /// <summary>
+        /// The reloader
+        /// </summary>
         private Timer Reloader;
         /// <summary>
         /// On after render as an asynchronous operation.
         /// </summary>
-        /// <param name = "firstRender">if set to <c>true</c> [first render].</param>
+        /// <param name="firstRender">if set to <c>true</c> [first render].</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
+        /// <remarks>The <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)" /> and <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)" /> lifecycle methods
+        /// are useful for performing interop, or interacting with values received from <c>@ref</c>.
+        /// Use the <paramref name="firstRender" /> parameter to ensure that initialization work is only performed
+        /// once.</remarks>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
@@ -928,6 +998,11 @@ namespace Notes2022RCL.Pages
             }
         }
 
+        /// <summary>
+        /// Reloads the specified source.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="e">The <see cref="ElapsedEventArgs"/> instance containing the event data.</param>
         protected async void Reload(Object source, ElapsedEventArgs e)
         {
             Reloader.Enabled = true;

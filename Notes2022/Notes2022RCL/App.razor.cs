@@ -1,34 +1,36 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Components;
-//using Microsoft.AspNetCore.Components.Web;
-//using System.Net.Http;
-//using System.Net.Http.Json;
-//using Microsoft.AspNetCore.Components.Forms;
-//using Microsoft.AspNetCore.Components.Web.Virtualization;
-//using Microsoft.AspNetCore.Components.WebAssembly.Http;
-//using Microsoft.JSInterop;
-//using Notes2022RCL;
-//using Notes2022.Proto;
-//using Blazored;
-//using Blazored.Modal;
-//using Blazored.Modal.Services;
-//using W8lessLabs.Blazor.LocalFiles;
-//using Syncfusion.Blazor;
-//using Syncfusion.Blazor.Navigations;
-//using Syncfusion.Blazor.Buttons;
-//using Syncfusion.Blazor.Grids;
-//using Syncfusion.Blazor.LinearGauge;
-//using Syncfusion.Blazor.Inputs;
-//using Syncfusion.Blazor.SplitButtons;
-//using Syncfusion.Blazor.Calendars;
-//using Microsoft.AspNetCore.Components.Routing;
-//using Syncfusion.Licensing;
-//using System.Timers;
-//using Grpc.Core;
-//using System.Text.Json;
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: App.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="App.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 
 //namespace Notes2022RCL
 //{

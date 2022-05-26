@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: NotesFilesAdmin.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="NotesFilesAdmin.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
@@ -6,6 +39,11 @@ using W8lessLabs.Blazor.LocalFiles;
 
 namespace Notes2022RCL.Pages.Admin
 {
+    /// <summary>
+    /// Class NotesFilesAdmin.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class NotesFilesAdmin
     {
 #pragma warning disable IDE1006 // Naming Styles
@@ -60,7 +98,7 @@ namespace Notes2022RCL.Pages.Admin
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Initializes a new instance of the <see cref = "NotesFilesAdmin"/> class.
+        /// Initializes a new instance of the <see cref="NotesFilesAdmin" /> class.
         /// </summary>
         public NotesFilesAdmin()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -174,7 +212,7 @@ namespace Notes2022RCL.Pages.Admin
         /// <summary>
         /// Creates the note file.
         /// </summary>
-        /// <param name = "Id">The identifier.</param>
+        /// <param name="Id">The identifier.</param>
         async void CreateNoteFile(int Id)
         {
             try
@@ -194,7 +232,7 @@ namespace Notes2022RCL.Pages.Admin
         /// <summary>
         /// Gets the application users.
         /// </summary>
-        /// <param name = "other">The other.</param>
+        /// <param name="other">The other.</param>
         /// <returns>List&lt;GAppUser&gt;.</returns>
         private List<GAppUser> GetApplicationUsers(GAppUserList other)
         {
@@ -210,7 +248,7 @@ namespace Notes2022RCL.Pages.Admin
         /// <summary>
         /// Deletes the note file.
         /// </summary>
-        /// <param name = "Id">The identifier.</param>
+        /// <param name="Id">The identifier.</param>
         async void DeleteNoteFile(int Id)
         {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -243,7 +281,7 @@ namespace Notes2022RCL.Pages.Admin
         /// <summary>
         /// Notes the file details.
         /// </summary>
-        /// <param name = "Id">The identifier.</param>
+        /// <param name="Id">The identifier.</param>
         async void NoteFileDetails(int Id)
         {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -269,7 +307,7 @@ namespace Notes2022RCL.Pages.Admin
         /// <summary>
         /// Edits the note file.
         /// </summary>
-        /// <param name = "Id">The identifier.</param>
+        /// <param name="Id">The identifier.</param>
         async void EditNoteFile(int Id)
         {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -327,9 +365,22 @@ namespace Notes2022RCL.Pages.Admin
         //                return;
         //            }
         //        }
+        /// <summary>
+        /// The file select
+        /// </summary>
         protected FileSelect fileSelect;
+        /// <summary>
+        /// The filename
+        /// </summary>
         protected string filename;
+        /// <summary>
+        /// The file identifier
+        /// </summary>
         protected int fileId;
+        /// <summary>
+        /// Fileses the selected handler.
+        /// </summary>
+        /// <param name="selectedFiles">The selected files.</param>
         async Task FilesSelectedHandler(SelectedFile[] selectedFiles)
         {
             var selectedFile = selectedFiles[0];
@@ -346,6 +397,10 @@ namespace Notes2022RCL.Pages.Admin
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
+        /// <summary>
+        /// Imports the note file2.
+        /// </summary>
+        /// <param name="Id">The identifier.</param>
         async Task ImportNoteFile2(int Id)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 

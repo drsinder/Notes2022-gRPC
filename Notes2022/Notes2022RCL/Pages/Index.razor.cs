@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: Index.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="Index.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Microsoft.AspNetCore.Components;
 using Notes2022.Proto;
 using Syncfusion.Blazor.DropDowns;
@@ -5,6 +38,11 @@ using System.Timers;
 
 namespace Notes2022RCL.Pages
 {
+    /// <summary>
+    /// Class Index.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class Index
     {
         /// <summary>
@@ -71,7 +109,7 @@ namespace Notes2022RCL.Pages
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Initializes a new instance of the <see cref = "Index"/> class.
+        /// Initializes a new instance of the <see cref="Index" /> class.
         /// </summary>
         public Index() // Needed for above Injection
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -82,11 +120,11 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Method invoked after each time the component has been rendered.
         /// </summary>
-        /// <param name = "firstRender">Set to <c>true</c> if this is the first time <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)"/> has been invoked
+        /// <param name="firstRender">Set to <c>true</c> if this is the first time <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)" /> has been invoked
         /// on this component instance; otherwise <c>false</c>.</param>
-        /// <remarks>The <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)"/> and <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)"/> lifecycle methods
+        /// <remarks>The <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)" /> and <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)" /> lifecycle methods
         /// are useful for performing interop, or interacting with values received from <c>@ref</c>.
-        /// Use the <paramref name = "firstRender"/> parameter to ensure that initialization work is only performed
+        /// Use the <paramref name="firstRender" /> parameter to ensure that initialization work is only performed
         /// once.</remarks>
         protected override void OnAfterRender(bool firstRender)
         {
@@ -172,8 +210,8 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Timers the tick2.
         /// </summary>
-        /// <param name = "source">The source.</param>
-        /// <param name = "e">The <see cref = "ElapsedEventArgs"/> instance containing the event data.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
         protected void TimerTick2(Object source, ElapsedEventArgs e)
         {
             if (++ticks == 10)
@@ -194,7 +232,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Handle typed in file name
         /// </summary>
-        /// <param name = "value">The value.</param>
+        /// <param name="value">The value.</param>
         protected void TextHasChanged(string value)
         {
             value = value.Trim().Replace("'\n", "").Replace("'\r", ""); //.Replace(" ", "");
@@ -218,7 +256,7 @@ namespace Notes2022RCL.Pages
         /// <summary>
         /// Values the change handler.
         /// </summary>
-        /// <param name = "args">The arguments.</param>
+        /// <param name="args">The arguments.</param>
         private void ValueChangeHandler(ChangeEventArgs<int, NoteFile> args)
         {
             Navigation.NavigateTo("noteindex/" + args.Value); // goto the file

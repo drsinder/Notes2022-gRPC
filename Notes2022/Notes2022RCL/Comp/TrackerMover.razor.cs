@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: TrackerMover.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="TrackerMover.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Microsoft.AspNetCore.Components;
 using Notes2022.Proto;
 using Notes2022RCL.Pages;
@@ -5,6 +38,11 @@ using Syncfusion.Blazor.SplitButtons;
 
 namespace Notes2022RCL.Comp
 {
+    /// <summary>
+    /// Class TrackerMover.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class TrackerMover
     {
         /// <summary>
@@ -78,7 +116,7 @@ namespace Notes2022RCL.Comp
         /// <summary>
         /// Move an item as wished
         /// </summary>
-        /// <param name = "args">The <see cref = "MenuEventArgs"/> instance containing the event data.</param>
+        /// <param name="args">The <see cref="MenuEventArgs" /> instance containing the event data.</param>
         private async Task ItemSelected(MenuEventArgs args)
         {
             switch (args.Item.Text)
@@ -113,8 +151,8 @@ namespace Notes2022RCL.Comp
         /// <summary>
         /// Swap the postion of two trackers
         /// </summary>
-        /// <param name = "a">a.</param>
-        /// <param name = "b">The b.</param>
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
         private async Task Swap(Sequencer a, Sequencer b)
         {
             int aord = a.Ordinal;

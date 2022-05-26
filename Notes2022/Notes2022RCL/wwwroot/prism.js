@@ -4,13 +4,33 @@
 // Created          : 04-20-2022
 //
 // Last Modified By : Dale Sinder
-// Last Modified On : 11-20-2021
+// Last Modified On : 05-09-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: prism.js
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
 // ***********************************************************************
 // <copyright file="prism.js" company="Notes2022.Client">
 //     Copyright (c) 2022 Dale Sinder. All rights reserved.
 // </copyright>
-// <summary></summary>
 // ***********************************************************************
+// <summary></summary>
 /* PrismJS 1.25.0
 https://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript+aspnet+c+csharp+cpp+java+json+markup-templating+perl+php+powershell+cshtml+sql+wasm+xml-doc */
 /// <reference lib="WebWorker"/>
@@ -50,7 +70,7 @@ var Prism = (function (_self) {
 	var plainTextGrammar = {};
 
 
-	/// <var>The </var>
+	/// <var>The</var>
 	var _ = {
 		/**
 		 * By default, Prism will attempt to highlight all code elements (by calling {@link Prism.highlightAll}) on the

@@ -1,3 +1,36 @@
+// ***********************************************************************
+// Assembly         : Notes2022RCL
+// Author           : Dale Sinder
+// Created          : 05-24-2022
+//
+// Last Modified By : Dale Sinder
+// Last Modified On : 05-25-2022
+//
+// Copyright © 2022, Dale Sinder
+//
+// Name: NoteMenu.razor.cs
+//
+// Description:
+//      TODO
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License version 3 as
+// published by the Free Software Foundation.   
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+// GNU General Public License version 3 for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  version 3 along with this program in file "license-gpl-3.0.txt".
+//  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+// ***********************************************************************
+// <copyright file="NoteMenu.razor.cs" company="Notes2022RCL">
+//     Copyright (c) Dale Sinder. All rights reserved.
+// </copyright>
+// ***********************************************************************
+// <summary></summary>
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
@@ -9,6 +42,11 @@ using MenuItem = Syncfusion.Blazor.Navigations.MenuItem;
 
 namespace Notes2022RCL.Menus
 {
+    /// <summary>
+    /// Class NoteMenu.
+    /// Implements the <see cref="ComponentBase" />
+    /// </summary>
+    /// <seealso cref="ComponentBase" />
     public partial class NoteMenu
     {
         /// <summary>
@@ -62,7 +100,7 @@ namespace Notes2022RCL.Menus
         NavigationManager Navigation { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref = "NoteMenu"/> class.
+        /// Initializes a new instance of the <see cref="NoteMenu" /> class.
         /// </summary>
         public NoteMenu()
         {
@@ -71,7 +109,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Construct our menu based on user access token
         /// </summary>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing any asynchronous operation.</returns>
+        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
         protected override Task OnParametersSetAsync()
         {
             menuItems = new List<MenuItem>();
@@ -158,7 +196,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Menu item invoked
         /// </summary>
-        /// <param name = "e">The e.</param>
+        /// <param name="e">The e.</param>
         public async Task OnSelect(MenuEventArgs<MenuItem> e)
         {
             await ExecMenu(e.Item.Id);
@@ -168,7 +206,7 @@ namespace Notes2022RCL.Menus
         /// This can be called not only from above but also by the container
         /// that shares the same model
         /// </summary>
-        /// <param name = "id">The identifier.</param>
+        /// <param name="id">The identifier.</param>
         public async Task ExecMenu(string id)
         {
             long myId;
@@ -263,6 +301,9 @@ namespace Notes2022RCL.Menus
             }
         }
 
+        /// <summary>
+        /// Does the json.
+        /// </summary>
         protected void DoJson()
         {
             NoteHeadersRequest request = new()
@@ -299,10 +340,10 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Exports a note
         /// </summary>
-        /// <param name = "isHtml">if set to <c>true</c> [is HTML].</param>
-        /// <param name = "isCollapsible">if set to <c>true</c> [is collapsible].</param>
-        /// <param name = "isEmail">if set to <c>true</c> [is email].</param>
-        /// <param name = "emailaddr">The emailaddr.</param>
+        /// <param name="isHtml">if set to <c>true</c> [is HTML].</param>
+        /// <param name="isCollapsible">if set to <c>true</c> [is collapsible].</param>
+        /// <param name="isEmail">if set to <c>true</c> [is email].</param>
+        /// <param name="emailaddr">The emailaddr.</param>
         private void DoExport(bool isHtml, bool isCollapsible, bool isEmail = false, string emailaddr = "")
         {
             var parameters = new ModalParameters();
@@ -334,7 +375,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Confirmation dialog
         /// </summary>
-        /// <param name = "message">The message.</param>
+        /// <param name="message">The message.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         private async Task<bool> YesNo(string message)
         {
@@ -348,7 +389,7 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Shows the message.
         /// </summary>
-        /// <param name = "message">The message.</param>
+        /// <param name="message">The message.</param>
         private void ShowMessage(string message)
         {
             var parameters = new ModalParameters();
