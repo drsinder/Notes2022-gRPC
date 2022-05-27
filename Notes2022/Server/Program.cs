@@ -117,8 +117,8 @@ builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
            .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
 }));
 
-//builder.Services.AddControllers();
-//builder.Services.AddRazorPages();
+builder.Services.AddControllers();
+builder.Services.AddRazorPages();
 
 Globals.SendGridApiKey = builder.Configuration["SendGridApiKey"];
 Globals.SendGridEmail = builder.Configuration["SendGridEmail"];
