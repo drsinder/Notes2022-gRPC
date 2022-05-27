@@ -299,29 +299,33 @@ namespace Notes2022RCL.Menus
                 // make the whole menu
                 menuItemsTop = new List<MenuItem>();
                 MenuItem item;
-                item = new()
-                { Id = "Recent", Text = "Recent Notes" };
+                item = new() { Id = "Recent", Text = "Recent Notes" };
                 menuItemsTop.Add(item);
+
                 MenuItem item3 = new()
                 { Id = "Manage", Text = "Manage" };
-                item3.Items = new List<MenuItem>{new()
-                {Id = "MRecent", Text = "Recent"}, //new () { Id = "Subscriptions", Text = "Subscriptions" },
-                new()
-                {Id = "Preferences", Text = "Preferences"}};
+                item3.Items = new List<MenuItem>
+                {
+                    new() {Id = "MRecent", Text = "Recent"}, //new () { Id = "Subscriptions", Text = "Subscriptions" },
+                    new() {Id = "Preferences", Text = "Preferences"}
+                };
                 menuItemsTop.Add(item3);
                 item = new()
                 { Id = "Help", Text = "Help" };
-                item.Items = new List<MenuItem>{new()
-                {Id = "MainHelp", Text = "Help"}, new()
-                {Id = "About", Text = "About"}, new()
-                {Id = "License", Text = "License"}};
+                item.Items = new List<MenuItem>
+                {
+                    new() {Id = "MainHelp", Text = "Help"},
+                    new() {Id = "About", Text = "About"}, 
+                    new() {Id = "License", Text = "License"}
+                };
                 menuItemsTop.Add(item);
                 item = new MenuItem()
                 { Id = "Admin", Text = "Admin" };
-                item.Items = new List<MenuItem>{new()
-                {Id = "NoteFiles", Text = "NoteFiles"}, new()
-                {Id = "Roles", Text = "Roles"},  new () 
-                { Id = "Hangfire2x", Text = "Hangfire" }
+                item.Items = new List<MenuItem>
+                {
+                    new() {Id = "NoteFiles", Text = "NoteFiles"},
+                    new() {Id = "Hangfire2x", Text = "Hangfire"},
+                    new() {Id = "Roles", Text = "Roles"}
                 };
                 
                 //if (Globals.IsMaui)
