@@ -87,10 +87,22 @@ namespace Notes2022.Server
             else
                 await ems.SendEmailAsync(email, "Import Restarted!", "Your import to " + myNotesFile + " was interrupted and has been restarted.");
 
-
             JsonData it = await _db.JsonData.SingleAsync(p => p.Id == fileId);
 
-            JsonExport? myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(it.JsonText);
+            JsonExport myJson = new();
+            try
+            {
+                myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(it.JsonText);
+            }
+            catch(Exception ex)
+            {
+                _db.JsonData.Remove(it);
+                await _db.SaveChangesAsync();
+
+                await ems.SendEmailAsync(email, "Import Failed!", "Your import to " + myNotesFile + " Failed!  " + ex.Message);
+
+                return false;
+            }
 
             bool retval = await Import(myJson, myNotesFile, fileId);
 

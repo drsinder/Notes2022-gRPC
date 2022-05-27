@@ -35,6 +35,7 @@ using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
 using Notes2022.Proto;
+using Notes2022RCL.Dialogs;
 using W8lessLabs.Blazor.LocalFiles;
 
 namespace Notes2022RCL.Pages.Admin
@@ -409,10 +410,14 @@ namespace Notes2022RCL.Pages.Admin
             {
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
                 string txt = await mauiFileActions.ReadClipboard();
+
+                if (string.IsNullOrEmpty(txt) || !txt.StartsWith("{"))
+                    return;
+
                 ModalParameters? parameters = new ModalParameters();
                 parameters.Add("UploadText", txt);
                 parameters.Add("NoteFile", filename);
-                var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
+                var yModal = Modal.Show<Upload>("Upload2", parameters);
                 await yModal.Result;
                 Navigation.NavigateTo("noteindex/" + fileId);
 
@@ -421,5 +426,17 @@ namespace Notes2022RCL.Pages.Admin
 
             fileSelect.SelectFiles();
         }
+
+        /// <summary>
+        /// Shows the message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private void ShowMessage(string message)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add("MessageInput", message);
+            Modal.Show<MessageBox>("", parameters);
+        }
+
     }
 }

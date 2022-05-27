@@ -513,6 +513,8 @@ namespace Notes2022RCL.Menus
 
             if (Globals.IsMaui)
             {
+                ShowMessage("Be sure data to import is in the clipboard!!");
+
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
                 string txt = await mauiFileActions.ReadClipboard();
                 ModalParameters? parameters = new ModalParameters();
