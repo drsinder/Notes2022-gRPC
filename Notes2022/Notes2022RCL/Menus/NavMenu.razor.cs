@@ -231,9 +231,9 @@ namespace Notes2022RCL.Menus
                     case "Preferences":
                         Navigation.NavigateTo("preferences");
                         break;
-                    //case "Hangfire":
-                    //    Navigation.NavigateTo(Globals.EditUserVModel.HangfireLoc, true);
-                    //    break;
+                    case "Hangfire":
+                        Navigation.NavigateTo(myState.UserInfo.Hangfire, true);
+                        break;
                     case "Roles":
                         Navigation.NavigateTo("admin/editroles");
                         break;
@@ -320,6 +320,13 @@ namespace Notes2022RCL.Menus
                 {Id = "Roles", Text = "Roles"}//new () { Id = "Linked", Text = "Linked" }
                 //new () { Id = "Hangfire", Text = "Hangfire" }
                 };
+                
+                if (!Globals.IsMaui && myState.UserInfo.Hangfire.Length > 10)
+                {
+                    MenuItem item4 = new() { Id = "Hangfire", Text = "Hangfire" };
+                    item.Items.Add(item4);
+                }
+
                 menuItemsTop.Add(item);
                 // remove what does not apply to this user
                 if (!isAdmin)

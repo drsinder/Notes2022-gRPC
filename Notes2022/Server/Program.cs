@@ -23,6 +23,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.Dashboard;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -154,7 +156,15 @@ app.UseCors();
 //app.MapRazorPages();
 //app.MapControllers();
 
-app.UseHangfireDashboard();
+Globals.HangfireAddress = "/" + Guid.NewGuid().ToString() + "hangfire";
+
+//app.UseHangfireDashboard(Globals.HangfireAddress);
+
+app.UseHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
+{
+    Authorization = new[] { new MyAuthorizationFilter() }
+});
+
 
 app.UseEndpoints(endpoints =>
 {
@@ -164,3 +174,14 @@ app.UseEndpoints(endpoints =>
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+
+public class MyAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    [Authorize(Roles = "Admin")]
+    public bool Authorize(DashboardContext context)
+    {
+        return true;
+    }
+}
+

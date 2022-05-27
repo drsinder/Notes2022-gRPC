@@ -68,6 +68,8 @@ namespace Notes2022.Server
         /// <value>The send grid API key.</value>
         public static string SendGridApiKey { get; set; } = "";
 
+        public static string HangfireAddress { get; set; }
+
         /// <summary>
         /// Base64s the encode.
         /// </summary>
