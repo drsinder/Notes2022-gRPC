@@ -100,6 +100,9 @@ namespace Notes2022RCL.Menus
         /// </summary>
         /// <value>The nav menu CSS class.</value>
         private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+
+        private string myHang { get; set; } = string.Empty;
         /// <summary>
         /// Gets or sets the navigation.
         /// </summary>
@@ -324,10 +327,12 @@ namespace Notes2022RCL.Menus
                 item4.Items = new List<MenuItem>
                 {
                     new() {Id = "NoteFiles", Text = "NoteFiles"},
-                    new() {Id = "Hangfire", Text = "Jobs-Dashboard"},
                     new() {Id = "Roles", Text = "Roles"}
                     //new() {Id = "Roles", Text = "Roles"}
                 };
+
+                if (!Globals.IsMaui && isAdmin)
+                    myHang = myState.UserInfo.Hangfire;
                 
                 //if (Globals.IsMaui)
                 //    item.Items.RemoveAt(item.Items.Count - 1);
