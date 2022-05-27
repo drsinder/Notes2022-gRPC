@@ -513,7 +513,10 @@ namespace Notes2022RCL.Menus
 
             if (Globals.IsMaui)
             {
-                ShowMessage("Be sure data to import is in the clipboard!!");
+                IModalReference? xx = ShowYesNo("Be sure data to import is in the clipboard!!  Ready?");
+                ModalResult? res = await xx.Result;
+                if (res.Cancelled)
+                    return;
 
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
                 string txt = await mauiFileActions.ReadClipboard();
@@ -533,11 +536,20 @@ namespace Notes2022RCL.Menus
         /// Handle state change for expand all switch
         /// </summary>
         /// <param name="message">The message.</param>
-        private void ShowMessage(string message)
+        private IModalReference? ShowMessage(string message)
         {
             var parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
-            Modal.Show<MessageBox>("", parameters);
+            IModalReference? retval = Modal.Show<MessageBox>("", parameters);
+            return retval;
+        }
+
+        private IModalReference? ShowYesNo(string message)
+        {
+            var parameters = new ModalParameters();
+            parameters.Add("MessageInput", message);
+            IModalReference? retval = Modal.Show<YesNo>("", parameters);
+            return retval;
         }
     }
 }

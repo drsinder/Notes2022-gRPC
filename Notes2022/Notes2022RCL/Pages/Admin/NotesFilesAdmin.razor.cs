@@ -270,7 +270,7 @@ namespace Notes2022RCL.Pages.Admin
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             parameters.Add("FileTitle", file.NoteFileTitle);
-            var xModal = Modal.Show<Dialogs.DeleteNoteFile>("Delete", parameters);
+            IModalReference? xModal = Modal.Show<Dialogs.DeleteNoteFile>("Delete", parameters);
             var result = await xModal.Result;
             if (!result.Cancelled)
             {
@@ -408,6 +408,11 @@ namespace Notes2022RCL.Pages.Admin
 
             if (Globals.IsMaui)
             {
+                IModalReference? xx = ShowYesNo("Be sure data to import is in the clipboard!! Ready?");
+                ModalResult? res = await xx.Result;
+                if (res.Cancelled)
+                    return;
+
                 Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
                 string txt = await mauiFileActions.ReadClipboard();
 
@@ -431,11 +436,12 @@ namespace Notes2022RCL.Pages.Admin
         /// Shows the message.
         /// </summary>
         /// <param name="message">The message.</param>
-        private void ShowMessage(string message)
+        private IModalReference? ShowYesNo(string message)
         {
             var parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
-            Modal.Show<MessageBox>("", parameters);
+            IModalReference?  retval = Modal.Show<YesNo>("", parameters);
+            return retval;
         }
 
     }
