@@ -325,8 +325,8 @@ namespace Notes2022RCL.Menus
                 {
                     new() {Id = "NoteFiles", Text = "NoteFiles"},
                     new() {Id = "Roles", Text = "Roles"},
-                    new() {Id = "Hangfire", Text = "Jobs-Dashboard"}
-                    //new() {Id = "Hangfire", Text = "Hangfire"}
+                    new() {Id = "Hangfire", Text = "Jobs-Dashboard"},
+                    new() {Id = "Roles", Text = "Roles"}
                 };
                 
                 //if (Globals.IsMaui)
