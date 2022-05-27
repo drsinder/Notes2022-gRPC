@@ -44,12 +44,7 @@
 
   <ItemGroup>
     <Content Remove="App.razor" />
-    <Content Remove="wwwroot\service-worker.js" />
     <Content Remove="_Imports.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\service-worker.js" />
   </ItemGroup>
 
   <ItemGroup>

@@ -43,7 +43,6 @@
 
 
 	<ItemGroup>
-    <ProjectReference Include="..\Notes2022MauiLib\Notes2022MauiLib.csproj" />
     <ProjectReference Include="..\Shared\Notes2022.Shared.csproj" />
   </ItemGroup>
 
