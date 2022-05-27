@@ -34,6 +34,9 @@ builder.Services.AddSingleton<CookieStateAgent>();       // for login state mgt 
 
 builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
 
+
+Globals.IsMaui = false;
+
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
 {

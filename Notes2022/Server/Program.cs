@@ -156,7 +156,7 @@ app.UseCors();
 //app.MapRazorPages();
 //app.MapControllers();
 
-Globals.HangfireAddress = "/" + Guid.NewGuid().ToString() + "hangfire";
+Globals.HangfireAddress = "/" + Guid.NewGuid().ToString() + "-hangfire";
 
 //app.UseHangfireDashboard(Globals.HangfireAddress);
 

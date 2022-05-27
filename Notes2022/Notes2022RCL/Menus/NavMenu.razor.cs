@@ -34,6 +34,7 @@
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Notes2022.Proto;
 using Notes2022RCL.Dialogs;
 using Syncfusion.Blazor.Navigations;
@@ -125,9 +126,9 @@ namespace Notes2022RCL.Menus
         /// <summary>
         /// Initializes a new instance of the <see cref="NavMenu" /> class.
         /// </summary>
+        [Inject] IJSRuntime JS { get; set; }
         public NavMenu()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
         {
         }
 
@@ -232,7 +233,9 @@ namespace Notes2022RCL.Menus
                         Navigation.NavigateTo("preferences");
                         break;
                     case "Hangfire":
-                        Navigation.NavigateTo(myState.UserInfo.Hangfire, true);
+                        await JS.InvokeAsync<object>("open", myState.UserInfo.Hangfire, "_blank");
+
+                        //Navigation.NavigateTo(myState.UserInfo.Hangfire, true);
                         break;
                     case "Roles":
                         Navigation.NavigateTo("admin/editroles");
@@ -317,15 +320,12 @@ namespace Notes2022RCL.Menus
                 { Id = "Admin", Text = "Admin" };
                 item.Items = new List<MenuItem>{new()
                 {Id = "NoteFiles", Text = "NoteFiles"}, new()
-                {Id = "Roles", Text = "Roles"}//new () { Id = "Linked", Text = "Linked" }
-                //new () { Id = "Hangfire", Text = "Hangfire" }
+                {Id = "Roles", Text = "Roles"},    //new () { Id = "Linked", Text = "Linked" }
+                new () { Id = "Hangfire", Text = "Hangfire" }
                 };
                 
-                if (!Globals.IsMaui && myState.UserInfo.Hangfire.Length > 10)
-                {
-                    MenuItem item4 = new() { Id = "Hangfire", Text = "Hangfire" };
-                    item.Items.Add(item4);
-                }
+                if (Globals.IsMaui)
+                    item.Items.RemoveAt(item.Items.Count - 1);
 
                 menuItemsTop.Add(item);
                 // remove what does not apply to this user
