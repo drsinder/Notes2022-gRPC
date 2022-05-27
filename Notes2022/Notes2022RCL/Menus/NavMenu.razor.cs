@@ -319,9 +319,9 @@ namespace Notes2022RCL.Menus
                     new() {Id = "License", Text = "License"}
                 };
                 menuItemsTop.Add(item);
-                item = new MenuItem()
+                MenuItem item4 = new MenuItem()
                 { Id = "Admin", Text = "Admin" };
-                item.Items = new List<MenuItem>
+                item4.Items = new List<MenuItem>
                 {
                     new() {Id = "NoteFiles", Text = "NoteFiles"},
                     new() {Id = "Roles", Text = "Roles"},
@@ -332,7 +332,7 @@ namespace Notes2022RCL.Menus
                 //if (Globals.IsMaui)
                 //    item.Items.RemoveAt(item.Items.Count - 1);
 
-                menuItemsTop.Add(item);
+                menuItemsTop.Add(item4);
                 // remove what does not apply to this user
                 if (!isAdmin)
                 {
