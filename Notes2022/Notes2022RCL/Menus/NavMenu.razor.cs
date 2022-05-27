@@ -232,7 +232,7 @@ namespace Notes2022RCL.Menus
                     case "Preferences":
                         Navigation.NavigateTo("preferences");
                         break;
-                    case "Hangfire2x":
+                    case "Hangfire":
                         await JS.InvokeAsync<object>("open", myState.UserInfo.Hangfire, "_blank");
 
                         //Navigation.NavigateTo(myState.UserInfo.Hangfire, true);
@@ -324,8 +324,9 @@ namespace Notes2022RCL.Menus
                 item.Items = new List<MenuItem>
                 {
                     new() {Id = "NoteFiles", Text = "NoteFiles"},
-                    new() {Id = "Hangfire2x", Text = "Hangfire"},
-                    new() {Id = "Roles", Text = "Roles"}
+                    new() {Id = "Roles", Text = "Roles"},
+                    new() {Id = "Hangfire", Text = "Hangfire"}
+                    //new() {Id = "Hangfire", Text = "Hangfire"}
                 };
                 
                 //if (Globals.IsMaui)
