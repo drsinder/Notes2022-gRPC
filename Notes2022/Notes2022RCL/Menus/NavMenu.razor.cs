@@ -320,8 +320,9 @@ namespace Notes2022RCL.Menus
                 { Id = "Admin", Text = "Admin" };
                 item.Items = new List<MenuItem>{new()
                 {Id = "NoteFiles", Text = "NoteFiles"}, new()
-                {Id = "Roles", Text = "Roles"},    //new () { Id = "Linked", Text = "Linked" }
-                new () { Id = "Hangfire", Text = "Hangfire" }
+                {Id = "Roles", Text = "Roles"},  new () 
+                { Id = "Hangfire", Text = "Hangfire" },  new ()
+                { Id = "Hangfire", Text = "Hangfire" }
                 };
                 
                 //if (Globals.IsMaui)
