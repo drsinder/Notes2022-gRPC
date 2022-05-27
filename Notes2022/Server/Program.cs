@@ -156,11 +156,11 @@ app.UseCors();
 //app.MapRazorPages();
 //app.MapControllers();
 
-Globals.HangfireAddress = "/" + Guid.NewGuid().ToString() + "-hangfire";
+Globals.HangfireAddress = "/"   + Guid.NewGuid().ToString() + "-hangfire";
 
 //app.UseHangfireDashboard(Globals.HangfireAddress);
 
-app.UseHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
+app.UseHangfireDashboard("/hangfire-gork", new DashboardOptions
 {
     Authorization = new[] { new MyAuthorizationFilter() }
 });
