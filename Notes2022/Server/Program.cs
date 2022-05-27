@@ -22,6 +22,7 @@ using Notes2022.Server;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Hangfire;
 using Hangfire.SqlServer;
+using Hangfire.Dashboard;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -153,6 +154,8 @@ app.UseCors();
 //app.MapRazorPages();
 //app.MapControllers();
 
+app.UseHangfireDashboard();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapGrpcService<Notes2022Service>().EnableGrpcWeb().RequireCors("AllowAll");
@@ -161,4 +164,3 @@ app.UseEndpoints(endpoints =>
 app.MapFallbackToFile("index.html");
 
 app.Run();
-
