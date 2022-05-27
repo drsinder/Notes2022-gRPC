@@ -406,23 +406,23 @@ namespace Notes2022RCL.Pages.Admin
             filename = file.NoteFileName;
             fileId = file.Id;
 
-            //if (Globals.IsMaui)
-            //{
-            //    Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
-            //    string txt = await mauiFileActions.ReadClipboard();
+            if (Globals.IsMaui)
+            {
+                Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
+                string txt = await mauiFileActions.ReadClipboard();
 
-            //    if (string.IsNullOrEmpty(txt) || !txt.StartsWith("{"))
-            //        return;
+                if (string.IsNullOrEmpty(txt) || !txt.StartsWith("{"))
+                    return;
 
-            //    ModalParameters? parameters = new ModalParameters();
-            //    parameters.Add("UploadText", txt);
-            //    parameters.Add("NoteFile", filename);
-            //    var yModal = Modal.Show<Upload>("Upload2", parameters);
-            //    await yModal.Result;
-            //    Navigation.NavigateTo("noteindex/" + fileId);
+                ModalParameters? parameters = new ModalParameters();
+                parameters.Add("UploadText", txt);
+                parameters.Add("NoteFile", filename);
+                var yModal = Modal.Show<Upload>("Upload2", parameters);
+                await yModal.Result;
+                Navigation.NavigateTo("noteindex/" + fileId);
 
-            //    return;
-            //}
+                return;
+            }
 
             fileSelect.SelectFiles();
         }

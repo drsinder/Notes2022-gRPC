@@ -511,20 +511,20 @@ namespace Notes2022RCL.Menus
             filename = file.NoteFileName;
             fileId = file.Id;
 
-            //if (Globals.IsMaui)
-            //{
-            //    ShowMessage("Be sure data to import is in the clipboard!!");
+            if (Globals.IsMaui)
+            {
+                ShowMessage("Be sure data to import is in the clipboard!!");
 
-            //    Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
-            //    string txt = await mauiFileActions.ReadClipboard();
-            //    ModalParameters? parameters = new ModalParameters();
-            //    parameters.Add("UploadText", txt);
-            //    parameters.Add("NoteFile", filename);
-            //    var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
-            //    await yModal.Result;
+                Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
+                string txt = await mauiFileActions.ReadClipboard();
+                ModalParameters? parameters = new ModalParameters();
+                parameters.Add("UploadText", txt);
+                parameters.Add("NoteFile", filename);
+                var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
+                await yModal.Result;
 
-            //    return;
-            //}
+                return;
+            }
 
             fileSelect.SelectFiles();
         }

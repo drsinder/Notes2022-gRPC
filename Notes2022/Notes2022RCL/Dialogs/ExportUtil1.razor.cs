@@ -410,13 +410,13 @@ namespace Notes2022RCL.Dialogs
         /// <param name="data">The data.</param>
         public async Task SaveAs(string filename, byte[] data)
         {
-            //if (Globals.IsMaui)
-            //{
-            //    GAppUser ui = await Client.GetUserDataAsync(new(), myState.AuthHeader);
-            //    Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
-            //    SavedFileName = await mauiFileActions.SaveToFileAndClipBoard(filename, data, ui.Pref1);
-            //    return;
-            //}
+            if (Globals.IsMaui)
+            {
+                GAppUser ui = await Client.GetUserDataAsync(new(), myState.AuthHeader);
+                Notes2022MauiLib.MauiFileActions mauiFileActions = new Notes2022MauiLib.MauiFileActions();
+                SavedFileName = await mauiFileActions.SaveToFileAndClipBoard(filename, data, ui.Pref1);
+                return;
+            }
 
 #pragma warning disable CS8604 // Possible null reference argument.
 
