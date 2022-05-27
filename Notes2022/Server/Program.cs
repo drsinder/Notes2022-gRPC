@@ -160,7 +160,7 @@ Globals.HangfireAddress = "/"   + Guid.NewGuid().ToString() + "-hangfire";
 
 //app.UseHangfireDashboard(Globals.HangfireAddress);
 
-app.UseHangfireDashboard("/hangfire-gork", new DashboardOptions
+app.UseHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
 {
     Authorization = new[] { new MyAuthorizationFilter() }
 });

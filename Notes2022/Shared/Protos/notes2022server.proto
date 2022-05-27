@@ -272,7 +272,7 @@ message UserInfo {
 	//repeated string roles = 4;  // obsolete/not working with cookies
 	bool isAdmin = 5;
 	bool isUser = 6;
-	//string hangfire = 7;		// address of hangfire for Admins ONLY
+	string hangfire = 7;		// address of hangfire for Admins ONLY
 
 }
 

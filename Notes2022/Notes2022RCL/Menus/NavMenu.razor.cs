@@ -236,7 +236,7 @@ namespace Notes2022RCL.Menus
                         Navigation.NavigateTo("preferences");
                         break;
                     case "Hangfire":
-                        await JS.InvokeAsync<object>("open", " hangfire-gork", "_blank");
+                        await JS.InvokeAsync<object>("open", myState.UserInfo.Hangfire, "_blank");
 
                         //Navigation.NavigateTo(myState.UserInfo.Hangfire, true);
                         break;

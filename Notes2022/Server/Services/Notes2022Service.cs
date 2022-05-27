@@ -322,8 +322,8 @@ namespace Notes2022.Server.Services
                     IsUser = roles.Contains("User")
                 };
 
-                //if (userInfo.IsAdmin)
-                //    userInfo.Hangfire = Globals.HangfireAddress;
+                if (userInfo.IsAdmin)
+                    userInfo.Hangfire = Globals.HangfireAddress;
 
                 return new LoginReply() { Status = StatusCodes.Status200OK, Message = "Login successful.", Info = userInfo, Jwt = stoken };
             }
