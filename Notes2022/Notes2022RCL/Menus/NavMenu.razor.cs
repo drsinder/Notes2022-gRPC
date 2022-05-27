@@ -324,8 +324,8 @@ namespace Notes2022RCL.Menus
                 new () { Id = "Hangfire", Text = "Hangfire" }
                 };
                 
-                if (Globals.IsMaui)
-                    item.Items.RemoveAt(item.Items.Count - 1);
+                //if (Globals.IsMaui)
+                //    item.Items.RemoveAt(item.Items.Count - 1);
 
                 menuItemsTop.Add(item);
                 // remove what does not apply to this user
