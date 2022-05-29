@@ -1358,7 +1358,8 @@ namespace Notes2022.Server.Services
             return new AboutModel()
             {
                 PrimeAdminEmail = _configuration["PrimeAdminEmail"],
-                PrimeAdminName = _configuration["PrimeAdminName"]
+                PrimeAdminName = _configuration["PrimeAdminName"],
+                HostUri = _configuration["AppUrl"]
             };
         }
 

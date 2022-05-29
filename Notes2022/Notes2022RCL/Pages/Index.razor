@@ -22,9 +22,6 @@
     **
     **--------------------------------------------------------------------------*@
 
-
-@*@page "/"
-*@
 @using Notes2022.Proto
 @using Notes2022RCL.Comp
 @using Syncfusion.Blazor.DropDowns
@@ -33,7 +30,10 @@
 
 <PageTitle>Notes 2022 Index</PageTitle>
 
-<h2 class="center">Welcome to Notes 2022 @myState.UserInfo?.Displayname <img src="favicon.ico" width="32" /></h2>
+
+<div>
+
+<h2 class="center">Welcome to Notes 2022 @myState.UserInfo?.Displayname</h2>
 
 <div>
     <h5 class="center">
@@ -130,6 +130,6 @@
     } 
 </div>
 
-
+</div>
 
 

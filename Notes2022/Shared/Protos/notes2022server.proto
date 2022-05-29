@@ -431,6 +431,7 @@ message NoteId {
 message AboutModel {
 	string PrimeAdminName = 1;
 	string PrimeAdminEmail = 2;
+	string HostUri = 3;
 }
 
 // container for an email
