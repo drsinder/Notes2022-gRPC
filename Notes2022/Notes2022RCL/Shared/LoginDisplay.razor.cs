@@ -53,7 +53,7 @@ namespace Notes2022RCL.Shared
         /// </summary>
         private void GotoProfile()
         {
-            //Navigation.NavigateTo("authentication/profile");
+            Navigation.NavigateTo("preferences");
         }
 
         /// <summary>

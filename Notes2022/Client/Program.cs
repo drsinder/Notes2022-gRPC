@@ -22,6 +22,7 @@ using Notes2022RCL;
 using Notes2022.Proto;
 using Syncfusion.Blazor;
 using Notes2022RCL.Comp;
+using Syncfusion.Licensing;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -34,6 +35,7 @@ builder.Services.AddSingleton<CookieStateAgent>();       // for login state mgt 
 
 builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
 
+SyncfusionLicenseProvider.RegisterLicense("NjQ2OTU1QDMyMzAyZTMxMmUzMFBsUmI0QUljc2lmOTlRTHEyVFZMMkZjUmhVU0FkWnBwbWRYRWtkcEQ0ZFU9");
 
 Globals.IsMaui = false;
 
@@ -41,9 +43,12 @@ Globals.IsMaui = false;
 builder.Services.AddSingleton(services =>
 {
     HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
-    var baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
-    var channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
-    return new Notes2022Server.Notes2022ServerClient(channel);
+    string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
+    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
+
+    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
+
+    return Client;
 });
 
 await builder.Build().RunAsync();

@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 @using Notes2022RCL.Shared
 
+@inject Notes2022Server.Notes2022ServerClient Client
 
 <Blazored.Modal.CascadingBlazoredModal HideCloseButton="true" DisableBackgroundCancel="true" HideHeader="true" Class="blazored-custom-modal">
     <CookieStateAgent></CookieStateAgent>
@@ -18,3 +19,4 @@
         </NotFound>
     </Router>
 </Blazored.Modal.CascadingBlazoredModal>
+
