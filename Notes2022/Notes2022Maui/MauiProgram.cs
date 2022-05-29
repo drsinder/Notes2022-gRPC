@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Notes2022.Proto;
 using Notes2022RCL.Comp;
 using Syncfusion.Blazor;
+using Syncfusion.Licensing;
 
 namespace Notes2022Maui
 {
@@ -39,6 +40,8 @@ namespace Notes2022Maui
             builder.Services.AddSingleton<CookieStateAgent>();       // for login state mgt = "myState" injection in _imports.razor
 
             builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
+
+            SyncfusionLicenseProvider.RegisterLicense("NjQ2OTU1QDMyMzAyZTMxMmUzMFBsUmI0QUljc2lmOTlRTHEyVFZMMkZjUmhVU0FkWnBwbWRYRWtkcEQ0ZFU9");
 
             string baseUri = "https://www.drsinder.com:449"; // "https://www.drsinder.com:449"; "https://localhost:7133/"; 
             Notes2022RCL.Globals.ServerAddress = baseUri;
