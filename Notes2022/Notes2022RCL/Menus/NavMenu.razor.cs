@@ -302,14 +302,15 @@ namespace Notes2022RCL.Menus
                 // make the whole menu
                 menuItemsTop = new List<MenuItem>();
                 MenuItem item;
-                item = new() { Id = "Recent", Text = "Recent Notes" };
-                menuItemsTop.Add(item);
+                //item = new() { Id = "Recent", Text = "Recent Notes" };
+                //menuItemsTop.Add(item);
 
                 MenuItem item3 = new()
-                { Id = "Manage", Text = "Manage" };
+                { Id = "Manage", Text = "Options" };
                 item3.Items = new List<MenuItem>
                 {
-                    new() {Id = "MRecent", Text = "Recent"}, //new () { Id = "Subscriptions", Text = "Subscriptions" },
+                    new() { Id = "Recent", Text = "See Recent Notes" },
+                    new() {Id = "MRecent", Text = "Manage Recent Notes"}, //new () { Id = "Subscriptions", Text = "Subscriptions" },
                     new() {Id = "Preferences", Text = "Preferences"}
                 };
                 menuItemsTop.Add(item3);
@@ -329,17 +330,16 @@ namespace Notes2022RCL.Menus
                     new() {Id = "NoteFiles", Text = "NoteFiles"},
                     new() {Id = "Roles", Text = "Roles"},
                     new() {Id = "Hangfire", Text = "Jobs-Dashboard"}
-                    //new() {Id = "Roles", Text = "Roles"}
                 };
 
                 if (Globals.IsMaui)
-                    item.Items.RemoveAt(item.Items.Count - 1);
+                    item4.Items.RemoveAt(item4.Items.Count - 1);
 
                 menuItemsTop.Add(item4);
                 // remove what does not apply to this user
                 if (!isAdmin)
                 {
-                    menuItemsTop.RemoveAt(3);
+                    menuItemsTop.RemoveAt(2);
                 }
 
                 if (isUser || isAdmin)
@@ -347,7 +347,6 @@ namespace Notes2022RCL.Menus
                 }
                 else
                 {
-                    menuItemsTop.RemoveAt(1);
                     menuItemsTop.RemoveAt(0);
                 }
             }

@@ -5,7 +5,7 @@
 @if (myState.IsAuthenticated)
 {
     <SfButton @onclick="GotoHome" class="homebutton">Home</SfButton>
-    <SfButton @onclick="GotoProfile" class="logbutton">@myState.UserInfo?.Displayname</SfButton>
+@*    <SfButton @onclick="GotoProfile" class="logbutton">@myState.UserInfo?.Displayname</SfButton>*@
     <SfButton @onclick="BeginSignOut" class="logbutton">Log out</SfButton>
 }
 else
