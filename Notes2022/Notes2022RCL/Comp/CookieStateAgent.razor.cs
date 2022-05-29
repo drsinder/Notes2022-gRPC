@@ -92,10 +92,10 @@ namespace Notes2022RCL.Comp
             pinger.Elapsed += Ping;
             pinger.Enabled = true;
             pinger.Start();
-            AString key = await Client.GetTextFileAsync(new AString()
-            { Val = "syncfusionkey.rsghjjsrsrj43632353" });
+            //AString key = await Client.GetTextFileAsync(new AString()
+            //{ Val = "syncfusionkey.rsghjjsrsrj43632353" });
 
-            SyncfusionLicenseProvider.RegisterLicense(key.Val);
+            //SyncfusionLicenseProvider.RegisterLicense(key.Val);
 
 
             if (Globals.IsMaui)
