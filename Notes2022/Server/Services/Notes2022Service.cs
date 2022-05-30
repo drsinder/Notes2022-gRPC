@@ -43,7 +43,6 @@ using Notes2022.Proto;
 using Notes2022.Server.Data;
 using Notes2022.Shared;
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -267,19 +266,18 @@ namespace Notes2022.Server.Services
         /// <returns>LoginReply.</returns>
         public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
+            ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email);
             if (user is null)
             {
                 user = await _userManager.FindByNameAsync(request.Email.Replace(" ", "_"));
             }
-
             if (user is not null && await _signInManager.CanSignInAsync(user))
             {
                 if (user.Pref0) // login turned off
                 {
                     return new LoginReply() { Status = StatusCodes.Status500InternalServerError, Message = "User Login failed! Login turned off!" };
                 }
-                var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: user.AccessFailedCount > _signInManager.Options.Lockout.MaxFailedAccessAttempts);
+                SignInResult? result = await _signInManager.PasswordSignInAsync(user, request.Password, request.Hours > 0, lockoutOnFailure: user.AccessFailedCount > _signInManager.Options.Lockout.MaxFailedAccessAttempts);
 
                 if (!(result.Succeeded))
                 {
@@ -288,7 +286,7 @@ namespace Notes2022.Server.Services
                     return new LoginReply() { Status = StatusCodes.Status500InternalServerError, Message = "User Login failed! Please check user details and try again later." };
                 }
 
-                var userRoles = await _userManager.GetRolesAsync(user);
+                IList<string>? userRoles = await _userManager.GetRolesAsync(user);
 
                 if (user.DisplayName == null)
                     user.DisplayName = String.Empty;
@@ -308,7 +306,7 @@ namespace Notes2022.Server.Services
                     roles.Add(userRole);
                 }
 
-                var token = GetToken(authClaims, request.Hours);
+                JwtSecurityToken? token = GetToken(authClaims, request.Hours);
 
                 JwtSecurityTokenHandler hand = new();
                 string stoken = hand.WriteToken(token);
@@ -329,6 +327,102 @@ namespace Notes2022.Server.Services
             }
 
             return new LoginReply() { Status = StatusCodes.Status500InternalServerError, Message = "User Login failed! Please check user details and try again." };
+        }
+
+        [Authorize] // IT IS VITAL THAT THIS IS AUTHORIZED HERE!  
+        public override async Task<NoRequest> ReLogin(NoRequest request, ServerCallContext context)
+        {
+            ApplicationUser user = await GetAppUser(context);
+
+            await _signInManager.SignInAsync(user, isPersistent: true);
+
+            return new();
+        }
+
+        public override async Task<AuthReply> ResendEmail(AString request, ServerCallContext context)
+        {
+            ApplicationUser? user = await _userManager.FindByEmailAsync(request.Val);
+            if (user is null)
+            {
+                user = await _userManager.FindByNameAsync(request.Val);
+            }
+            if (user is null)
+                return new() { Status = 500, Message = "Somthing went wrong!" };
+
+            // send email for user to confirm email address - not not log in until they do
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            ConfirmEmailRequest mess = new() { UserId = user.Id, Code = code };
+            string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
+
+            string target = _configuration["AppUrl"] + "/authentication/confirmemail/" + payload;
+            await _emailSender.SendEmailAsync(request.Val, "Confirm your email",
+                $"Please confirm your Notes 2022 account email by <a href='{target}'>clicking here</a>.  You cannot login until you do this.");
+
+            return new AuthReply() { Status = StatusCodes.Status200OK, Message = "Email sent!" };
+        }
+
+        public override async Task<AuthReply> ResetPassword(AString request, ServerCallContext context)
+        {
+            ApplicationUser? user = await _userManager.FindByEmailAsync(request.Val);
+            if (user is null)
+            {
+                user = await _userManager.FindByNameAsync(request.Val);
+            }
+            if (user is null)
+                return new() { Status = 500, Message = "Somthing went wrong!" };
+
+            string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            ConfirmEmailRequest mess = new() { UserId = user.Id, Code = code };
+            string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
+
+            string target = _configuration["AppUrl"] + "/authentication/resetpassword/" + payload;
+            await _emailSender.SendEmailAsync(request.Val, "Reset your password",
+                $"Please <a href='{target}'>click here</a> to reset your Notes2022 password.");
+
+            return new AuthReply() { Status = StatusCodes.Status200OK, Message = "Email sent!" };
+        }
+
+        public override async Task<AuthReply> ResetPassword2(ResetPasswordRequest request, ServerCallContext context)
+        {
+            AuthReply ar = new() { Status = 500, Message = "Something went wrong" };
+
+            ApplicationUser? user = await _userManager.FindByIdAsync(request.UserId);
+            if (user is null)
+            {
+                return ar;
+            }
+
+            IdentityResult res = await _userManager.ResetPasswordAsync(user, request.Code, request.NewPassword);
+
+            if (res.Succeeded)
+            {
+                ar.Message = "Password changed!";
+                ar.Status = 200;
+            }
+
+            return ar;
+        }
+
+        [Authorize]
+        public override async Task<AuthReply> ChangePassword(ResetPasswordRequest request, ServerCallContext context)
+        {
+            AuthReply ar = new() { Status = 500, Message = "Something went wrong" };
+
+            ApplicationUser? user = await GetAppUser(context);
+            if (user is null)
+            {
+                return ar;
+            }
+
+            IdentityResult? res = await _userManager.ChangePasswordAsync(user, request.Code, request.NewPassword);
+
+            if (res.Succeeded)
+            {
+                ar.Status = 200;
+                ar.Message = "Password Changed!";
+            }
+
+            return ar;
         }
 
         /// <summary>
@@ -1363,59 +1457,6 @@ namespace Notes2022.Server.Services
             };
         }
 
-        ///// <summary>
-        ///// The throttle
-        ///// </summary>
-        //private static int throttle = 0;
-
-        ///// <summary>
-        ///// The time of throttle set
-        ///// </summary>
-        //private static DateTime? TimeOfThrottle = null;
-
-        ///// <summary>
-        ///// Send an email.
-        ///// unauthenticated - slower - use it too much and it really hurts you!
-        ///// </summary>
-        ///// <param name="request">The request received from the client.</param>
-        ///// <param name="context">The context of the server-side call handler being invoked.</param>
-        ///// <returns>The response to send back to the client (wrapped by a task).</returns>
-        //public override async Task<NoRequest> SendEmail(GEmail request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        ApplicationUser appUser = await GetAppUser(context);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        // was not authenticated - slow them up
-
-        //        if (throttle++ >= 100)
-        //        {
-        //            // some real potential abuse??
-        //            Thread.Sleep(1000 * throttle);
-
-        //            if (TimeOfThrottle is null)
-        //            {
-        //                TimeOfThrottle = DateTime.UtcNow;
-        //            }
-        //            else
-        //            {
-        //                TimeSpan? diff = DateTime.UtcNow - TimeOfThrottle;
-        //                if (diff > new TimeSpan(0, 30, 0)) // backoff in 30 minutes
-        //                {
-        //                    throttle = 0;
-        //                    TimeOfThrottle = null;
-        //                }
-        //            }
-        //        }
-
-        //        Thread.Sleep(1000);
-        //    }
-
-        //    await _emailSender.SendEmailAsync(request.Address, request.Subject, request.Body);
-        //    return new NoRequest();
-        //}
 
         /// <summary>
         /// Send email authenticated.
@@ -1429,39 +1470,6 @@ namespace Notes2022.Server.Services
             await _emailSender.SendEmailAsync(request.Address, request.Subject, request.Body);
             return new NoRequest();
         }
-
-        ///// <summary>
-        ///// Gets the export info for phase 1.
-        ///// </summary>
-        ///// <param name="request">The request.</param>
-        ///// <param name="context">The context.</param>
-        ///// <returns>GNoteHeaderList.</returns>
-        //[Authorize]
-        //public override async Task<GNoteHeaderList> GetExport(ExportRequest request, ServerCallContext context)
-        //{
-        //    ApplicationUser appUser = await GetAppUser(context);
-        //    NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, request.FileId, request.ArcId);
-        //    if (!na.ReadAccess)
-        //        return new GNoteHeaderList();
-
-        //    List<NoteHeader> nhl;
-
-        //    if (request.NoteOrdinal == 0)   // All base notes
-        //    {
-        //        nhl = await _db.NoteHeader
-        //            .Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId && p.ResponseOrdinal == 0)
-        //            .OrderBy(p => p.NoteOrdinal)
-        //            .ToListAsync();
-        //    }
-        //    else                // Just one base note/response
-        //    {
-        //        nhl = await _db.NoteHeader
-        //            .Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId && p.NoteOrdinal == request.NoteOrdinal && p.ResponseOrdinal == request.ResponseOrdinal)
-        //            .ToListAsync();
-        //    }
-
-        //    return NoteHeader.GetGNoteHeaderList(nhl);
-        //}
 
         /// <summary>
         /// Gets the export info for phase 2. (note content)

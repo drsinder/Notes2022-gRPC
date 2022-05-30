@@ -63,7 +63,7 @@ namespace Notes2022RCL.Pages.Authentication
             /// directly from your code. This API may change or be removed in future releases.
             /// </summary>
             /// <value>The password.</value>
-            [Required]
+            //[Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -119,6 +119,22 @@ namespace Notes2022RCL.Pages.Authentication
             Globals.LoginDisplay?.Reload();
             Globals.NavMenu?.Reload();
             Navigation.NavigateTo(retUrl);
+        }
+
+        private async Task GotoResend()
+        {
+            AuthReply reply = await AuthClient.ResendEmailAsync(new AString() { Val = Input.Email });
+            Message = reply.Message;
+
+            StateHasChanged();
+        }
+
+        private async Task GotoPassword()
+        {
+            AuthReply reply = await AuthClient.ResetPasswordAsync(new AString() { Val = Input.Email });
+            Message = reply.Message;
+
+            StateHasChanged();
         }
     }
 }

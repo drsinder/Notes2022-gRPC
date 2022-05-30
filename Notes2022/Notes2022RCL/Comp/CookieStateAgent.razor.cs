@@ -157,6 +157,10 @@ namespace Notes2022RCL.Comp
                     // found a cookie!
                     savedLoginValue = JsonSerializer.Deserialize<LoginReply>(cookie);
                     savedLogin = savedLoginValue; // save the value - login
+
+                    await Client.ReLoginAsync(new NoRequest(), myState.AuthHeader);
+                    
+
                     if (Globals.NavMenu != null)
                     {
                         await Globals.NavMenu.Reload();

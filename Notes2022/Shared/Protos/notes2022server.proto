@@ -38,6 +38,11 @@ service Notes2022Server {
 	rpc Login(LoginRequest) returns (LoginReply);						// log a user in
 	rpc Logout(NoRequest) returns (AuthReply);							// log current user out
 	rpc ConfirmEmail(ConfirmEmailRequest) returns (AuthReply);			// user confirms email - login enabled now
+	rpc ReLogin(NoRequest) returns (NoRequest);							// Relogs a user in using JWT
+	rpc ResendEmail(AString) returns (AuthReply);						// Resend confirmation email
+	rpc ResetPassword(AString) returns (AuthReply);						// Send Password Reset Email
+	rpc ResetPassword2(ResetPasswordRequest) returns (AuthReply);		// Send Password Reset Email
+	rpc ChangePassword(ResetPasswordRequest) returns (AuthReply);		// Change Password
 
 // Notes Services proper
 
@@ -295,6 +300,12 @@ message LoginReply {
 message ConfirmEmailRequest {
 	string userId = 1;
 	string code = 2;
+}
+
+message ResetPasswordRequest {
+	string userId = 1;
+	string code = 2;
+	string newPassword = 3;
 }
 
 /////////////////////////////////////////////////

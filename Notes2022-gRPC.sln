@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2022RCL", "Notes2022\N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2022Maui", "Notes2022\Notes2022Maui\Notes2022Maui.csproj", "{FA4F6C3E-6E85-4BF3-9737-2DCD7CDAA918}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes2022MauiLib", "Notes2022\Notes2022MauiLib\Notes2022MauiLib.csproj", "{24277A62-6F77-4700-B7D9-A25D8D7B8B0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2022MauiLib", "Notes2022\Notes2022MauiLib\Notes2022MauiLib.csproj", "{24277A62-6F77-4700-B7D9-A25D8D7B8B0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

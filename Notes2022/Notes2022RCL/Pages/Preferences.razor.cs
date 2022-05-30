@@ -108,6 +108,11 @@ namespace Notes2022RCL.Pages
             Navigation.NavigateTo("");
         }
 
+        private void ChangePassword()
+        {
+            Navigation.NavigateTo("authentication/changepassword");
+        }
+
         /// <summary>
         /// Class LocalModel2.
         /// </summary>

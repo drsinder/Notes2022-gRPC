@@ -86,6 +86,10 @@ namespace Notes2022.Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Notes2022.Proto.ConfirmEmailRequest> __Marshaller_notes2022server_ConfirmEmailRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.ConfirmEmailRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Notes2022.Proto.AString> __Marshaller_notes2022server_AString = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.AString.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Notes2022.Proto.ResetPasswordRequest> __Marshaller_notes2022server_ResetPasswordRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.ResetPasswordRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Notes2022.Proto.GAppUser> __Marshaller_notes2022server_GAppUser = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.GAppUser.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Notes2022.Proto.GAppUserList> __Marshaller_notes2022server_GAppUserList = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.GAppUserList.Parser));
@@ -144,8 +148,6 @@ namespace Notes2022.Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Notes2022.Proto.NoteHeadersRequest> __Marshaller_notes2022server_NoteHeadersRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.NoteHeadersRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Notes2022.Proto.AString> __Marshaller_notes2022server_AString = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.AString.Parser));
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Notes2022.Proto.NoteCount> __Marshaller_notes2022server_NoteCount = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.NoteCount.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Notes2022.Proto.HomePageModel> __Marshaller_notes2022server_HomePageModel = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Notes2022.Proto.HomePageModel.Parser));
@@ -184,6 +186,46 @@ namespace Notes2022.Proto {
         __ServiceName,
         "ConfirmEmail",
         __Marshaller_notes2022server_ConfirmEmailRequest,
+        __Marshaller_notes2022server_AuthReply);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Notes2022.Proto.NoRequest, global::Notes2022.Proto.NoRequest> __Method_ReLogin = new grpc::Method<global::Notes2022.Proto.NoRequest, global::Notes2022.Proto.NoRequest>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ReLogin",
+        __Marshaller_notes2022server_NoRequest,
+        __Marshaller_notes2022server_NoRequest);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Notes2022.Proto.AString, global::Notes2022.Proto.AuthReply> __Method_ResendEmail = new grpc::Method<global::Notes2022.Proto.AString, global::Notes2022.Proto.AuthReply>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ResendEmail",
+        __Marshaller_notes2022server_AString,
+        __Marshaller_notes2022server_AuthReply);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Notes2022.Proto.AString, global::Notes2022.Proto.AuthReply> __Method_ResetPassword = new grpc::Method<global::Notes2022.Proto.AString, global::Notes2022.Proto.AuthReply>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ResetPassword",
+        __Marshaller_notes2022server_AString,
+        __Marshaller_notes2022server_AuthReply);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Notes2022.Proto.ResetPasswordRequest, global::Notes2022.Proto.AuthReply> __Method_ResetPassword2 = new grpc::Method<global::Notes2022.Proto.ResetPasswordRequest, global::Notes2022.Proto.AuthReply>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ResetPassword2",
+        __Marshaller_notes2022server_ResetPasswordRequest,
+        __Marshaller_notes2022server_AuthReply);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Notes2022.Proto.ResetPasswordRequest, global::Notes2022.Proto.AuthReply> __Method_ChangePassword = new grpc::Method<global::Notes2022.Proto.ResetPasswordRequest, global::Notes2022.Proto.AuthReply>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ChangePassword",
+        __Marshaller_notes2022server_ResetPasswordRequest,
         __Marshaller_notes2022server_AuthReply);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -576,6 +618,66 @@ namespace Notes2022.Proto {
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.AuthReply> ConfirmEmail(global::Notes2022.Proto.ConfirmEmailRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// Relogs a user in using JWT
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.NoRequest> ReLogin(global::Notes2022.Proto.NoRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// Resend confirmation email
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.AuthReply> ResendEmail(global::Notes2022.Proto.AString request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.AuthReply> ResetPassword(global::Notes2022.Proto.AString request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.AuthReply> ResetPassword2(global::Notes2022.Proto.ResetPasswordRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// Change Password
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.AuthReply> ChangePassword(global::Notes2022.Proto.ResetPasswordRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -1299,6 +1401,246 @@ namespace Notes2022.Proto {
       public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ConfirmEmailAsync(global::Notes2022.Proto.ConfirmEmailRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_ConfirmEmail, null, options, request);
+      }
+      /// <summary>
+      /// Relogs a user in using JWT
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.NoRequest ReLogin(global::Notes2022.Proto.NoRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ReLogin(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Relogs a user in using JWT
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.NoRequest ReLogin(global::Notes2022.Proto.NoRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ReLogin, null, options, request);
+      }
+      /// <summary>
+      /// Relogs a user in using JWT
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.NoRequest> ReLoginAsync(global::Notes2022.Proto.NoRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ReLoginAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Relogs a user in using JWT
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.NoRequest> ReLoginAsync(global::Notes2022.Proto.NoRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ReLogin, null, options, request);
+      }
+      /// <summary>
+      /// Resend confirmation email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ResendEmail(global::Notes2022.Proto.AString request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ResendEmail(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Resend confirmation email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ResendEmail(global::Notes2022.Proto.AString request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ResendEmail, null, options, request);
+      }
+      /// <summary>
+      /// Resend confirmation email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ResendEmailAsync(global::Notes2022.Proto.AString request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ResendEmailAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Resend confirmation email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ResendEmailAsync(global::Notes2022.Proto.AString request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ResendEmail, null, options, request);
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ResetPassword(global::Notes2022.Proto.AString request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ResetPassword(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ResetPassword(global::Notes2022.Proto.AString request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ResetPassword, null, options, request);
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ResetPasswordAsync(global::Notes2022.Proto.AString request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ResetPasswordAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ResetPasswordAsync(global::Notes2022.Proto.AString request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ResetPassword, null, options, request);
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ResetPassword2(global::Notes2022.Proto.ResetPasswordRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ResetPassword2(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ResetPassword2(global::Notes2022.Proto.ResetPasswordRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ResetPassword2, null, options, request);
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ResetPassword2Async(global::Notes2022.Proto.ResetPasswordRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ResetPassword2Async(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Send Password Reset Email
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ResetPassword2Async(global::Notes2022.Proto.ResetPasswordRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ResetPassword2, null, options, request);
+      }
+      /// <summary>
+      /// Change Password
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ChangePassword(global::Notes2022.Proto.ResetPasswordRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ChangePassword(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Change Password
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Notes2022.Proto.AuthReply ChangePassword(global::Notes2022.Proto.ResetPasswordRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ChangePassword, null, options, request);
+      }
+      /// <summary>
+      /// Change Password
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ChangePasswordAsync(global::Notes2022.Proto.ResetPasswordRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ChangePasswordAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Change Password
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.AuthReply> ChangePasswordAsync(global::Notes2022.Proto.ResetPasswordRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ChangePassword, null, options, request);
       }
       /// <summary>
       /// gets data for the current user
@@ -3310,6 +3652,11 @@ namespace Notes2022.Proto {
           .AddMethod(__Method_Login, serviceImpl.Login)
           .AddMethod(__Method_Logout, serviceImpl.Logout)
           .AddMethod(__Method_ConfirmEmail, serviceImpl.ConfirmEmail)
+          .AddMethod(__Method_ReLogin, serviceImpl.ReLogin)
+          .AddMethod(__Method_ResendEmail, serviceImpl.ResendEmail)
+          .AddMethod(__Method_ResetPassword, serviceImpl.ResetPassword)
+          .AddMethod(__Method_ResetPassword2, serviceImpl.ResetPassword2)
+          .AddMethod(__Method_ChangePassword, serviceImpl.ChangePassword)
           .AddMethod(__Method_GetUserData, serviceImpl.GetUserData)
           .AddMethod(__Method_GetUserList, serviceImpl.GetUserList)
           .AddMethod(__Method_GetUserRoles, serviceImpl.GetUserRoles)
@@ -3365,6 +3712,11 @@ namespace Notes2022.Proto {
       serviceBinder.AddMethod(__Method_Login, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.LoginRequest, global::Notes2022.Proto.LoginReply>(serviceImpl.Login));
       serviceBinder.AddMethod(__Method_Logout, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoRequest, global::Notes2022.Proto.AuthReply>(serviceImpl.Logout));
       serviceBinder.AddMethod(__Method_ConfirmEmail, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.ConfirmEmailRequest, global::Notes2022.Proto.AuthReply>(serviceImpl.ConfirmEmail));
+      serviceBinder.AddMethod(__Method_ReLogin, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoRequest, global::Notes2022.Proto.NoRequest>(serviceImpl.ReLogin));
+      serviceBinder.AddMethod(__Method_ResendEmail, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.AString, global::Notes2022.Proto.AuthReply>(serviceImpl.ResendEmail));
+      serviceBinder.AddMethod(__Method_ResetPassword, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.AString, global::Notes2022.Proto.AuthReply>(serviceImpl.ResetPassword));
+      serviceBinder.AddMethod(__Method_ResetPassword2, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.ResetPasswordRequest, global::Notes2022.Proto.AuthReply>(serviceImpl.ResetPassword2));
+      serviceBinder.AddMethod(__Method_ChangePassword, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.ResetPasswordRequest, global::Notes2022.Proto.AuthReply>(serviceImpl.ChangePassword));
       serviceBinder.AddMethod(__Method_GetUserData, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoRequest, global::Notes2022.Proto.GAppUser>(serviceImpl.GetUserData));
       serviceBinder.AddMethod(__Method_GetUserList, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoRequest, global::Notes2022.Proto.GAppUserList>(serviceImpl.GetUserList));
       serviceBinder.AddMethod(__Method_GetUserRoles, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.AppUserRequest, global::Notes2022.Proto.EditUserViewModel>(serviceImpl.GetUserRoles));
