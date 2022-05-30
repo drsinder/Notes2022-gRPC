@@ -1,5 +1,7 @@
 ﻿@page "/notedisplay/{NoteID:long}"
 
+<Notes2022RCL.Pages.ShowNote NoteId="@NoteId"></Notes2022RCL.Pages.ShowNote>
+
 @code{
     [Parameter] public long NoteId { get; set; }
 
