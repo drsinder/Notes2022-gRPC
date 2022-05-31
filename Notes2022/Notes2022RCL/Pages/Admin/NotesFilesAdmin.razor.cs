@@ -294,7 +294,7 @@ namespace Notes2022RCL.Pages.Admin
 
             parameters.Add("FileName", file.NoteFileName);
             parameters.Add("FileTitle", file.NoteFileTitle);
-            //parameters.Add("LastEdited", file.LastEdited);
+            parameters.Add("LastEdited", file.LastEdited.ToDateTime());
             parameters.Add("NumberArchives", file.NumberArchives);
             parameters.Add("Owner", model.UserDataList.List.ToList().Find(p => p.Id == file.OwnerId).DisplayName);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.

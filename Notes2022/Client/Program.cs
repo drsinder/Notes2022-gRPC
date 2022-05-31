@@ -47,9 +47,9 @@ builder.Services.AddSingleton(services =>
     string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
     GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
 
-    Grpc.Core.CallInvoker? invoker = channel.Intercept(new ClientLoggingInterceptor());
+    //Grpc.Core.CallInvoker? invoker = channel.Intercept(new ClientLoggingInterceptor());
 
-    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(invoker);
+    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
 
     return Client;
 });

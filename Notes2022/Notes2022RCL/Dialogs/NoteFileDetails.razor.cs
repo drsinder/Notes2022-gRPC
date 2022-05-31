@@ -76,6 +76,9 @@ namespace Notes2022RCL.Dialogs
         /// </summary>
         /// <value>The last edited.</value>
         [Parameter]
+        public DateTime LastEdited { get; set; }
+
+        [Parameter]
         public int NumberArchives { get; set; }
 
         /// <summary>
