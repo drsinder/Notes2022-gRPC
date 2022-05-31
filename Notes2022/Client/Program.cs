@@ -23,8 +23,9 @@ using Notes2022.Proto;
 using Syncfusion.Blazor;
 using Notes2022RCL.Comp;
 using Syncfusion.Licensing;
+using Grpc.Core.Interceptors;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
+WebAssemblyHostBuilder? builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -46,7 +47,9 @@ builder.Services.AddSingleton(services =>
     string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
     GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
 
-    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
+    Grpc.Core.CallInvoker? invoker = channel.Intercept(new ClientLoggingInterceptor());
+
+    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(invoker);
 
     return Client;
 });

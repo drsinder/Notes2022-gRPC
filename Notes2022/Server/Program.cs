@@ -107,6 +107,8 @@ builder.Services.AddGrpc()
         {
             options.MaxReceiveMessageSize = 50 * 1024 * 1024; // 50 MB
             options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
+            if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"].Length > 1)
+                options.Interceptors.Add<ServerLoggingInterceptor>();
         });
 
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
@@ -125,6 +127,14 @@ Globals.SendGridEmail = builder.Configuration["SendGridEmail"];
 Globals.SendGridName = builder.Configuration["SendGridName"];
 Globals.ImportRoot = builder.Configuration["ImportRoot"];
 Globals.AppUrl = builder.Configuration["AppUrl"];
+
+try
+{
+    Globals.ErrorThreshold = long.Parse(configuration["GrpcErrorThreshold"]);
+    Globals.WarnThreshold = long.Parse(configuration["GrpcWarnThreshold"]);
+}
+catch { }
+
 
 //builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 

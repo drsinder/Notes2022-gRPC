@@ -72,6 +72,10 @@ namespace Notes2022.Server
 
         public static string AppUrl { get; set; }
 
+        public static long ErrorThreshold { get; set; } = 1000L;
+        public static long WarnThreshold { get; set; } = 500L;
+
+
         /// <summary>
         /// Base64s the encode.
         /// </summary>
