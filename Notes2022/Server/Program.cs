@@ -127,6 +127,7 @@ Globals.SendGridEmail = builder.Configuration["SendGridEmail"];
 Globals.SendGridName = builder.Configuration["SendGridName"];
 Globals.ImportRoot = builder.Configuration["ImportRoot"];
 Globals.AppUrl = builder.Configuration["AppUrl"];
+Globals.StartTime = DateTime.UtcNow;
 
 try
 {

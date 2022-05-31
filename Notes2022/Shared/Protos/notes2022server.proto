@@ -444,6 +444,7 @@ message AboutModel {
 	string PrimeAdminName = 1;
 	string PrimeAdminEmail = 2;
 	string HostUri = 3;
+	google.protobuf.Timestamp upTime = 4;
 }
 
 // container for an email

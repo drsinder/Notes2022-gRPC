@@ -76,6 +76,8 @@ namespace Notes2022.Server
         public static long WarnThreshold { get; set; } = 500L;
 
 
+        public static DateTime StartTime { get; set; }
+
         /// <summary>
         /// Base64s the encode.
         /// </summary>

@@ -1464,11 +1464,16 @@ namespace Notes2022.Server.Services
         public override async Task<AboutModel> GetAbout(NoRequest request, ServerCallContext context)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
+            TimeSpan span = DateTime.UtcNow - Globals.StartTime;
+            Google.Protobuf.WellKnownTypes.Timestamp stamp = new Google.Protobuf.WellKnownTypes.Timestamp();
+            stamp.Seconds = (long)span.TotalSeconds;
+
             return new AboutModel()
             {
                 PrimeAdminEmail = _configuration["PrimeAdminEmail"],
                 PrimeAdminName = _configuration["PrimeAdminName"],
-                HostUri = _configuration["AppUrl"]
+                HostUri = _configuration["AppUrl"],
+                UpTime = stamp
             };
         }
 

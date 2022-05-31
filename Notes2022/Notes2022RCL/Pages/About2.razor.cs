@@ -73,6 +73,8 @@ namespace Notes2022RCL.Pages
             try
             {
                 model = await Client.GetAboutAsync(new NoRequest());
+
+                upTime = new TimeSpan(0, 0, (int)model.UpTime.Seconds);
             }
             finally
             {
