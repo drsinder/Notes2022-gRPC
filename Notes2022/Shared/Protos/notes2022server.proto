@@ -97,6 +97,7 @@ service Notes2022Server {
 //	rpc GetExport(ExportRequest) returns (GNoteHeaderList);				// gets a note header list during an Export
 	rpc GetTextFile(AString) returns (AString);	// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
 	rpc NoOp(NoRequest) returns (NoRequest);
+	//rpc TalkToSelf(NoRequest) returns (NoRequest);
 }
 
 

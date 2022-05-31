@@ -124,6 +124,8 @@ Globals.SendGridApiKey = builder.Configuration["SendGridApiKey"];
 Globals.SendGridEmail = builder.Configuration["SendGridEmail"];
 Globals.SendGridName = builder.Configuration["SendGridName"];
 Globals.ImportRoot = builder.Configuration["ImportRoot"];
+Globals.AppUrl = builder.Configuration["AppUrl"];
+
 //builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
 var app = builder.Build();
@@ -156,7 +158,7 @@ app.UseCors();
 //app.MapRazorPages();
 //app.MapControllers();
 
-Globals.HangfireAddress = "/"   + Guid.NewGuid().ToString() + "-hangfire";
+Globals.HangfireAddress = "/hangfire";   // "/"   + Guid.NewGuid().ToString() + "-hangfire";
 
 //app.UseHangfireDashboard(Globals.HangfireAddress);
 

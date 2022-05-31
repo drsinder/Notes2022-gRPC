@@ -33,6 +33,8 @@
 // <summary></summary>
 
 using Grpc.Core;
+using Grpc.Net.Client;
+using Grpc.Net.Client.Web;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -122,6 +124,20 @@ namespace Notes2022.Server.Services
             _emailSender = emailSender;
         }
 
+
+        //public override async Task<NoRequest> TalkToSelf(NoRequest request, ServerCallContext context)
+        //{
+        //    HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
+        //    string? baseUri = Globals.AppUrl;
+        //    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
+
+        //    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
+
+        //    RecurringJob.AddOrUpdate("keep-alive", () => Client.NoOpAsync(new(), new()).GetAwaiter().GetResult(), Cron.Minutely);
+
+        //    return new();
+        //}
+
         /// <summary>
         /// Does nothing.  Just permits a ping of the server.
         /// </summary>
@@ -130,7 +146,6 @@ namespace Notes2022.Server.Services
         /// <returns></returns>
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public override async Task<NoRequest> NoOp(NoRequest request, ServerCallContext context)
-
         {
             return new();
         }

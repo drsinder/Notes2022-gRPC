@@ -70,6 +70,8 @@ namespace Notes2022.Server
 
         public static string HangfireAddress { get; set; }
 
+        public static string AppUrl { get; set; }
+
         /// <summary>
         /// Base64s the encode.
         /// </summary>
