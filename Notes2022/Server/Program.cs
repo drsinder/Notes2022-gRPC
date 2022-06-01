@@ -133,6 +133,7 @@ try
 {
     Globals.ErrorThreshold = long.Parse(configuration["GrpcErrorThreshold"]);
     Globals.WarnThreshold = long.Parse(configuration["GrpcWarnThreshold"]);
+    Globals.ImportMailInterval = int.Parse(configuration["ImportMailInterval"]);
 }
 catch { }
 

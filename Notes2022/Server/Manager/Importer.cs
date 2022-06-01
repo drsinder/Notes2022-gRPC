@@ -146,8 +146,10 @@ namespace Notes2022.Server
                 if (currentBase++ < tracker.HandledBase)
                     continue;
 
-                if (currentBase % 100 == 0)
+                if (currentBase % Globals.ImportMailInterval == 0)
+                {
                     await ems.SendEmailAsync(email, "Import Progess", "Your import to " + myNotesFile + " has completed " + currentBase + " base notes...");
+                }
 
                 using (var dbTran = _db.Database.BeginTransaction())
                 {

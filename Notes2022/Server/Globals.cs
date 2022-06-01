@@ -75,7 +75,7 @@ namespace Notes2022.Server
         public static long ErrorThreshold { get; set; } = 1000L;
         public static long WarnThreshold { get; set; } = 500L;
 
-
+        public static int ImportMailInterval { get; set; } = 200;
         public static DateTime StartTime { get; set; }
 
         /// <summary>
