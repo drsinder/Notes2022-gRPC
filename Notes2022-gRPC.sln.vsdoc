@@ -29,7 +29,7 @@
       <add key="VBdocman_comObject"><![CDATA[-1]]></add>
       <add key="VBdocman_comDelegate"><![CDATA[-1]]></add>
       <add key="VBdocman_supportedXnaFramework"><![CDATA[]]></add>
-      <add key="VBdocman_emptyOutputFolder"><![CDATA[-1]]></add>
+      <add key="VBdocman_emptyOutputFolder"><![CDATA[0]]></add>
       <add key="VBdocman_rootNamespaceCommentStyle"><![CDATA[2]]></add>
       <add key="VBdocman_comEnumeration"><![CDATA[-1]]></add>
       <add key="VBdocman_comMethod"><![CDATA[-1]]></add>
@@ -829,7 +829,7 @@ Public License instead of this License. But first, please read<br/>
     <name>gRPC Definition</name>
     <id>new_topic_3</id>
     <comment><![CDATA[<summary>
-<para></para>
+<para>See documentation at:&#160; <see href="grpc.html" target="_blank"/></para>
 <code lang="C#"><![CDATA[/*--------------------------------------------------------------------------
     **
     ** Copyright © 2022, Dale Sinder
@@ -870,6 +870,11 @@ service Notes2022Server {
  rpc Login(LoginRequest) returns (LoginReply);      // log a user in
  rpc Logout(NoRequest) returns (AuthReply);       // log current user out
  rpc ConfirmEmail(ConfirmEmailRequest) returns (AuthReply);   // user confirms email - login enabled now
+ rpc ReLogin(NoRequest) returns (NoRequest);       // Relogs a user in using JWT
+ rpc ResendEmail(AString) returns (AuthReply);      // Resend confirmation email
+ rpc ResetPassword(AString) returns (AuthReply);      // Send Password Reset Email
+ rpc ResetPassword2(ResetPasswordRequest) returns (AuthReply);  // Do Password Reset
+ rpc ChangePassword(ResetPasswordRequest) returns (AuthReply);  // Change Password
  
 // Notes Services proper
  
@@ -887,21 +892,21 @@ service Notes2022Server {
  rpc CreateNoteFile(NoteFile) returns (NoteFile);     // create a note file
  rpc UpdateNoteFile(NoteFile) returns (NoteFile);     // updates note file data
  rpc DeleteNoteFile(NoteFile) returns (NoRequest);     // deletes a note file
-// rpc Import(ImportRequest) returns (NoRequest);      // runs an import given server side file name
- rpc Import(ImportRequest) returns (NoRequest);      // runs an import given client side file contents as btye[]
- rpc UpdateAccessItem(NoteAccess) returns (NoteAccess);   // get a single access item
+// rpc Import(ImportRequest) returns (NoRequest);      // runs an import given client side file contents as byte[]
+ rpc ImportJson(ImportRequest) returns (NoRequest);     // runs an import given client side file contents as json byte[]
+ rpc UpdateAccessItem(NoteAccess) returns (NoteAccess);    // get a single access item
  rpc DeleteAccessItem(NoteAccess) returns (NoRequest);    // deletes an access item
- rpc AddAccessItem(NoteAccess) returns (NoteAccess);    // adds an access item
+ rpc AddAccessItem(NoteAccess) returns (NoteAccess);     // adds an access item
  rpc UpdateUserData(GAppUser) returns (GAppUser);     // updates user data
  rpc GetVersions(GetVersionsRequest) returns (NoteHeaderList);  // gets the non-zero version headers
  rpc GetSequencer(NoRequest) returns (SequencerList);    // gets the sequencer list for a user
  rpc CreateSequencer(SCheckModel) returns (NoRequest);    // creates a sequencer item
  rpc DeleteSequencer(SCheckModel) returns (NoRequest);    // deletes a sequencer item
- rpc UpdateSequencer(Sequencer) returns (NoRequest);    // updates a sequencer item - while sequencing
+ rpc UpdateSequencer(Sequencer) returns (NoRequest);     // updates a sequencer item - while sequencing
  rpc UpdateSequencerOrdinal(Sequencer) returns (NoRequest);   // updates a sequencer item ordinal
  rpc GetNoteFile(NoteFileRequest) returns (NoteFile);    // get the notefile for the note index
  rpc CreateNewNote(TextViewModel) returns (NoteHeader);    // get a note header
- rpc UpdateNote(TextViewModel) returns (NoteHeader);    // updates a note header
+ rpc UpdateNote(TextViewModel) returns (NoteHeader);     // updates a note header
  rpc SendEmailAuth(GEmail) returns (NoRequest);      // authenticated
  rpc GetExport2(NoteId) returns (NoteContent);      // gets note content during an export
  rpc DoForward(ForwardViewModel) returns (NoRequest);    // forwards note(s) via email
@@ -924,14 +929,13 @@ service Notes2022Server {
 // rpc GetExport(ExportRequest) returns (GNoteHeaderList);    // gets a note header list during an Export
  rpc GetTextFile(AString) returns (AString); // files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
  rpc NoOp(NoRequest) returns (NoRequest);
- 
- 
+ //rpc TalkToSelf(NoRequest) returns (NoRequest);
 }
  
  
 // Database Entities
  
-// data for a note file
+// data for a note file - Included in database context
 message NoteFile {
  int32 id = 1;    // file Id
  int32 numberArchives = 2; // number of archives it has
@@ -945,7 +949,7 @@ message NoteFileList {
  repeated NoteFile List = 1;
 }
  
-// header for a note
+// header for a note - Included in database context
 message NoteHeader {
  int64 id = 1;     // note Id
  int32 noteFileId = 2;   // Id of file to which it belongs
@@ -967,14 +971,14 @@ message NoteHeader {
  string directorMessage = 18;     // director message
  NoteContent content = 19;      // for GetNoteHeaders and JsonExport only
  TagsList tags = 20;        // for GetNoteHeaders and JsonExport only
- NoteHeaderList Responses = 21;     // for GetNoteHeaders and JsonExport only
+ NoteHeaderList responses = 21;     // for GetNoteHeaders and JsonExport only
 }
  
 message NoteHeaderList {
- repeated NoteHeader List = 1;
+ repeated NoteHeader list = 1;
 }
  
-// note content
+// note content - Included in database context
 message NoteContent {
  int64 id = 1;    // just for Ident in DB
  int64 noteHeaderId = 2;
@@ -986,12 +990,12 @@ message NoteContentList {
  repeated NoteContent list = 1;
 }
  
-// tag for a note
+// tag for a note - Included in database context
 message Tags {
  int32 noteFileId = 1;  // file Id
  int32 archiveId = 2;  // archive Id
  int64 noteHeaderId = 3;  // header Id - what note is this for
- string Tag = 4;    // text of tag
+ string tag = 4;    // text of tag
 }
  
 // list of tags
@@ -999,7 +1003,7 @@ message TagsList {
  repeated Tags list = 1;
 }
  
-// access item/token for a user
+// access item/token for a user - Included in database context
 message NoteAccess {
  string userID = 1;   // Id / subject
  int32 noteFileId = 2;  // file Id
@@ -1018,7 +1022,7 @@ message NoteAccessList {
  repeated NoteAccess list = 1;
 }
  
-// sequencer item
+// sequencer item - Included in database context
 message Sequencer {
  string userId = 1;       // user Id / subject
  int32 noteFileId = 2;      // note file Id
@@ -1041,12 +1045,12 @@ message AppUserRequest {
  
 //////////////////////////////////////////////
  
-// Includes user defined elements and Id
+// Includes user defined elements and Id  - Included in database context
 message GAppUser {
  string id = 1;   // = Subject in Jwt
  string displayName = 2; // users name for display
  int32 timeZoneID = 3; // obsolete
- int32 ipref0 = 4;
+ int32 ipref0 = 4;  // minutes between new notes check - 0 means don't check
  int32 ipref1 = 5;
  int32 ipref2 = 6;  // page size for note file index
  int32 ipref3 = 7;
@@ -1056,8 +1060,8 @@ message GAppUser {
  int32 ipref7 = 11;
  int32 ipref8 = 12;
  int32 ipref9 = 13;
- bool pref0 = 14;
- bool pref1 = 15;
+ bool pref0 = 14;  // login turned off flag
+ bool pref1 = 15;  // Maui write clipboad flag
  bool pref2 = 16;
  bool pref3 = 17;  // Show Responses by default
  bool pref4 = 18;  // Flip Response order by default
@@ -1106,6 +1110,8 @@ message UserInfo {
  //repeated string roles = 4;  // obsolete/not working with cookies
  bool isAdmin = 5;
  bool isUser = 6;
+ string hangfire = 7;  // address of hangfire for Admins ONLY
+ 
 }
  
 // used to return status during accout operations
@@ -1129,6 +1135,12 @@ message ConfirmEmailRequest {
  string code = 2;
 }
  
+message ResetPasswordRequest {
+ string userId = 1;
+ string code = 2;
+ string newPassword = 3;
+}
+ 
 /////////////////////////////////////////////////
 //
 // For Role editing - represents a user role item
@@ -1145,7 +1157,7 @@ message CheckedUser {
  
 // list of role/mambership items
 message CheckedUserList {
- repeated CheckedUser List = 1;
+ repeated CheckedUser list = 1;
 }
  
 // used while editing role memberships
@@ -1168,15 +1180,10 @@ message HomePageModel {
  GAppUserList userDataList = 5;  // list of all users
 }
  
-// request to import a file
-//message ImportRequest {
-// string noteFile = 1;  // file name to import to
-// string uploadFile = 2;  // name of source file to import or its contents
-//}
- 
 message ImportRequest {
- string noteFile = 1;  // file name to import to
- bytes payload = 2;   // import contents
+ string noteFile = 1;   // file name to import to
+ string payload = 2;    // import contents
+ string jsonFileName = 3;
 }
  
 // used to display the note file index
@@ -1191,9 +1198,9 @@ message NoteDisplayIndexModel
  int32 expandOrdinal = 7;
  repeated NoteHeader notes = 8;  // list of base notes
  repeated NoteHeader allNotes = 9; // list of all notes
- string linkedText = 10;   // extra text to be displayed for a linked file
+ string linkedText = 10;    // extra text to be displayed for a linked file
  string message = 11;   
- GAppUser userData = 12;   // user data
+ GAppUser userData = 12;    // user data
  repeated Tags tags = 13;   // all tags for file
 }
  
@@ -1208,7 +1215,7 @@ message DisplayModel {
  NoteFile noteFile = 1;   // the note file
  NoteHeader header = 2;   // the note header
  NoteContent content = 3;  // note body
- repeated Tags tags = 4;    // tags for this note
+ repeated Tags tags = 4;   // tags for this note
  NoteAccess access = 5;   // access item/token for file/user
  bool canEdit = 6;    // can user edit the note
  bool isAdmin = 7;    // is user an admin
@@ -1267,13 +1274,15 @@ message NoteId {
  
 // configurable data for about page
 message AboutModel {
- string PrimeAdminName = 1;
- string PrimeAdminEmail = 2;
+ string primeAdminName = 1;
+ string primeAdminEmail = 2;
+ string hostUri = 3;
+ google.protobuf.Timestamp upTime = 4;
 }
  
 // container for an email
 message GEmail {
- string address = 1;  // send to
+ string address = 1;   // send to
  string subject = 2;
  string body = 3;
 }
@@ -1289,31 +1298,31 @@ message ExportRequest {
  
 // used to forward note(s) to an email address
 message ForwardViewModel {
-    NoteFile NoteFile = 1;  // Note file
-    int64 NoteID = 2;   // note Id
- int32 FileID = 3;   // file Id
-    int32 ArcID = 4;   // archive id
-    int32 NoteOrdinal = 5;  // note ordinal
-    string NoteSubject = 6;  // note subject
+    NoteFile noteFile = 1;  // Note file
+    int64 noteID = 2;   // note Id
+ int32 fileID = 3;   // file Id
+    int32 arcID = 4;   // archive id
+    int32 noteOrdinal = 5;  // note ordinal
+    string noteSubject = 6;  // note subject
     bool wholestring = 7;  // include note an responses
     bool hasstring = 8;   // is part of a string of notes
-    bool IsAdmin = 9;   // is user an admin
+    bool isAdmin = 9;   // is user an admin
     bool toAllUsers = 10;  // send to all users
-    string ToEmail = 11;  // email addess to send to
+    string toEmail = 11;  // email addess to send to
 }
  
 // used to copy note(s) to another file
 message CopyModel {
- NoteHeader Note = 1;  // note header to copy
- int32 FileId = 2;   // file id to copy to
- bool WholeString = 3;  // base note an responses
+ NoteHeader note = 1;  // note header to copy
+ int32 fileId = 2;   // file id to copy to
+ bool wholeString = 3;  // base note an responses
 }
  
 // Used to get a representation of the whole file - to be serialized as json
 message JsonExport {
- NoteFile NoteFile = 1;    // notefile to export
- NoteAccess NoteAccess = 2;   // access token for requesting user
- NoteHeaderList NoteHeaders = 3; // list of headers - includes Content and Tags!
+ NoteFile noteFile = 1;   // notefile to export
+ NoteAccess noteAccess = 2;  // access token for requesting user
+ NoteHeaderList noteHeaders = 3; // list of headers - includes Content and Tags!
 }
  
 message AString {
@@ -1333,7 +1342,7 @@ message NoteHeadersRequest {
 }
  
 message NoteCount {
- int32 Count = 1;
+ int32 count = 1;
 }vsdocman_escaped2_]_]_></code>
 <para></para>
 </summary>vsdocman_escaped_]_]_></comment>
@@ -1386,6 +1395,8 @@ message NoteCount {
     <add key="VBdocman_Notes2022.Client"><![CDATA[default]]></add>
     <add key="VBdocman_Notes2022.Server"><![CDATA[default]]></add>
     <add key="VBdocman_Notes2022.Shared"><![CDATA[default]]></add>
+    <add key="VBdocman_Notes2022Maui"><![CDATA[default]]></add>
+    <add key="VBdocman_Notes2022MauiLib"><![CDATA[default]]></add>
     <add key="VBdocman_Notes2022RCL"><![CDATA[default]]></add>
     <add key="VBdocman_Proto"><![CDATA[default]]></add>
     <add key="VBdocman_TextToJson"><![CDATA[default]]></add>
