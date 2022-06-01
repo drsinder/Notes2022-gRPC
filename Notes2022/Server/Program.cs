@@ -28,13 +28,16 @@ using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.WebHost.UseSentry();
-
-
 ConfigurationManager configuration = builder.Configuration;
 
-var connectionString = configuration.GetConnectionString("DefaultConnection");
+string? sentry = configuration["Sentry:Flag"];
+string? GrpcReflect = configuration["GrpcReflect"];
+
+if (!string.IsNullOrEmpty(sentry) && sentry.Length > 2)
+    builder.WebHost.UseSentry();
+
+
+string? connectionString = configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<NotesDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -116,7 +119,8 @@ builder.Services.AddGrpc()
                 options.Interceptors.Add<ServerLoggingInterceptor>();
         });
 
-builder.Services.AddGrpcReflection();
+if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect.Length > 2)
+    builder.Services.AddGrpcReflection();
 
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
 {
@@ -149,13 +153,13 @@ catch { }
 
 var app = builder.Build();
 
-app.UseSentryTracing();
+if (!string.IsNullOrEmpty(sentry) && sentry.Length > 2)
+    app.UseSentryTracing();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
-    app.MapGrpcReflectionService();
 }
 else
 {
@@ -163,6 +167,9 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect.Length > 2)
+    app.MapGrpcReflectionService();
 
 app.UseHttpsRedirection();  // ?? maybe needed?
 
