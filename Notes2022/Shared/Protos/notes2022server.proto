@@ -139,11 +139,11 @@ message NoteHeader {
 	string directorMessage = 18;					// director message
 	NoteContent content = 19;						// for GetNoteHeaders and JsonExport only
 	TagsList tags = 20;								// for GetNoteHeaders and JsonExport only
-	NoteHeaderList Responses = 21;					// for GetNoteHeaders and JsonExport only
+	NoteHeaderList responses = 21;					// for GetNoteHeaders and JsonExport only
 }
 
 message NoteHeaderList {
-	repeated NoteHeader List = 1;
+	repeated NoteHeader list = 1;
 }
 
 // note content - Included in database context
@@ -163,7 +163,7 @@ message Tags {
 	int32 noteFileId = 1;		// file Id
 	int32 archiveId = 2;		// archive Id
 	int64 noteHeaderId = 3;		// header Id - what note is this for
-	string Tag = 4;				// text of tag
+	string tag = 4;				// text of tag
 }
 
 // list of tags
@@ -325,7 +325,7 @@ message CheckedUser {
 
 // list of role/mambership items
 message CheckedUserList {
-	repeated CheckedUser List = 1;
+	repeated CheckedUser list = 1;
 }
 
 // used while editing role memberships
@@ -442,9 +442,9 @@ message NoteId {
 
 // configurable data for about page
 message AboutModel {
-	string PrimeAdminName = 1;
-	string PrimeAdminEmail = 2;
-	string HostUri = 3;
+	string primeAdminName = 1;
+	string primeAdminEmail = 2;
+	string hostUri = 3;
 	google.protobuf.Timestamp upTime = 4;
 }
 
@@ -466,31 +466,31 @@ message ExportRequest {
 
 // used to forward note(s) to an email address
 message ForwardViewModel {
-    NoteFile NoteFile = 1;		// Note file
-    int64 NoteID = 2;			// note Id
-	int32 FileID = 3;			// file Id
-    int32 ArcID = 4;			// archive id
-    int32 NoteOrdinal = 5;		// note ordinal
-    string NoteSubject = 6;		// note subject
+    NoteFile noteFile = 1;		// Note file
+    int64 noteID = 2;			// note Id
+	int32 fileID = 3;			// file Id
+    int32 arcID = 4;			// archive id
+    int32 noteOrdinal = 5;		// note ordinal
+    string noteSubject = 6;		// note subject
     bool wholestring = 7;		// include note an responses
     bool hasstring = 8;			// is part of a string of notes
-    bool IsAdmin = 9;			// is user an admin
+    bool isAdmin = 9;			// is user an admin
     bool toAllUsers = 10;		// send to all users
-    string ToEmail = 11;		// email addess to send to
+    string toEmail = 11;		// email addess to send to
 }
 
 // used to copy note(s) to another file
 message CopyModel {
-	NoteHeader Note = 1;		// note header to copy
-	int32 FileId = 2;			// file id to copy to
-	bool WholeString = 3;		// base note an responses
+	NoteHeader note = 1;		// note header to copy
+	int32 fileId = 2;			// file id to copy to
+	bool wholeString = 3;		// base note an responses
 }
 
 // Used to get a representation of the whole file - to be serialized as json
 message JsonExport {
-	NoteFile NoteFile = 1;			// notefile to export
-	NoteAccess NoteAccess = 2;		// access token for requesting user
-	NoteHeaderList NoteHeaders = 3;	// list of headers - includes Content and Tags!
+	NoteFile noteFile = 1;			// notefile to export
+	NoteAccess noteAccess = 2;		// access token for requesting user
+	NoteHeaderList noteHeaders = 3;	// list of headers - includes Content and Tags!
 }
 
 message AString {
@@ -510,5 +510,5 @@ message NoteHeadersRequest {
 }
 
 message NoteCount {
-	int32 Count = 1;
+	int32 count = 1;
 }
