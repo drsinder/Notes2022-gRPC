@@ -41,7 +41,7 @@ service Notes2022Server {
 	rpc ReLogin(NoRequest) returns (NoRequest);							// Relogs a user in using JWT
 	rpc ResendEmail(AString) returns (AuthReply);						// Resend confirmation email
 	rpc ResetPassword(AString) returns (AuthReply);						// Send Password Reset Email
-	rpc ResetPassword2(ResetPasswordRequest) returns (AuthReply);		// Send Password Reset Email
+	rpc ResetPassword2(ResetPasswordRequest) returns (AuthReply);		// Do Password Reset
 	rpc ChangePassword(ResetPasswordRequest) returns (AuthReply);		// Change Password
 
 // Notes Services proper

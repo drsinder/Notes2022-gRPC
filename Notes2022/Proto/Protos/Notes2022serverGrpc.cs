@@ -659,7 +659,7 @@ namespace Notes2022.Proto {
       }
 
       /// <summary>
-      /// Send Password Reset Email
+      /// Do Password Reset
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -1553,7 +1553,7 @@ namespace Notes2022.Proto {
         return CallInvoker.AsyncUnaryCall(__Method_ResetPassword, null, options, request);
       }
       /// <summary>
-      /// Send Password Reset Email
+      /// Do Password Reset
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1566,7 +1566,7 @@ namespace Notes2022.Proto {
         return ResetPassword2(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Send Password Reset Email
+      /// Do Password Reset
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1577,7 +1577,7 @@ namespace Notes2022.Proto {
         return CallInvoker.BlockingUnaryCall(__Method_ResetPassword2, null, options, request);
       }
       /// <summary>
-      /// Send Password Reset Email
+      /// Do Password Reset
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1590,7 +1590,7 @@ namespace Notes2022.Proto {
         return ResetPassword2Async(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Send Password Reset Email
+      /// Do Password Reset
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
