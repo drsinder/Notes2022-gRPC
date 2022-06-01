@@ -1461,7 +1461,7 @@ namespace Notes2022.Server.Services
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             TimeSpan span = DateTime.UtcNow - Globals.StartTime;
-            Google.Protobuf.WellKnownTypes.Timestamp stamp = new Google.Protobuf.WellKnownTypes.Timestamp();
+            Google.Protobuf.WellKnownTypes.Duration stamp = new Google.Protobuf.WellKnownTypes.Duration();
             stamp.Seconds = (long)span.TotalSeconds;
 
             return new AboutModel()

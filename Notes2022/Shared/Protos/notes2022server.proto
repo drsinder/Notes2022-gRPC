@@ -28,6 +28,7 @@ option csharp_namespace = "Notes2022.Proto";
 
 package notes2022server;
 
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
 // service defintion
@@ -445,7 +446,7 @@ message AboutModel {
 	string primeAdminName = 1;
 	string primeAdminEmail = 2;
 	string hostUri = 3;
-	google.protobuf.Timestamp upTime = 4;
+	google.protobuf.Duration upTime = 4;
 }
 
 // container for an email
