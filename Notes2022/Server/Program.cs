@@ -33,7 +33,7 @@ ConfigurationManager configuration = builder.Configuration;
 string? sentry = configuration["Sentry:Flag"];
 string? GrpcReflect = configuration["GrpcReflect"];
 
-if (!string.IsNullOrEmpty(sentry) && sentry.Length > 2)
+if (!string.IsNullOrEmpty(sentry) && sentry == "true")
     builder.WebHost.UseSentry();
 
 
@@ -115,11 +115,11 @@ builder.Services.AddGrpc()
         {
             options.MaxReceiveMessageSize = 50 * 1024 * 1024; // 50 MB
             options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
-            if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"].Length > 1)
+            if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
                 options.Interceptors.Add<ServerLoggingInterceptor>();
         });
 
-if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect.Length > 2)
+if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
     builder.Services.AddGrpcReflection();
 
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
@@ -153,7 +153,7 @@ catch { }
 
 var app = builder.Build();
 
-if (!string.IsNullOrEmpty(sentry) && sentry.Length > 2)
+if (!string.IsNullOrEmpty(sentry) && sentry == "true")
     app.UseSentryTracing();
 
 // Configure the HTTP request pipeline.
@@ -168,7 +168,7 @@ else
     app.UseHsts();
 }
 
-if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect.Length > 2)
+if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
     app.MapGrpcReflectionService();
 
 app.UseHttpsRedirection();  // ?? maybe needed?
@@ -187,9 +187,7 @@ app.UseCors();
 //app.MapRazorPages();
 //app.MapControllers();
 
-Globals.HangfireAddress = "/hangfire";   // "/"   + Guid.NewGuid().ToString() + "-hangfire";
-
-//app.UseHangfireDashboard(Globals.HangfireAddress);
+Globals.HangfireAddress = "/hangfire";
 
 app.UseHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
 {
