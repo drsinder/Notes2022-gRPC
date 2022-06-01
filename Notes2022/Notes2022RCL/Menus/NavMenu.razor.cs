@@ -236,7 +236,9 @@ namespace Notes2022RCL.Menus
                         Navigation.NavigateTo("preferences");
                         break;
                     case "Hangfire":
-                        await JS.InvokeAsync<object>("open", myState.UserInfo.Hangfire, "_blank");
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                        _ = await JS.InvokeAsync<object>("open", myState.UserInfo.Hangfire, "_blank");
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                         //Navigation.NavigateTo(myState.UserInfo.Hangfire, true);
                         break;

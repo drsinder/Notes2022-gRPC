@@ -770,7 +770,7 @@ namespace Notes2022RCL.Pages
             CurrentNoteId = currHeader.Id;
             try
             {
-                this.InvokeAsync(() => this.StateHasChanged());
+                await this.InvokeAsync(() => this.StateHasChanged());
             }
             catch (Exception) { }
         }

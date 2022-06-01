@@ -92,7 +92,9 @@ namespace Notes2022.Server
             JsonExport myJson = new();
             try
             {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(it.JsonText);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             }
             catch(Exception ex)
             {
@@ -104,7 +106,9 @@ namespace Notes2022.Server
                 return false;
             }
 
+#pragma warning disable CS8604 // Possible null reference argument.
             bool retval = await Import(myJson, myNotesFile, fileId);
+#pragma warning restore CS8604 // Possible null reference argument.
 
             _db.JsonData.Remove(it);
             await _db.SaveChangesAsync();

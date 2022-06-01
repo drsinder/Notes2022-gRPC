@@ -514,7 +514,9 @@ namespace Notes2022RCL.Menus
             if (Globals.IsMaui)
             {
                 IModalReference? xx = ShowYesNo("Be sure data to import is in the clipboard!!  Ready?");
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 ModalResult? res = await xx.Result;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 if (res.Cancelled)
                     return;
 

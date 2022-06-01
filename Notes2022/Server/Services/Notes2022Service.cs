@@ -822,8 +822,6 @@ namespace Notes2022.Server.Services
         [Authorize]
         public override async Task<NoRequest> ImportJson(ImportRequest request, ServerCallContext context)
         {
-            JsonExport? myJson;
-
             ApplicationUser appUser;
 
             try
@@ -853,7 +851,9 @@ namespace Notes2022.Server.Services
             Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<JsonData>? ent =_db.JsonData.Add(data);
             await _db.SaveChangesAsync();
 
+#pragma warning disable CS8605 // Unboxing a possibly null value.
             int fileId = (int)ent.Member("Id").CurrentValue;
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
             BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile, appUser.Email));
 

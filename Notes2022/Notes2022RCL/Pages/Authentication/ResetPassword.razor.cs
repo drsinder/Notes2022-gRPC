@@ -43,7 +43,7 @@ namespace Notes2022RCL.Pages.Authentication
             public string Password2 { get; set; }
         }
 
-        [Parameter] public string payload { get; set; }
+        [Parameter] public string? payload { get; set; }
 
         protected InputModel Input = new()
         { Password = string.Empty, Password2 = string.Empty };
@@ -52,9 +52,17 @@ namespace Notes2022RCL.Pages.Authentication
 
         public string Message { get; set; }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected override async Task OnParametersSetAsync()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8604
             mess = (ConfirmEmailRequest)System.Text.Json.JsonSerializer.Deserialize(Globals.Base64Decode(payload), typeof(ConfirmEmailRequest));
+#pragma warning restore CS8604
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         }
 

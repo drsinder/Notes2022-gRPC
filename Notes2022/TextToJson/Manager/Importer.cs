@@ -72,7 +72,7 @@ namespace Notes2022.TextToJson.Manager
 
         private bool flag = true;
 
-        StreamReader file = null;
+        StreamReader? file = null;
 
 
         /// <summary>
@@ -508,7 +508,7 @@ namespace Notes2022.TextToJson.Manager
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 file.Close();
                  throw;
@@ -535,8 +535,8 @@ namespace Notes2022.TextToJson.Manager
         /// <returns>System.String.</returns>
         public async Task<string> CheckFf(string inline, StreamReader file)
         {
-            if (counter > 321)
-                ;
+            //if (counter > 321)
+            //    ;
 
             if (inline.Length == 1)
             {
@@ -572,7 +572,7 @@ namespace Notes2022.TextToJson.Manager
         /// Centralized to for line counting.
         /// </summary>
         /// <returns>Line read from input file.</returns>
-        private async Task<string> GetLineAsync()
+        private async Task<string?> GetLineAsync()
         {
             counter++;
             //Output($"Line: {counter}");   // debugging
