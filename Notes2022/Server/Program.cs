@@ -27,6 +27,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.WebHost.UseSentry();
+
+
 ConfigurationManager configuration = builder.Configuration;
 
 var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -143,6 +148,8 @@ catch { }
 //builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
 var app = builder.Build();
+
+app.UseSentryTracing();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

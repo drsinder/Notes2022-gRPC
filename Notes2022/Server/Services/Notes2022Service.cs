@@ -44,6 +44,7 @@ using Microsoft.IdentityModel.Tokens;
 using Notes2022.Proto;
 using Notes2022.Server.Data;
 using Notes2022.Shared;
+using Sentry;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
