@@ -101,13 +101,13 @@ namespace Notes2022.Server
                 _db.JsonData.Remove(it);
                 await _db.SaveChangesAsync();
 
-                await ems.SendEmailAsync(email, "Import Failed!", "Your import to " + myNotesFile + " Failed!  " + ex.Message +  "\nSource: " + JsonFileName);
+                await ems.SendEmailAsync(email, "Import Failed!", "Your import to " + myNotesFile + " Failed!  Check input...  " + ex.Message +  "\nSource: " + JsonFileName);
 
                 return false;
             }
 
 #pragma warning disable CS8604 // Possible null reference argument.
-            bool retval = await Import(myJson, myNotesFile, fileId);
+            bool retval = await Import(myJson, myNotesFile, JsonFileName, fileId, email);
 #pragma warning restore CS8604 // Possible null reference argument.
 
             _db.JsonData.Remove(it);
@@ -124,7 +124,7 @@ namespace Notes2022.Server
         /// <param name="myNotesFile">The notes file. name to import to</param>
         /// <returns>
         ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
-        public async Task<bool> Import(JsonExport input, string myNotesFile, int rowId)
+        protected async Task<bool> Import(JsonExport input, string myNotesFile, string JsonFileName, int rowId, string email)
         {
             if (input is null || input.NoteHeaders is null || input.NoteHeaders.List is null || input.NoteHeaders.List.Count < 1)
                 return false;   // nothing to import
@@ -138,12 +138,16 @@ namespace Notes2022.Server
 
             int currentBase = 0;
 
+            EmailSender ems = new EmailSender();
 
             // base note loop
             foreach (NoteHeader nh in input.NoteHeaders.List)
             {
                 if (currentBase++ < tracker.HandledBase)
                     continue;
+
+                if (currentBase % 100 == 0)
+                    await ems.SendEmailAsync(email, "Import Progess", "Your import to " + myNotesFile + " has completed " + currentBase + " base notes...");
 
                 using (var dbTran = _db.Database.BeginTransaction())
                 {
