@@ -111,6 +111,8 @@ builder.Services.AddGrpc()
                 options.Interceptors.Add<ServerLoggingInterceptor>();
         });
 
+builder.Services.AddGrpcReflection();
+
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
 {
     builder.AllowAnyOrigin()
@@ -146,6 +148,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+    app.MapGrpcReflectionService();
 }
 else
 {

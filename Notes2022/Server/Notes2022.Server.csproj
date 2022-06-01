@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
+    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.46.0" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.46.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.29" />
     <PackageReference Include="Hangfire.Core" Version="1.7.29" />
