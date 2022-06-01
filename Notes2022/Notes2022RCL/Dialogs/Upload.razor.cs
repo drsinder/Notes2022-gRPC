@@ -65,6 +65,10 @@ namespace Notes2022RCL.Dialogs
         [Parameter]
         public string UploadText { get; set; }
 
+        [Parameter]
+        public string JsonFileName { get; set; }
+
+
         /// <summary>
         /// On after render as an asynchronous operation.
         /// </summary>
@@ -74,8 +78,11 @@ namespace Notes2022RCL.Dialogs
         {
             if (firstRender)
             {
+                if (string.IsNullOrEmpty(JsonFileName))
+                    JsonFileName = "Clipboard";
+
                 var request = new ImportRequest()
-                { NoteFile = NoteFile, Payload = UploadText };
+                { NoteFile = NoteFile, Payload = UploadText, JsonFileName = JsonFileName };
                 _ = await Client.ImportJsonAsync(request, myState.AuthHeader, deadline: DateTime.UtcNow.AddMinutes(10));
                 await ModalInstance.CancelAsync();
             }

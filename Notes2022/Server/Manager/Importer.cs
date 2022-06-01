@@ -77,15 +77,15 @@ namespace Notes2022.Server
         /// <param name="myNotesFile">My notes file.</param>
         /// <returns>
         ///   <c>true</c> if success, <c>false</c> otherwise.</returns>
-        public async Task<bool> Import(int fileId, string myNotesFile, string email)
+        public async Task<bool> Import(int fileId, string myNotesFile, string JsonFileName, string email)
         {
             EmailSender ems = new EmailSender();
 
             JsonData tracker = _db.JsonData.Single(p => p.Id.Equals(fileId));
             if (tracker.HandledBase == 0)
-                await ems.SendEmailAsync(email, "Import Started!", "Your import to " + myNotesFile + " has started.");
+                await ems.SendEmailAsync(email, "Import Started!", "Your import to " + myNotesFile + " has started. \nSource: " + JsonFileName);
             else
-                await ems.SendEmailAsync(email, "Import Restarted!", "Your import to " + myNotesFile + " was interrupted and has been restarted.");
+                await ems.SendEmailAsync(email, "Import Restarted!", "Your import to " + myNotesFile + " was interrupted and has been restarted.  \nSource: " + JsonFileName);
 
             JsonData it = await _db.JsonData.SingleAsync(p => p.Id == fileId);
 
@@ -101,7 +101,7 @@ namespace Notes2022.Server
                 _db.JsonData.Remove(it);
                 await _db.SaveChangesAsync();
 
-                await ems.SendEmailAsync(email, "Import Failed!", "Your import to " + myNotesFile + " Failed!  " + ex.Message);
+                await ems.SendEmailAsync(email, "Import Failed!", "Your import to " + myNotesFile + " Failed!  " + ex.Message +  "\nSource: " + JsonFileName);
 
                 return false;
             }
@@ -113,7 +113,7 @@ namespace Notes2022.Server
             _db.JsonData.Remove(it);
             await _db.SaveChangesAsync();
 
-            await ems.SendEmailAsync(email, "Import Completed!", "Your import to " + myNotesFile + " has completed successfully.");
+            await ems.SendEmailAsync(email, "Import Completed!", "Your import to " + myNotesFile + " has completed successfully.  \nSource: " + JsonFileName);
 
             return retval;
         }

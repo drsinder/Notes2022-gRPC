@@ -494,7 +494,8 @@ namespace Notes2022RCL.Menus
             ModalParameters? parameters = new ModalParameters();
             parameters.Add("UploadText", myText);
             parameters.Add("NoteFile", filename);
-            var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
+            parameters.Add("JsonFileName", selectedFile.Name);
+            IModalReference? yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
             await yModal.Result;
             //Navigation.NavigateTo("noteindex/" + Model.NoteFile.Id, true);
         }
@@ -525,7 +526,8 @@ namespace Notes2022RCL.Menus
                 ModalParameters? parameters = new ModalParameters();
                 parameters.Add("UploadText", txt);
                 parameters.Add("NoteFile", filename);
-                var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
+                parameters.Add("JsonFileName", "Clipboard");
+                IModalReference? yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
                 await yModal.Result;
 
                 return;

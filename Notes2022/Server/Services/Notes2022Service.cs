@@ -834,17 +834,11 @@ namespace Notes2022.Server.Services
                 NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, nf.Id, 0);
                 if (!na.Write)
                     return new NoRequest();
-
-                //myJson = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonExport>(request.Payload);
             }
             catch (Exception)
             {
                 return new NoRequest();
             }
-
-            Importer imp = new Importer(_db);
-
-            //_ = await imp.Import(myJson, request.NoteFile);
 
             JsonData data = new JsonData();
             data.JsonText = request.Payload;
@@ -855,7 +849,8 @@ namespace Notes2022.Server.Services
             int fileId = (int)ent.Member("Id").CurrentValue;
 #pragma warning restore CS8605 // Unboxing a possibly null value.
 
-            BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile, appUser.Email));
+            Importer imp = new Importer(_db);
+            BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile, request.JsonFileName, appUser.Email));
 
             Thread.Sleep(2000);
 
