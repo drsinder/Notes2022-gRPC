@@ -1461,15 +1461,15 @@ namespace Notes2022.Server.Services
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             TimeSpan span = DateTime.UtcNow - Globals.StartTime;
-            Google.Protobuf.WellKnownTypes.Duration stamp = new Google.Protobuf.WellKnownTypes.Duration();
-            stamp.Seconds = (long)span.TotalSeconds;
+            Google.Protobuf.WellKnownTypes.Duration dur = new Google.Protobuf.WellKnownTypes.Duration();
+            dur.Seconds = (long)span.TotalSeconds;
 
             return new AboutModel()
             {
                 PrimeAdminEmail = _configuration["PrimeAdminEmail"],
                 PrimeAdminName = _configuration["PrimeAdminName"],
                 HostUri = _configuration["AppUrl"],
-                UpTime = stamp
+                UpTime = dur
             };
         }
 
