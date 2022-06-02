@@ -33,23 +33,20 @@
 // <summary></summary>
 
 using Grpc.Core;
-using Grpc.Net.Client;
-using Grpc.Net.Client.Web;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using Notes2022.Proto;
 using Notes2022.Server.Data;
 using Notes2022.Shared;
-using Sentry;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-//using Newtonsoft.Json;
 
 namespace Notes2022.Server.Services
 {
@@ -125,20 +122,6 @@ namespace Notes2022.Server.Services
             _emailSender = emailSender;
         }
 
-
-        //public override async Task<NoRequest> TalkToSelf(NoRequest request, ServerCallContext context)
-        //{
-        //    HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
-        //    string? baseUri = Globals.AppUrl;
-        //    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
-
-        //    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
-
-        //    RecurringJob.AddOrUpdate("keep-alive", () => Client.NoOpAsync(new(), new()).GetAwaiter().GetResult(), Cron.Minutely);
-
-        //    return new();
-        //}
-
         /// <summary>
         /// Does nothing.  Just permits a ping of the server.
         /// </summary>
@@ -163,7 +146,6 @@ namespace Notes2022.Server.Services
             ApplicationUser appUser = await GetAppUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, request.NoteFileId, request.ArcId);
             return na;
-
         }
 
         /// <summary>
@@ -174,8 +156,8 @@ namespace Notes2022.Server.Services
         /// <returns>AuthReply.</returns>
         public override async Task<AuthReply> Register(RegisterRequest request, ServerCallContext context)
         {
-            var userExists = await _userManager.FindByEmailAsync(request.Email);
-            if (userExists != null)
+            ApplicationUser? userExists = await _userManager.FindByEmailAsync(request.Email);
+            if (userExists is not null)
                 return new AuthReply() { Status = StatusCodes.Status500InternalServerError, Message = "User already exists!" };
 
             userExists = await _userManager.FindByNameAsync(request.Username.Replace(" ", "_"));
@@ -186,14 +168,14 @@ namespace Notes2022.Server.Services
             {
                 Email = request.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = request.Username.Replace(" ", "_"),
+                UserName = request.Username.Replace(" ", "_").Trim(),
                 DisplayName = request.Username,
                 Ipref2 = 12     // starting note index page size pref.
             };
 
             try
             {
-                var result = await _userManager.CreateAsync(user, request.Password);
+                IdentityResult? result = await _userManager.CreateAsync(user, request.Password);
                 if (!result.Succeeded)
                     return new AuthReply() { Status = StatusCodes.Status500InternalServerError, Message = "User creation failed! Please check user details and try again." };
             }
@@ -210,9 +192,7 @@ namespace Notes2022.Server.Services
 
             // everyone is a user
             if (await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
-            }
 
             // first user to register is assumed to be the starting admin
             if (_userManager.Users.Count() == 1)        // first user is Admin
@@ -224,7 +204,7 @@ namespace Notes2022.Server.Services
             }
 
             // send email for user to confirm email address - not not log in until they do
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            string? code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             ConfirmEmailRequest mess = new() { UserId = user.Id, Code = code };
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
@@ -254,14 +234,14 @@ namespace Notes2022.Server.Services
                 return ret;
             }
 
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(request.UserId);
             if (user is null)
             {
                 ret.Message = "Failed to find user!";
                 return ret;
             }
 
-            var result = await _userManager.ConfirmEmailAsync(user, request.Code);
+            IdentityResult? result = await _userManager.ConfirmEmailAsync(user, request.Code);
             if (result.Succeeded)
             {
                 ret.Status = StatusCodes.Status200OK;
@@ -270,7 +250,6 @@ namespace Notes2022.Server.Services
             }
 
             ret.Message = "Failed to confirm email address.";
-
             return ret;
         }
 
@@ -304,10 +283,10 @@ namespace Notes2022.Server.Services
 
                 IList<string>? userRoles = await _userManager.GetRolesAsync(user);
 
-                if (user.DisplayName == null)
+                if (user.DisplayName is null)
                     user.DisplayName = String.Empty;
 
-                var authClaims = new List<Claim>
+                List<Claim>? authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -316,7 +295,7 @@ namespace Notes2022.Server.Services
                 };
 
                 List<string> roles = new();
-                foreach (var userRole in userRoles)
+                foreach (string? userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                     roles.Add(userRole);
@@ -366,7 +345,7 @@ namespace Notes2022.Server.Services
                 return new() { Status = 500, Message = "Somthing went wrong!" };
 
             // send email for user to confirm email address - not not log in until they do
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            string? code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             ConfirmEmailRequest mess = new() { UserId = user.Id, Code = code };
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
@@ -461,9 +440,9 @@ namespace Notes2022.Server.Services
         /// <returns>JwtSecurityToken.</returns>
         private JwtSecurityToken GetToken(List<Claim> authClaims, int hours)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTAuth:SecretKey"]));
+            SymmetricSecurityKey? authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTAuth:SecretKey"]));
 
-            var token = new JwtSecurityToken(
+            JwtSecurityToken? token = new JwtSecurityToken(
                 issuer: _configuration["JWTAuth:ValidIssuerURL"],
                 audience: _configuration["JWTAuth:ValidAudienceURL"],
                 expires: DateTime.Now.AddHours(hours),
@@ -513,11 +492,11 @@ namespace Notes2022.Server.Services
 
             model.UserData = user.GetGAppUser();
 
-            var allRoles = _roleManager.Roles.ToList();
+            List<IdentityRole>? allRoles = _roleManager.Roles.ToList();
 
             //var myRoles = await _userManager.GetRolesAsync(user);
 
-            foreach (var role in allRoles)
+            foreach (IdentityRole? role in allRoles)
             {
                 CheckedUser cu = new()
                 {
@@ -542,7 +521,7 @@ namespace Notes2022.Server.Services
         public override async Task<NoRequest> UpdateUserRoles(EditUserViewModel model, ServerCallContext context)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(model.UserData.Id);
-            var myRoles = await _userManager.GetRolesAsync(user);
+            IList<string>? myRoles = await _userManager.GetRolesAsync(user);
             foreach (CheckedUser item in model.RolesList.List)
             {
                 if (item.IsMember && !myRoles.Contains(item.TheRole.RoleName)) // need to add role
@@ -575,7 +554,7 @@ namespace Notes2022.Server.Services
         /// <returns>ApplicationUser.</returns>
         private async Task<ApplicationUser> GetAppUser(ServerCallContext context)
         {
-            var user = context.GetHttpContext().User;
+            ClaimsPrincipal? user = context.GetHttpContext().User;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             ApplicationUser appUser = await _userManager.FindByIdAsync(user.FindFirst(ClaimTypes.NameIdentifier).Value);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -1022,7 +1001,7 @@ namespace Notes2022.Server.Services
             };
 
             accessAndUserList.AccessList.AddRange(_db.NoteAccess.Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId).ToList());
-            var ul = ApplicationUser.GetGAppUserList((await _userManager.GetUsersInRoleAsync("User")).ToList());
+            GAppUserList? ul = ApplicationUser.GetGAppUserList((await _userManager.GetUsersInRoleAsync("User")).ToList());
 
             accessAndUserList.AppUsers = ul;
             return accessAndUserList;
@@ -1354,7 +1333,7 @@ namespace Notes2022.Server.Services
             };
 
             NoteHeader created;
-            using (var dbTran = _db.Database.BeginTransaction())
+            using (IDbContextTransaction? dbTran = _db.Database.BeginTransaction())
             {
                 if (tvm.BaseNoteHeaderID == 0)  // a base note
                 {
@@ -1574,7 +1553,7 @@ namespace Notes2022.Server.Services
             bool whole = Model.WholeString;
             NoteFile noteFile = await _db.NoteFile.SingleAsync(p => p.Id == fileId);
 
-            using (var dbTran = _db.Database.BeginTransaction())
+            using (IDbContextTransaction? dbTran = _db.Database.BeginTransaction())
             {
                 // Just the note
                 if (!whole)
@@ -1827,7 +1806,7 @@ namespace Notes2022.Server.Services
         public override async Task<AString> GetHomePageMessage(NoRequest request, ServerCallContext context)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            var message = new AString();
+            AString? message = new();
 
             NoteFile? hpmf = _db.NoteFile.Where(p => p.NoteFileName == "homepagemessages").FirstOrDefault();
             if (hpmf is not null)
