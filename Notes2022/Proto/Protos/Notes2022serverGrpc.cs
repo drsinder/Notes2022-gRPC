@@ -35,6 +35,8 @@ using grpc = global::Grpc.Core;
 namespace Notes2022.Proto {
   /// <summary>
   /// service defintion
+  /// some messages are reused in the RPCs - as long as they are compatible no need to
+  /// add another message
   /// </summary>
   public static partial class Notes2022Server
   {
@@ -827,7 +829,7 @@ namespace Notes2022.Proto {
       }
 
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as byte[]
+      /// runs an import given client side file contents as json byte[]
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -1163,8 +1165,7 @@ namespace Notes2022.Proto {
       }
 
       /// <summary>
-      ///	rpc SendEmail(GEmail) returns (NoRequest);							// unauthenticated - slower - use it too much and it really hurts you!
-      ///	rpc GetExport(ExportRequest) returns (GNoteHeaderList);				// gets a note header list during an Export
+      /// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -1176,7 +1177,7 @@ namespace Notes2022.Proto {
       }
 
       /// <summary>
-      ///rpc TalkToSelf(NoRequest) returns (NoRequest);
+      /// just for pinging the server
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -2225,7 +2226,7 @@ namespace Notes2022.Proto {
         return CallInvoker.AsyncUnaryCall(__Method_DeleteNoteFile, null, options, request);
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as byte[]
+      /// runs an import given client side file contents as json byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -2238,7 +2239,7 @@ namespace Notes2022.Proto {
         return ImportJson(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as byte[]
+      /// runs an import given client side file contents as json byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -2249,7 +2250,7 @@ namespace Notes2022.Proto {
         return CallInvoker.BlockingUnaryCall(__Method_ImportJson, null, options, request);
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as byte[]
+      /// runs an import given client side file contents as json byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -2262,7 +2263,7 @@ namespace Notes2022.Proto {
         return ImportJsonAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///	rpc Import(ImportRequest) returns (NoRequest);						// runs an import given client side file contents as byte[]
+      /// runs an import given client side file contents as json byte[]
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -3569,8 +3570,7 @@ namespace Notes2022.Proto {
         return CallInvoker.AsyncUnaryCall(__Method_GetAbout, null, options, request);
       }
       /// <summary>
-      ///	rpc SendEmail(GEmail) returns (NoRequest);							// unauthenticated - slower - use it too much and it really hurts you!
-      ///	rpc GetExport(ExportRequest) returns (GNoteHeaderList);				// gets a note header list during an Export
+      /// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -3583,8 +3583,7 @@ namespace Notes2022.Proto {
         return GetTextFile(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///	rpc SendEmail(GEmail) returns (NoRequest);							// unauthenticated - slower - use it too much and it really hurts you!
-      ///	rpc GetExport(ExportRequest) returns (GNoteHeaderList);				// gets a note header list during an Export
+      /// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -3595,8 +3594,7 @@ namespace Notes2022.Proto {
         return CallInvoker.BlockingUnaryCall(__Method_GetTextFile, null, options, request);
       }
       /// <summary>
-      ///	rpc SendEmail(GEmail) returns (NoRequest);							// unauthenticated - slower - use it too much and it really hurts you!
-      ///	rpc GetExport(ExportRequest) returns (GNoteHeaderList);				// gets a note header list during an Export
+      /// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -3609,8 +3607,7 @@ namespace Notes2022.Proto {
         return GetTextFileAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///	rpc SendEmail(GEmail) returns (NoRequest);							// unauthenticated - slower - use it too much and it really hurts you!
-      ///	rpc GetExport(ExportRequest) returns (GNoteHeaderList);				// gets a note header list during an Export
+      /// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -3621,7 +3618,7 @@ namespace Notes2022.Proto {
         return CallInvoker.AsyncUnaryCall(__Method_GetTextFile, null, options, request);
       }
       /// <summary>
-      ///rpc TalkToSelf(NoRequest) returns (NoRequest);
+      /// just for pinging the server
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -3634,7 +3631,7 @@ namespace Notes2022.Proto {
         return NoOp(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///rpc TalkToSelf(NoRequest) returns (NoRequest);
+      /// just for pinging the server
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -3645,7 +3642,7 @@ namespace Notes2022.Proto {
         return CallInvoker.BlockingUnaryCall(__Method_NoOp, null, options, request);
       }
       /// <summary>
-      ///rpc TalkToSelf(NoRequest) returns (NoRequest);
+      /// just for pinging the server
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -3658,7 +3655,7 @@ namespace Notes2022.Proto {
         return NoOpAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      ///rpc TalkToSelf(NoRequest) returns (NoRequest);
+      /// just for pinging the server
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
