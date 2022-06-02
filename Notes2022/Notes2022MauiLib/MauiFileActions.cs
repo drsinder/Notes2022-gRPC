@@ -21,6 +21,22 @@ namespace Notes2022MauiLib
             return file;
         }
 
+        public void DeleteFile(string filename)
+        {
+            string file = Path.Combine(FileSystem.Current.AppDataDirectory, filename);
+            File.Delete(file);
+        }
+
+        public async Task<string> ReadFromFile(string filename)
+        {
+            string file = Path.Combine(FileSystem.Current.AppDataDirectory, filename);
+
+            if (File.Exists(file))
+            {
+                return await File.ReadAllTextAsync(file);
+            }
+            return null;
+        }
 
         //public async Task SaveFileToClipBoard(string data)
         //{

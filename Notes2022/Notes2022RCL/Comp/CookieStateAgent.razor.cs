@@ -34,7 +34,7 @@
 using Grpc.Core;
 using Microsoft.JSInterop;
 using Notes2022.Proto;
-using Syncfusion.Licensing;
+using System.Text;
 using System.Text.Json;
 using System.Timers;
 
@@ -50,6 +50,10 @@ namespace Notes2022RCL.Comp
     public partial class CookieStateAgent
     {
         /// <summary>
+        /// Dealing with login related info
+        /// </summary>
+        private LoginReply? savedLogin;
+        /// <summary>
         /// The saved login value used while updating cookies
         /// </summary>
         private LoginReply? savedLoginValue; // used while updating cookies
@@ -63,9 +67,7 @@ namespace Notes2022RCL.Comp
         /// <value>The pinger.</value>
         private System.Timers.Timer pinger { get; set; }
 
-
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
-
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
@@ -73,7 +75,6 @@ namespace Notes2022RCL.Comp
         /// <returns>A task that represents the asynchronous dispose operation.</returns>
         async ValueTask IAsyncDisposable.DisposeAsync()
 #pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
-
         {
             if (module is not null)
             {
@@ -92,27 +93,18 @@ namespace Notes2022RCL.Comp
             pinger.Elapsed += Ping;
             pinger.Enabled = true;
             pinger.Start();
-            //AString key = await Client.GetTextFileAsync(new AString()
-            //{ Val = "syncfusionkey.rsghjjsrsrj43632353" });
-
-            //SyncfusionLicenseProvider.RegisterLicense(key.Val);
-
-
-            if (Globals.IsMaui)
-                return;
 
             AString cookiename = await Client.GetTextFileAsync(new AString()
             { Val = "CookieName" });
             Globals.Cookie = cookiename.Val;
-            // JS injected in .razor file - make sure the cookie.js is loaded
-            if (module is null)
-                module = await JS.InvokeAsync<IJSObjectReference>("import", "./cookies.js");
-            //try
-            //{
-            //    await Client.SpinUpAsync(new NoRequest());
-            //}
-            //catch (Exception ex)
-            //{ }
+
+            if (!Globals.IsMaui)
+            {
+                // JS injected in .razor file - make sure the cookie.js is loaded
+                if (module is null)
+                    module = await JS.InvokeAsync<IJSObjectReference>("import", "./cookies.js");
+            }
+
             if (myState.IsAuthenticated) // nothing more to do here!
                 return;
             savedLoginValue = myState.LoginReply; // should be null
@@ -132,9 +124,6 @@ namespace Notes2022RCL.Comp
         /// <param name="e">The <see cref="ElapsedEventArgs"/> instance containing the event data.</param>
         protected void Ping(Object source, ElapsedEventArgs e)
         {
-            //if (Globals.IsMaui)
-            //    return;
-
             _ = Client.NoOpAsync(new NoRequest()).GetAwaiter().GetResult();
         }
 
@@ -144,23 +133,32 @@ namespace Notes2022RCL.Comp
         /// <returns>A Task representing the asynchronous operation.</returns>
         public async Task GetLoginReplyAsync()
         {
-            if (Globals.IsMaui)
-                return;
-
             try
             {
-                if (module is null)
-                    module = await JS.InvokeAsync<IJSObjectReference>("import", "./cookies.js");
-                string? cookie = await ReadCookie(Globals.Cookie);
+                string? cookie;
+
+                if (Globals.IsMaui)
+                {
+                    Notes2022MauiLib.MauiFileActions mf = new Notes2022MauiLib.MauiFileActions();
+                    cookie = await mf.ReadFromFile(Globals.Cookie + ".json");
+                }
+                else
+                {
+                    if (module is null)
+                        module = await JS.InvokeAsync<IJSObjectReference>("import", "./cookies.js");
+
+                    cookie = await ReadCookie(Globals.Cookie);
+                }
+
                 if (!string.IsNullOrEmpty(cookie))
                 {
                     // found a cookie!
                     savedLoginValue = JsonSerializer.Deserialize<LoginReply>(cookie);
                     savedLogin = savedLoginValue; // save the value - login
 
+                    // Login at server
                     await Client.ReLoginAsync(new NoRequest(), myState.AuthHeader);
                     
-
                     if (Globals.NavMenu != null)
                     {
                         await Globals.NavMenu.Reload();
@@ -218,7 +216,7 @@ namespace Notes2022RCL.Comp
             {
                 try
                 {
-                    await module.InvokeAsync<string>("CreateCookie", cookieName, Globals.Base64Encode(newCookie), hours);
+                    _ = await module.InvokeAsync<string>("CreateCookie", cookieName, Globals.Base64Encode(newCookie), hours);
                 }
                 catch (Exception)
                 {
@@ -226,10 +224,6 @@ namespace Notes2022RCL.Comp
             }
         }
 
-        /// <summary>
-        /// Dealing with login related info
-        /// </summary>
-        private LoginReply? savedLogin;
         /// <summary>
         /// Gets or sets the login reply.  Setting also notifies subsrcibers
         /// </summary>
@@ -246,10 +240,23 @@ namespace Notes2022RCL.Comp
                 savedLogin = value;
 
                 if (Globals.IsMaui)
+                {
+                    Notes2022MauiLib.MauiFileActions mf = new Notes2022MauiLib.MauiFileActions();
+                    string filename = Globals.Cookie + ".json";
+                    if (savedLogin is not null)
+                    {
+                        _ = mf.SaveToFileAndClipBoard(filename, Encoding.ASCII.GetBytes( JsonSerializer.Serialize(savedLogin)), false).GetAwaiter().GetResult();
+                    }
+                    else
+                    {
+                        mf.DeleteFile(filename);
+                    }
+                    NotifyStateChanged(); // notify subscribers
                     return;
+                }
 
                 // now save login cookie state
-                if (savedLogin != null)
+                if (savedLogin is not null)
                 {
                     WriteCookie(Globals.Cookie, JsonSerializer.Serialize(savedLogin), savedLogin.Hours).GetAwaiter();
                 }
@@ -271,8 +278,8 @@ namespace Notes2022RCL.Comp
         /// </summary>
         private void NotifyStateChanged()
         {
-            if (Globals.IsMaui)
-                return;
+            //if (Globals.IsMaui)
+            //    return;
 
             OnChange?.Invoke();
         }
