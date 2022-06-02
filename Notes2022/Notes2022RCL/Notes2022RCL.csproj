@@ -37,16 +37,16 @@
 		<PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
 		<PackageReference Include="Grpc.Net.Client.Web" Version="2.46.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="Syncfusion.Blazor.Buttons" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.Calendars" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.Core" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.Grid" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.Inputs" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.LinearGauge" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.Navigations" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Blazor.Themes" Version="20.1.0.57" />
-		<PackageReference Include="Syncfusion.Licensing" Version="20.1.0.57" />
+		<PackageReference Include="Syncfusion.Blazor.Buttons" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.Calendars" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.Core" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.Grid" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.Inputs" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.LinearGauge" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.Navigations" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Blazor.Themes" Version="20.1.0.58" />
+		<PackageReference Include="Syncfusion.Licensing" Version="20.1.0.58" />
 		<PackageReference Include="W8lessLabs.Blazor.LocalFiles" Version="3.0.0" />
 	</ItemGroup>
 
