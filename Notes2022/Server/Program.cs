@@ -23,21 +23,18 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.Dashboard;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 ConfigurationManager configuration = builder.Configuration;
 
 string? sentry = configuration["Sentry:Flag"];
 string? GrpcReflect = configuration["GrpcReflect"];
+string? connectionString = configuration.GetConnectionString("DefaultConnection");
 
 if (!string.IsNullOrEmpty(sentry) && sentry == "true")
     builder.WebHost.UseSentry();
-
-
-string? connectionString = configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<NotesDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -59,7 +56,6 @@ builder.Services.AddHangfire(configuration => configuration
 // Add the processing server as IHostedService
 builder.Services.AddHangfireServer();
 
-
 // For Identity
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
@@ -67,7 +63,6 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddDefaultTokenProviders();
 
 // Adding Authentication
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -90,7 +85,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Add services to the container.
-
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Default Lockout settings.
@@ -108,8 +102,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 });
 
+// Add Email service
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+// Add Grpc
 builder.Services.AddGrpc()
         .AddServiceOptions<Notes2022Service>(options =>
         {
@@ -119,9 +115,11 @@ builder.Services.AddGrpc()
                 options.Interceptors.Add<ServerLoggingInterceptor>();
         });
 
+// GRPC Reflection?
 if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
     builder.Services.AddGrpcReflection();
 
+// Cross-site
 builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
 {
     builder.AllowAnyOrigin()
@@ -130,14 +128,15 @@ builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
            .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
 }));
 
-builder.Services.AddControllers();
-builder.Services.AddRazorPages();
+//builder.Services.AddControllers();
+//builder.Services.AddRazorPages();
 
-Globals.SendGridApiKey = builder.Configuration["SendGridApiKey"];
-Globals.SendGridEmail = builder.Configuration["SendGridEmail"];
-Globals.SendGridName = builder.Configuration["SendGridName"];
-Globals.ImportRoot = builder.Configuration["ImportRoot"];
-Globals.AppUrl = builder.Configuration["AppUrl"];
+// Set Globals
+Globals.SendGridApiKey = configuration["SendGridApiKey"];
+Globals.SendGridEmail = configuration["SendGridEmail"];
+Globals.SendGridName = configuration["SendGridName"];
+Globals.ImportRoot = configuration["ImportRoot"];
+Globals.AppUrl = configuration["AppUrl"];
 Globals.StartTime = DateTime.UtcNow;
 
 try
@@ -151,7 +150,7 @@ catch { }
 
 //builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
-var app = builder.Build();
+WebApplication? app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -165,7 +164,7 @@ else
     app.UseHsts();
 }
 
-
+// GRPC Reflection?
 if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
     app.MapGrpcReflectionService();
 
