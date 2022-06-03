@@ -43,7 +43,7 @@ else
                             <GridColumn HeaderText="User Name" TextAlign="TextAlign.Left">
                                 <Template>
                                     @{
-                                        var current = (context as NoteAccess);
+                                        NoteAccess? current = (context as NoteAccess);
                                         string userName = current is not null ? current.UserID : "";
                                         if (userName != Globals.AccessOtherId)
                                         {
@@ -62,7 +62,7 @@ else
                             <GridColumn HeaderText="Read" TextAlign="TextAlign.Center">
                                 <Template>
                                 @{
-                                        var item = (context as NoteAccess);
+                                        NoteAccess? item = (context as NoteAccess);
                                         item = item is not null ? item : new NoteAccess();
                                         AccessItem read = new AccessItem { isChecked = item.ReadAccess, which = AccessX.ReadAccess, Item = item, canEdit = myAccess.EditAccess };
                                         <AccessCheckBox Model="@read" />
@@ -72,7 +72,7 @@ else
                             <GridColumn HeaderText="Write" TextAlign="TextAlign.Center">
                                 <Template>
                                     @{
-                                        var item = (context as NoteAccess);
+                                        NoteAccess? item = (context as NoteAccess);
                                         item = item is not null ? item : new NoteAccess();
                                         AccessItem write = new AccessItem { isChecked = item.Write, which = AccessX.Write, Item = item, canEdit = myAccess.EditAccess };
                                         <AccessCheckBox Model="@write" />
@@ -82,7 +82,7 @@ else
                             <GridColumn HeaderText="Respond" TextAlign="TextAlign.Center">
                                 <Template>
                                     @{
-                                        var item = (context as NoteAccess);
+                                        NoteAccess? item = (context as NoteAccess);
                                         item = item is not null ? item : new NoteAccess();
                                         AccessItem resp = new AccessItem { isChecked = item.Respond, which = AccessX.Respond, Item = item, canEdit = myAccess.EditAccess };
                                         <AccessCheckBox Model="@resp" />
@@ -92,7 +92,7 @@ else
                             <GridColumn HeaderText="Set Tag" TextAlign="TextAlign.Center">
                                 <Template>
                                     @{
-                                        var item = (context as NoteAccess);
+                                        NoteAccess? item = (context as NoteAccess);
                                         item = item is not null ? item : new NoteAccess();
                                         AccessItem settag = new AccessItem { isChecked = item.SetTag, which = AccessX.SetTag, Item = item, canEdit = myAccess.EditAccess };
                                         <AccessCheckBox Model="@settag" />
@@ -102,7 +102,7 @@ else
                             <GridColumn HeaderText="Delete/Edit" TextAlign="TextAlign.Center">
                                 <Template>
                                     @{
-                                        var item = (context as NoteAccess);
+                                        NoteAccess? item = (context as NoteAccess);
                                         item = item is not null ? item : new NoteAccess();
                                         AccessItem settag = new AccessItem { isChecked = item.DeleteEdit, which = AccessX.DeleteEdit, Item = item, canEdit = myAccess.EditAccess };
                                         <AccessCheckBox Model="@settag" />
@@ -112,7 +112,7 @@ else
                             <GridColumn HeaderText="View Access" TextAlign="TextAlign.Center">
                                 <Template>
                                     @{
-                                        var item = (context as NoteAccess);
+                                        NoteAccess? item = (context as NoteAccess);
                                         item = item is not null ? item : new NoteAccess();
                                         AccessItem settag = new AccessItem { isChecked = item.ViewAccess, which = AccessX.ViewAccess, Item = item, canEdit = myAccess.EditAccess };
                                         <AccessCheckBox Model="@settag" />
@@ -122,7 +122,7 @@ else
                             <GridColumn HeaderText="Edit Access" TextAlign="TextAlign.Center">
                                 <Template>
                                     @{
-                                        var item = (context as NoteAccess);
+                                        NoteAccess? item = (context as NoteAccess);
                                         item = item is not null ? item : new NoteAccess();
                                         AccessItem settag = new AccessItem { isChecked = item.EditAccess, which = AccessX.EditAccess, Item = item, canEdit = myAccess.EditAccess };
                                         <AccessCheckBox Model="@settag" />
@@ -134,7 +134,7 @@ else
                                     @{
                                         if (myAccess.EditAccess)
                                         {
-                                            var item = (context as NoteAccess);
+                                            NoteAccess? item = (context as NoteAccess);
                                             item = item is not null ? item : new NoteAccess();
                                             if (item.UserID == Globals.AccessOtherId)
                                             {

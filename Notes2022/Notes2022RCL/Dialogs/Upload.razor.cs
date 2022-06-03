@@ -81,7 +81,7 @@ namespace Notes2022RCL.Dialogs
                 if (string.IsNullOrEmpty(JsonFileName))
                     JsonFileName = "Clipboard";
 
-                var request = new ImportRequest()
+                ImportRequest? request = new ImportRequest()
                 { NoteFile = NoteFile, Payload = UploadText, JsonFileName = JsonFileName };
                 _ = await Client.ImportJsonAsync(request, myState.AuthHeader, deadline: DateTime.UtcNow.AddMinutes(10));
                 await ModalInstance.CancelAsync();

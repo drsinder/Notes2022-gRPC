@@ -154,10 +154,10 @@ namespace Notes2022RCL.Dialogs
         /// </summary>
         protected async void CreateNew()
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("userList", userList);
             parameters.Add("NoteFileId", fileId);
-            var xx = Modal.Show<AddAccessDlg>("", parameters);
+            IModalReference? xx = Modal.Show<AddAccessDlg>("", parameters);
             await xx.Result;
             try
             {

@@ -963,7 +963,7 @@ namespace Notes2022RCL.Pages
         /// <param name="message">The message.</param>
         private void ShowMessage(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             Modal.Show<MessageBox>("", parameters);
         }

@@ -492,7 +492,7 @@ namespace Notes2022RCL.Panels
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
             string stuff = sb.ToString(); // turn accumulated output into a string
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("PrintStuff", stuff); // pass string to print dialog
             Modal.Show<PrintDlg>("", parameters); // invloke print dialog with our output
         }
@@ -873,7 +873,7 @@ namespace Notes2022RCL.Panels
         /// <param name="message">The message.</param>
         private void ShowMessage(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             Modal.Show<MessageBox>("", parameters);
         }

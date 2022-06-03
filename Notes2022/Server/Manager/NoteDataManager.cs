@@ -338,7 +338,7 @@ namespace Notes2022.Server
 
                 if (tags is not null && tags.Length > 1)
                 {
-                    var theTags = Tags.StringToList(tags, newHeader.Id, newHeader.NoteFileId, newHeader.ArchiveId);
+                    List<Tags>? theTags = Tags.StringToList(tags, newHeader.Id, newHeader.NoteFileId, newHeader.ArchiveId);
 
                     if (theTags.Count > 0)
                     {
@@ -458,7 +458,7 @@ namespace Notes2022.Server
 
             NoteHeader nnh;
 
-            using (var dbTran = db.Database.BeginTransaction())
+            using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? dbTran = db.Database.BeginTransaction())
             {
                 int nvers = await db.NoteHeader.CountAsync(p => p.NoteFileId == dh.NoteFileId && p.NoteOrdinal == dh.NoteOrdinal
                 && p.ResponseOrdinal == dh.ResponseOrdinal && p.ArchiveId == dh.ArchiveId);

@@ -221,10 +221,10 @@ namespace Notes2022RCL.Pages.Admin
                 await this.InvokeAsync(() => this.StateHasChanged());
             }
             catch (Exception) { }
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("FileId", Id);
-            var xModal = Modal.Show<Dialogs.CreateNoteFile>("Create Notefile", parameters);
-            var result = await xModal.Result;
+            IModalReference? xModal = Modal.Show<Dialogs.CreateNoteFile>("Create Notefile", parameters);
+            ModalResult? result = await xModal.Result;
             await Reload();
             if (!result.Cancelled)
                 Navigation.NavigateTo("admin/notefilelist");
@@ -262,7 +262,7 @@ namespace Notes2022RCL.Pages.Admin
                 await this.InvokeAsync(() => this.StateHasChanged());
             }
             catch (Exception) { }
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("FileId", Id);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
@@ -271,7 +271,7 @@ namespace Notes2022RCL.Pages.Admin
 
             parameters.Add("FileTitle", file.NoteFileTitle);
             IModalReference? xModal = Modal.Show<Dialogs.DeleteNoteFile>("Delete", parameters);
-            var result = await xModal.Result;
+            ModalResult? result = await xModal.Result;
             if (!result.Cancelled)
             {
                 await Reload();
@@ -288,7 +288,7 @@ namespace Notes2022RCL.Pages.Admin
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 
             NoteFile file = files.List.ToList().Find(x => x.Id == Id);
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("FileId", Id);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
@@ -301,7 +301,7 @@ namespace Notes2022RCL.Pages.Admin
 
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
-            var xModal = Modal.Show<Dialogs.NoteFileDetails>("Details", parameters);
+            IModalReference? xModal = Modal.Show<Dialogs.NoteFileDetails>("Details", parameters);
             await xModal.Result;
         }
 
@@ -312,11 +312,10 @@ namespace Notes2022RCL.Pages.Admin
         async void EditNoteFile(int Id)
         {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-
             NoteFile file = files.List.ToList().Find(x => x.Id == Id);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("FileId", Id);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
@@ -327,8 +326,8 @@ namespace Notes2022RCL.Pages.Admin
             parameters.Add("LastEdited", file.LastEdited);
             parameters.Add("NumberArchives", file.NumberArchives);
             parameters.Add("Owner", file.OwnerId);
-            var xModal = Modal.Show<Dialogs.EditNoteFile>("Edit Notefile", parameters);
-            var result = await xModal.Result;
+            IModalReference? xModal = Modal.Show<Dialogs.EditNoteFile>("Edit Notefile", parameters);
+            ModalResult? result = await xModal.Result;
             if (!result.Cancelled)
             {
                 await Reload();
@@ -392,7 +391,7 @@ namespace Notes2022RCL.Pages.Admin
             parameters.Add("UploadText", myText);
             parameters.Add("NoteFile", filename);
             parameters.Add("JsonFileName", selectedFile.Name);
-            var yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
+            IModalReference? yModal = Modal.Show<Dialogs.Upload>("Upload2", parameters);
             await yModal.Result;
             Navigation.NavigateTo("noteindex/" + fileId);
         }
@@ -426,7 +425,7 @@ namespace Notes2022RCL.Pages.Admin
                 parameters.Add("UploadText", txt);
                 parameters.Add("NoteFile", filename);
                 parameters.Add("JsonFileName", "Clipboard");
-                var yModal = Modal.Show<Upload>("Upload2", parameters);
+                IModalReference? yModal = Modal.Show<Upload>("Upload2", parameters);
                 await yModal.Result;
                 Navigation.NavigateTo("noteindex/" + fileId);
 
@@ -442,7 +441,7 @@ namespace Notes2022RCL.Pages.Admin
         /// <param name="message">The message.</param>
         private IModalReference? ShowYesNo(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             IModalReference?  retval = Modal.Show<YesNo>("", parameters);
             return retval;

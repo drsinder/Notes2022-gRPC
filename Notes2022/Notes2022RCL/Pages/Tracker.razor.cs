@@ -86,7 +86,7 @@ namespace Notes2022RCL.Pages
             if (trackers is not null)
             {
                 trackers = trackers.OrderBy(p => p.Ordinal).ToList();
-                foreach (var tracker in trackers)
+                foreach (Sequencer? tracker in trackers)
                 {
 #pragma warning disable CS8604 // Possible null reference argument.
 
@@ -98,7 +98,7 @@ namespace Notes2022RCL.Pages
 
             if (stuff is not null && stuff.Count > 0)
             {
-                foreach (var s in stuff)
+                foreach (NoteFile? s in stuff)
                 {
                     if (files.Find(p => p.Id == s.Id) is null)
                         files.Add(s);

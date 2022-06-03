@@ -220,11 +220,11 @@ namespace Notes2022RCL.Panels
             }
 
             // get insertion point?? how??
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("stuff", xx);
             parameters.Add("EditObj", EditObj);
-            var formModal = Modal.Show<CodeFormat>("", parameters);
-            var result = await formModal.Result;
+            IModalReference? formModal = Modal.Show<CodeFormat>("", parameters);
+            ModalResult? result = await formModal.Result;
             if (!result.Cancelled)
             {
                 PreparedCode = (string)result.Data;
@@ -246,7 +246,7 @@ namespace Notes2022RCL.Panels
         /// <param name="message">The message.</param>
         private void ShowMessage(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             Modal.Show<MessageBox>("", parameters);
         }

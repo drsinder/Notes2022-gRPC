@@ -282,7 +282,7 @@ namespace Notes2022RCL.Menus
                     Forward();
                     break;
                 case "Copy":
-                    var parameters = new ModalParameters();
+                    ModalParameters? parameters = new ModalParameters();
                     parameters.Add("Note", Model.Header);
                     Modal.Show<Copy>("", parameters);
                     break;
@@ -318,7 +318,7 @@ namespace Notes2022RCL.Menus
                 request.ResponseOrdinal = 0;
             }
 
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("model", request);
             Modal.Show<ExportJsonString>("", parameters);
         }
@@ -328,7 +328,7 @@ namespace Notes2022RCL.Menus
         /// </summary>
         protected void Forward()
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             ForwardViewModel fv = new()
             { NoteID = Model.Header.Id, FileID = Model.Header.NoteFileId, ArcID = Model.Header.ArchiveId, NoteOrdinal = Model.Header.NoteOrdinal, NoteSubject = Model.Header.NoteSubject, NoteFile = Model.NoteFile };
             if (Model.Header.ResponseCount > 0 || Model.Header.BaseNoteId > 0)
@@ -346,7 +346,7 @@ namespace Notes2022RCL.Menus
         /// <param name="emailaddr">The emailaddr.</param>
         private void DoExport(bool isHtml, bool isCollapsible, bool isEmail = false, string emailaddr = "")
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             ExportViewModel vm = new()
             { ArchiveNumber = Model.Header.ArchiveId, isCollapsible = isCollapsible, isDirectOutput = !isEmail, isHtml = isHtml, NoteFile = Model.NoteFile, NoteOrdinal = Model.Header.NoteOrdinal, Email = emailaddr };
             //vm.myMenu = this;
@@ -361,9 +361,9 @@ namespace Notes2022RCL.Menus
         private async Task DoEmail()
         {
             string emailaddr;
-            var parameters = new ModalParameters();
-            var formModal = Modal.Show<Dialogs.Email>("", parameters);
-            var result = await formModal.Result;
+            ModalParameters? parameters = new ModalParameters();
+            IModalReference? formModal = Modal.Show<Dialogs.Email>("", parameters);
+            ModalResult? result = await formModal.Result;
             if (result.Cancelled)
                 return;
             emailaddr = (string)result.Data;
@@ -379,10 +379,10 @@ namespace Notes2022RCL.Menus
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         private async Task<bool> YesNo(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
-            var formModal = Modal.Show<YesNo>("", parameters);
-            var result = await formModal.Result;
+            IModalReference? formModal = Modal.Show<YesNo>("", parameters);
+            ModalResult? result = await formModal.Result;
             return !result.Cancelled;
         }
 
@@ -392,7 +392,7 @@ namespace Notes2022RCL.Menus
         /// <param name="message">The message.</param>
         private void ShowMessage(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             Modal.Show<MessageBox>("", parameters);
         }

@@ -47,7 +47,7 @@ else
             <GridColumn HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
                 <Template Context="inner">
                     @{
-                        var itemx = (inner as NoteFile);
+                        NoteFile? itemx = (inner as NoteFile);
                         itemx = itemx is not null ? itemx : new();
                         DateTime curTimex = itemx.LastEdited.ToDateTime().ToLocalTime();
                     string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString();

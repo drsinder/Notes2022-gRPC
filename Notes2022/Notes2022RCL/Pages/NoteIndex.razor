@@ -76,7 +76,7 @@ else                    @*    Index mode        *@
                             <GridTemplates>
                                 <DetailTemplate>
                                     @{
-                                        var current = (context as NoteHeader);
+                                        NoteHeader? current = (context as NoteHeader);
                                         current = current is not null ? current : new();
                                         List<NoteHeader>? Resp = null;
                                         if ( current.ResponseCount > 0 ) {
@@ -101,7 +101,7 @@ else                    @*    Index mode        *@
                                 <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
                                     <Template Context="inner">
                             @{
-                                            var itemx = (inner as NoteHeader);
+                                            NoteHeader? itemx = (inner as NoteHeader);
                                             itemx = itemx is not null ? itemx : new();
                                             <span>@itemx.CreateDate.ToDateTime().ToLocalTime()</span>
                                         }

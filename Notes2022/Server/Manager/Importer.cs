@@ -151,7 +151,7 @@ namespace Notes2022.Server
                     await ems.SendEmailAsync(email, "Import Progess", "Your import to " + myNotesFile + " has completed " + currentBase + " base notes...");
                 }
 
-                using (var dbTran = _db.Database.BeginTransaction())
+                using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? dbTran = _db.Database.BeginTransaction())
                 {
 
                     string theTags = string.Empty;

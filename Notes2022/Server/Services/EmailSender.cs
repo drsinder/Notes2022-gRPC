@@ -83,12 +83,12 @@ namespace Notes2022.Server.Services
         /// <returns>A Task representing the asynchronous operation.</returns>
         public async Task SendEmailAsync(string email, string subject, string message)
         {
-            var apiKey = Globals.SendGridApiKey;
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress(Globals.SendGridEmail, Globals.SendGridName);
-            var to = new EmailAddress(email);
-            var htmlStart = "<!DOCTYPE html>";
-            var isHtml = message.StartsWith(htmlStart);
+            string? apiKey = Globals.SendGridApiKey;
+            SendGridClient? client = new SendGridClient(apiKey);
+            EmailAddress? from = new EmailAddress(Globals.SendGridEmail, Globals.SendGridName);
+            EmailAddress? to = new EmailAddress(email);
+            string? htmlStart = "<!DOCTYPE html>";
+            bool isHtml = message.StartsWith(htmlStart);
 
             SendGridMessage msg;
 

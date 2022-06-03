@@ -241,7 +241,7 @@ namespace Notes2022RCL.Menus
                     Modal.Show<HelpDialog>();
                     break;
                 case "AccessControls":
-                    var parameters = new ModalParameters();
+                    ModalParameters? parameters = new ModalParameters();
                     parameters.Add("fileId", Model.NoteFile.Id);
                     Modal.Show<AccessList>("", parameters);
                     break;
@@ -288,10 +288,10 @@ namespace Notes2022RCL.Menus
         /// </summary>
         private async Task SetSearch()
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("searchtype", "File");
-            var formModal = Modal.Show<SearchDlg>();
-            var result = await formModal.Result;
+            IModalReference? formModal = Modal.Show<SearchDlg>();
+            ModalResult? result = await formModal.Result;
             if (result.Cancelled)
                 return;
             else
@@ -389,7 +389,7 @@ namespace Notes2022RCL.Menus
             string stuff = sb.ToString(); // turn accumulated output into a string
             sb = null;
             json = null;
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("PrintStuff", stuff); // pass string to print dialog
             Modal.Show<PrintDlg>("", parameters); // invoke print dialog with our output
         }
@@ -403,7 +403,7 @@ namespace Notes2022RCL.Menus
         /// <param name="emailaddr">Where to mail it</param>
         private void DoExport(bool isHtml, bool isCollapsible, bool isEmail = false, string emailaddr = "")
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             ExportViewModel vm = new()
             { ArchiveNumber = Model.ArcId, isCollapsible = isCollapsible, isDirectOutput = !isEmail, isHtml = isHtml, NoteFile = Model.NoteFile, NoteOrdinal = 0, Email = emailaddr, myMenu = this };
             currNote = 1;
@@ -445,7 +445,7 @@ namespace Notes2022RCL.Menus
         /// <param name="ext">if set to <c>true</c> [ext].</param>
         private void DoJson(bool ext = false)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             ExportViewModel vm = new()
             { ArchiveNumber = Model.ArcId, NoteFile = Model.NoteFile, NoteOrdinal = 0, isCollapsible = ext, myMenu = this };
             parameters.Add("model", vm);
@@ -458,9 +458,9 @@ namespace Notes2022RCL.Menus
         private async Task DoEmail()
         {
             string emailaddr;
-            var parameters = new ModalParameters();
-            var formModal = Modal.Show<Email>("", parameters);
-            var result = await formModal.Result;
+            ModalParameters? parameters = new ModalParameters();
+            IModalReference? formModal = Modal.Show<Email>("", parameters);
+            ModalResult? result = await formModal.Result;
             if (result.Cancelled)
                 return;
             emailaddr = (string)result.Data;
@@ -487,7 +487,7 @@ namespace Notes2022RCL.Menus
         /// <param name="selectedFiles">The selected files.</param>
         async Task FilesSelectedHandler(SelectedFile[] selectedFiles)
         {
-            var selectedFile = selectedFiles[0];
+            SelectedFile? selectedFile = selectedFiles[0];
             Stream myFile = await fileSelect.OpenFileStreamAsync(selectedFile.Name); // open a stream on the file
             StreamReader sr = new StreamReader(myFile); // get a reader
             string myText = await sr.ReadToEndAsync(); // read entire file as a string
@@ -542,7 +542,7 @@ namespace Notes2022RCL.Menus
         /// <param name="message">The message.</param>
         private IModalReference? ShowMessage(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             IModalReference? retval = Modal.Show<MessageBox>("", parameters);
             return retval;
@@ -550,7 +550,7 @@ namespace Notes2022RCL.Menus
 
         private IModalReference? ShowYesNo(string message)
         {
-            var parameters = new ModalParameters();
+            ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             IModalReference? retval = Modal.Show<YesNo>("", parameters);
             return retval;
