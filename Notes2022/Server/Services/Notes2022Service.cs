@@ -924,7 +924,7 @@ namespace Notes2022.Server.Services
         }
 
         /// <summary>
-        /// Gets the content of the note.
+        /// Gets the full content of the note.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
@@ -967,7 +967,7 @@ namespace Notes2022.Server.Services
         }
 
         /// <summary>
-        /// Gets the content of the note.
+        /// Gets the partial content of the note.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
