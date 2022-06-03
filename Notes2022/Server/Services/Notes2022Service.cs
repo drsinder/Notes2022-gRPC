@@ -57,12 +57,12 @@ namespace Notes2022.Server.Services
     /// <seealso cref="Notes2022.Proto.Notes2022Server.Notes2022ServerBase" />
     public class Notes2022Service : Notes2022Server.Notes2022ServerBase
     {
-        /// <summary>
-        /// The logger
-        /// </summary>
-#pragma warning disable IDE0052 // Remove unread private members
-        //private readonly ILogger<Notes2022Service> _logger; // not currently used - here if/when needed
-#pragma warning restore IDE0052 // Remove unread private members
+//        /// <summary>
+//        /// The logger
+//        /// </summary>
+//#pragma warning disable IDE0052 // Remove unread private members
+//        private readonly ILogger<Notes2022Service> _logger; // not currently used - here if/when needed
+//#pragma warning restore IDE0052 // Remove unread private members
 
         /// <summary>
         /// The database
@@ -104,7 +104,8 @@ namespace Notes2022.Server.Services
         /// <param name="signInManager">The sign in manager.</param>
         /// <param name="emailSender">The email sender.</param>
         /// <param name="userManager">The user manager.</param>
-        public Notes2022Service(/*ILogger<Notes2022Service> logger,*/
+        public Notes2022Service(
+            //ILogger<Notes2022Service> logger,
             NotesDbContext db,
             IConfiguration configuration,
             RoleManager<IdentityRole> roleManager,
@@ -311,8 +312,8 @@ namespace Notes2022.Server.Services
                     Displayname = user.DisplayName,
                     Email = user.Email,
                     Subject = user.Id,
-                    IsAdmin = roles.Contains("Admin"),
-                    IsUser = roles.Contains("User")
+                    IsAdmin = roles.Contains((UserRoles.Admin)),
+                    IsUser = roles.Contains((UserRoles.User))
                 };
 
                 if (userInfo.IsAdmin)
@@ -467,7 +468,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GAppUserList.</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.Admin)]
         public override async Task<GAppUserList> GetUserList(NoRequest request, ServerCallContext context)
         {
             List<ApplicationUser> list = await _userManager.Users.ToListAsync();
@@ -480,7 +481,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>EditUserViewModel.</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.Admin)]
         public override async Task<EditUserViewModel> GetUserRoles(AppUserRequest request, ServerCallContext context)
         {
             EditUserViewModel model = new()
@@ -489,12 +490,8 @@ namespace Notes2022.Server.Services
             };
             string Id = request.Subject;
             ApplicationUser user = await _userManager.FindByIdAsync(Id);
-
             model.UserData = user.GetGAppUser();
-
             List<IdentityRole>? allRoles = _roleManager.Roles.ToList();
-
-            //var myRoles = await _userManager.GetRolesAsync(user);
 
             foreach (IdentityRole? role in allRoles)
             {
@@ -517,7 +514,7 @@ namespace Notes2022.Server.Services
         /// <param name="model">The model.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoRequest> UpdateUserRoles(EditUserViewModel model, ServerCallContext context)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(model.UserData.Id);
@@ -567,7 +564,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>System.Nullable&lt;GNotefile&gt;.</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoteFile?> CreateNoteFile(NoteFile request, ServerCallContext context)
         {
             ApplicationUser appUser = await GetAppUser(context);
@@ -597,7 +594,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>HomePageModel.</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.Admin)]
         public override async Task<HomePageModel> GetAdminPageModel(NoRequest request, ServerCallContext context)
         {
             HomePageModel homepageModel = await GetBaseHomePageModelAsync(request, context);
@@ -702,7 +699,7 @@ namespace Notes2022.Server.Services
         /// <returns>
         /// NoteFile.
         /// </returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoteFile> UpdateNoteFile(NoteFile noteFile, ServerCallContext context)
         {
             NoteFile nf = await NoteDataManager.GetFileById(_db, noteFile.Id);
@@ -719,7 +716,7 @@ namespace Notes2022.Server.Services
         /// <param name="noteFile">The note file.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoRequest> DeleteNoteFile(NoteFile noteFile, ServerCallContext context)
         {
             NoteFile nf = await NoteDataManager.GetFileById(_db, noteFile.Id);
@@ -756,7 +753,7 @@ namespace Notes2022.Server.Services
         ///// <param name="request">The request. Points to a file on server</param>
         ///// <param name="context">The context.</param>
         ///// <returns>NoRequest.</returns>
-        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = UserRoles.Admin)]
         //public override async Task<NoRequest> Import(ImportRequest request, ServerCallContext context)
         //{
         //    Importer imp = new();
@@ -770,7 +767,7 @@ namespace Notes2022.Server.Services
         ///// <param name="request">The request. Contains entire contents to import!</param>
         ///// <param name="context">The context.</param>
         ///// <returns>NoRequest.</returns>
-        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = UserRoles.Admin)]
         //public override async Task<NoRequest> Import(ImportRequest request, ServerCallContext context)
         //{
         //    MemoryStream? input = new(request.Payload.ToArray());
