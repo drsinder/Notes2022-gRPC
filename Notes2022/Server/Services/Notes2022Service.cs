@@ -287,6 +287,7 @@ namespace Notes2022.Server.Services
                 if (user.DisplayName is null)
                     user.DisplayName = String.Empty;
 
+                // form login response with JWT
                 List<Claim>? authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
@@ -325,6 +326,12 @@ namespace Notes2022.Server.Services
             return new LoginReply() { Status = StatusCodes.Status500InternalServerError, Message = "User Login failed! Please check user details and try again." };
         }
 
+        /// <summary>
+        /// Relogs a user in using JWT
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>The response to send back to the client (wrapped by a task).</returns>
         [Authorize] // IT IS VITAL THAT THIS IS AUTHORIZED HERE!  
         public override async Task<NoRequest> ReLogin(NoRequest request, ServerCallContext context)
         {
@@ -335,6 +342,12 @@ namespace Notes2022.Server.Services
             return new();
         }
 
+        /// <summary>
+        /// Resend confirmation email
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>The response to send back to the client (wrapped by a task).</returns>
         public override async Task<AuthReply> ResendEmail(AString request, ServerCallContext context)
         {
             ApplicationUser? user = await _userManager.FindByEmailAsync(request.Val);
@@ -357,6 +370,12 @@ namespace Notes2022.Server.Services
             return new AuthReply() { Status = StatusCodes.Status200OK, Message = "Email sent!" };
         }
 
+        /// <summary>
+        /// Send Password Reset Email
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>The response to send back to the client (wrapped by a task).</returns>
         public override async Task<AuthReply> ResetPassword(AString request, ServerCallContext context)
         {
             ApplicationUser? user = await _userManager.FindByEmailAsync(request.Val);
@@ -378,6 +397,12 @@ namespace Notes2022.Server.Services
             return new AuthReply() { Status = StatusCodes.Status200OK, Message = "Email sent!" };
         }
 
+        /// <summary>
+        /// Do Password Reset
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>The response to send back to the client (wrapped by a task).</returns>
         public override async Task<AuthReply> ResetPassword2(ResetPasswordRequest request, ServerCallContext context)
         {
             AuthReply ar = new() { Status = 500, Message = "Something went wrong" };
@@ -399,6 +424,12 @@ namespace Notes2022.Server.Services
             return ar;
         }
 
+        /// <summary>
+        /// Change Password
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>The response to send back to the client (wrapped by a task).</returns>
         [Authorize]
         public override async Task<AuthReply> ChangePassword(ResetPasswordRequest request, ServerCallContext context)
         {
@@ -692,7 +723,7 @@ namespace Notes2022.Server.Services
         }
 
         /// <summary>
-        /// Updates the note file.
+        /// Updates the note file.  (name and title)
         /// </summary>
         /// <param name="noteFile">The note file.</param>
         /// <param name="context">The context.</param>
@@ -747,46 +778,8 @@ namespace Notes2022.Server.Services
             return new NoRequest();
         }
 
-        ///// <summary>
-        ///// Imports the specified request.
-        ///// </summary>
-        ///// <param name="request">The request. Points to a file on server</param>
-        ///// <param name="context">The context.</param>
-        ///// <returns>NoRequest.</returns>
-        //[Authorize(Roles = UserRoles.Admin)]
-        //public override async Task<NoRequest> Import(ImportRequest request, ServerCallContext context)
-        //{
-        //    Importer imp = new();
-        //    _ = await imp.Import(_db, Globals.ImportRoot + request.UploadFile, request.NoteFile);
-        //    return new NoRequest();
-        //}
-
-        ///// <summary>
-        ///// Imports the specified request.
-        ///// </summary>
-        ///// <param name="request">The request. Contains entire contents to import!</param>
-        ///// <param name="context">The context.</param>
-        ///// <returns>NoRequest.</returns>
-        //[Authorize(Roles = UserRoles.Admin)]
-        //public override async Task<NoRequest> Import(ImportRequest request, ServerCallContext context)
-        //{
-        //    MemoryStream? input = new(request.Payload.ToArray());
-        //    StreamReader file = new(input);
-
-        //    Importer? imp = new();
-        //    _ = await imp.Import(_db, file, request.NoteFile);
-
-        //    file.DiscardBufferedData();
-        //    file.Dispose();
-        //    input.Dispose();
-        //    GC.Collect();
-        //    GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-        //    GC.Collect();
-        //    return new NoRequest();
-        //}
-
         /// <summary>
-        /// rpc Import(ImportRequest) returns (NoRequest);  
+        /// rpc ImportJson(ImportRequest) returns (NoRequest);  
         /// Runs a Json import given client side file contents
         /// Caller must have Write access to the target note file.
         /// </summary>
@@ -1019,7 +1012,6 @@ namespace Notes2022.Server.Services
         {
             List<NoteHeader> nhl = await _db.NoteHeader.Where(p => p.NoteFileId == request.FileId 
                     && p.ArchiveId == request.ArcId && !p.IsDeleted && p.Version == 0)
-                    //.OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal)
                     .ToListAsync();
 
             List<long> ids = nhl.Select(p => p.Id).ToList();
@@ -1063,15 +1055,12 @@ namespace Notes2022.Server.Services
         {
             AccessAndUserList accessAndUserList = new()
             {
-                //AccessList = NoteAccess.GetGNoteAccessList(_db.NoteAccess.Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId).ToList()),
-                //AppUsers = ApplicationUser.GetGAppUserList((await _userManager.GetUsersInRoleAsync("User")).ToList()),
-                UserAccess = (await AccessManager.GetAccess(_db, request.UserId, request.FileId, request.ArcId))
+                UserAccess = await AccessManager.GetAccess(_db, request.UserId, request.FileId, request.ArcId)
             };
 
-            accessAndUserList.AccessList.AddRange(_db.NoteAccess.Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId).ToList());
-            GAppUserList? ul = ApplicationUser.GetGAppUserList((await _userManager.GetUsersInRoleAsync("User")).ToList());
+            accessAndUserList.AccessList.AddRange(await _db.NoteAccess.Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId).ToListAsync());
+            accessAndUserList.AppUsers = ApplicationUser.GetGAppUserList((await _userManager.GetUsersInRoleAsync("User")).ToList());
 
-            accessAndUserList.AppUsers = ul;
             return accessAndUserList;
         }
 
@@ -1482,9 +1471,7 @@ namespace Notes2022.Server.Services
 
             NoteHeader gnh = (await _db.NoteHeader.SingleAsync(p => p.Id == request.Id));
 
-            if (isAdmin)
-            { }
-            else
+            if (!isAdmin)
             {
                 NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, gnh.NoteFileId, gnh.ArchiveId);
                 if (!na.ReadAccess)
@@ -1778,7 +1765,7 @@ namespace Notes2022.Server.Services
         /// file as json.  But the fact is this is a good way to grab every thing the file contains 
         /// relevant to the requesting user.  In here you have the file object, all headers including their 
         /// content object and tag objects.  Finally, the users access token.
-        /// Grab this and you have all you need to display a file.
+        /// Grab this and you have all you need to display a file or to import it.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
