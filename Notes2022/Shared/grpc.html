@@ -215,6 +215,14 @@
                 </li>
               
                 <li>
+                  <a href="#notes2022server.ContentSearchRequest"><span class="badge">M</span>ContentSearchRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#notes2022server.ContentSearchResponse"><span class="badge">M</span>ContentSearchResponse</a>
+                </li>
+              
+                <li>
                   <a href="#notes2022server.CopyModel"><span class="badge">M</span>CopyModel</a>
                 </li>
               
@@ -678,6 +686,68 @@
 
         
       
+        <h3 id="notes2022server.ContentSearchRequest">ContentSearchRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>fileId</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>file Id </p></td>
+                </tr>
+              
+                <tr>
+                  <td>arcId</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Acrhive Id </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>target of search </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="notes2022server.ContentSearchResponse">ContentSearchResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>list</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="notes2022server.CopyModel">CopyModel</h3>
         <p>used to copy note(s) to another file</p>
 
@@ -804,13 +874,6 @@
                   <td><a href="#int64">int64</a></td>
                   <td></td>
                   <td><p>id of note </p></td>
-                </tr>
-              
-                <tr>
-                  <td>full</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p>fill all data? </p></td>
                 </tr>
               
             </tbody>
@@ -2732,6 +2795,13 @@
               </tr>
             
               <tr>
+                <td>GetPartNoteContent</td>
+                <td><a href="#notes2022server.DisplayModelRequest">DisplayModelRequest</a></td>
+                <td><a href="#notes2022server.DisplayModel">DisplayModel</a></td>
+                <td><p>gets the content of a note - short version</p></td>
+              </tr>
+            
+              <tr>
                 <td>GetAccessAndUserList</td>
                 <td><a href="#notes2022server.AccessAndUserListRequest">AccessAndUserListRequest</a></td>
                 <td><a href="#notes2022server.AccessAndUserList">AccessAndUserList</a></td>
@@ -2946,6 +3016,13 @@
                 <td><a href="#notes2022server.NoteFileRequest">NoteFileRequest</a></td>
                 <td><a href="#notes2022server.NoteCount">NoteCount</a></td>
                 <td><p>Gets the number of base notes.</p></td>
+              </tr>
+            
+              <tr>
+                <td>SearchNoteContent</td>
+                <td><a href="#notes2022server.ContentSearchRequest">ContentSearchRequest</a></td>
+                <td><a href="#notes2022server.ContentSearchResponse">ContentSearchResponse</a></td>
+                <td><p></p></td>
               </tr>
             
               <tr>

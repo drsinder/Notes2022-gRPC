@@ -299,9 +299,16 @@ namespace Notes2022RCL.Panels
 
             // Get data from the server - just the content -
             // we already have the header in the container (index)
-            model = await Client.GetNoteContentAsync(new DisplayModelRequest()
-            { Vers = Vers, NoteId = NoteId }, myState.AuthHeader);
+
+            model = await Client.GetPartNoteContentAsync(new DisplayModelRequest()
+            { Vers = Vers, NoteId = NoteId}, myState.AuthHeader);
             model = model is not null ? model : new();
+
+            model.Header = MyNoteIndex.GetModel().AllNotes.Single(p => p.Id == NoteId);
+            model.Access = MyNoteIndex.GetModel().MyAccess;
+            model.CanEdit = MyNoteIndex.GetModel().MyAccess.UserID == myState.UserInfo.Subject || myState.IsAdmin;
+            model.IsAdmin = myState.IsAdmin;
+
             // set text to be displayed re responses
             respX = respY = "";
             if (model.Header.ResponseCount > 0)
@@ -318,14 +325,12 @@ namespace Notes2022RCL.Panels
             {
                 if (RespShown)
                 {
-                    //RespShown = false;
                     ResetShown = true;
                     respHeaders = MyNoteIndex.GetResponseHeaders(model.Header.Id);
                     if (IsRootNote && RespFlipped && RespShown)
                         respHeaders = respHeaders.OrderByDescending(x => x.ResponseOrdinal).ToList();
                     else if (IsRootNote && RespShown)
                         respHeaders = respHeaders.OrderBy(x => x.ResponseOrdinal).ToList();
-                    //StateHasChanged();
                 }
             }
         }

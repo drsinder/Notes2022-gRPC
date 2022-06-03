@@ -678,26 +678,38 @@ namespace Notes2022RCL.Pages
         protected async Task SearchContents(Search target)
         {
             results = new List<NoteHeader>();
-            List<NoteHeader> lookin = Model.AllNotes.ToList();
-            foreach (NoteHeader nh in lookin)
+
+
+            //List<NoteHeader> lookin = Model.AllNotes.ToList();
+            //foreach (NoteHeader nh in lookin)
+            //{
+            //    DisplayModel dm = await Client.GetPartNoteContentAsync(new DisplayModelRequest()
+            //    { NoteId = nh.Id }, myState.AuthHeader);
+            //    NoteContent nc = dm.Content;
+            //    bool isMatch = false;
+            //    switch (target.Option)
+            //    {
+            //        case SearchOption.Content:
+            //            isMatch = nc.NoteBody.ToLower().Contains(target.Text);
+            //            break;
+            //    }
+
+            //    if (isMatch)
+            //        results.Add(nh);
+            //}
+
+
+            ContentSearchRequest req = new()
             {
-                //DisplayModel dm = await DAL.GetNoteContent(Http, nh.Id);
-                DisplayModel dm = await Client.GetNoteContentAsync(new DisplayModelRequest()
-                { NoteId = nh.Id }, myState.AuthHeader);
-                NoteContent nc = dm.Content;
-                bool isMatch = false;
-                switch (target.Option)
-                {
-                    case SearchOption.Content:
-                        isMatch = nc.NoteBody.ToLower().Contains(target.Text);
-                        break;
-                }
+                FileId = Model.NoteFile.Id,
+                ArcId = Model.ArcId,
+                Target = target.Text
+            };
+            ContentSearchResponse resp = await Client.SearchNoteContentAsync(req , myState.AuthHeader);
 
-                if (isMatch)
-                    results.Add(nh);
-            }
+            results = Model.AllNotes.Where(p => resp.List.Contains(p.Id)).OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal).ToList();
 
-            if (results.Count == 0)
+             if (results.Count == 0)
             {
                 ShowMessage("Nothing Found.");
                 return;

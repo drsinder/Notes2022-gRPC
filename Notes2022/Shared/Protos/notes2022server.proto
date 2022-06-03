@@ -56,6 +56,7 @@ service Notes2022Server {
 	rpc GetUserRoles(AppUserRequest) returns (EditUserViewModel);		// used for editing roles users are in
 	rpc GetHeaderForNoteId(NoteId) returns (NoteHeader);				// gets a note header given its id
 	rpc GetNoteContent(DisplayModelRequest) returns (DisplayModel);		// gets the content of a note
+	rpc GetPartNoteContent(DisplayModelRequest) returns (DisplayModel);	// gets the content of a note - short version
 	rpc GetAccessAndUserList(AccessAndUserListRequest) returns (AccessAndUserList);	// gets access data and user list
 	rpc GetAccessList(AccessAndUserListRequest) returns (NoteAccessList);			// gets the access list for a file
 	rpc GetAccess(NoteFileRequest) returns (NoteAccess);				// gets the access for user
@@ -87,6 +88,7 @@ service Notes2022Server {
 	rpc GetNoteHeaders(NoteHeadersRequest) returns (NoteHeaderList);	// request all or some slice of a note file - headers w or wo content and tags
 	rpc GetHomePageMessage(NoRequest) returns (AString);				// Gets the current homepage message if any
 	rpc GetNoteCount(NoteFileRequest) returns (NoteCount);				// Gets the number of base notes.
+	rpc SearchNoteContent(ContentSearchRequest) returns (ContentSearchResponse);
 
 // These are crafted for the specific user interface I've provided and may return more or less than you want.
 // The basics above will permit more targeted access to data but may require more round trips.
@@ -395,7 +397,6 @@ message DisplayModel {
 message DisplayModelRequest {
 	int32 vers = 1;					// version of note
 	int64 noteId = 2;				// id of note
-	bool full = 3;					// fill all data?
 }
 
 // request use list and access list
@@ -517,4 +518,15 @@ message NoteHeadersRequest {
 // count of base notes in a file
 message NoteCount {
 	int32 count = 1;			// the count
+}
+
+message ContentSearchRequest {
+	int32 fileId = 1;			// file Id
+	int32 arcId = 2;			//Acrhive Id
+	string target = 3;			// target of search
+}
+
+message ContentSearchResponse
+{
+	repeated int64 list = 1;
 }

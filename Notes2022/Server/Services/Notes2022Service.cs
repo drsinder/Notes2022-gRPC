@@ -61,7 +61,7 @@ namespace Notes2022.Server.Services
         /// The logger
         /// </summary>
 #pragma warning disable IDE0052 // Remove unread private members
-        private readonly ILogger<Notes2022Service> _logger; // not currently used - here if/when needed
+        //private readonly ILogger<Notes2022Service> _logger; // not currently used - here if/when needed
 #pragma warning restore IDE0052 // Remove unread private members
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Notes2022.Server.Services
         /// <param name="signInManager">The sign in manager.</param>
         /// <param name="emailSender">The email sender.</param>
         /// <param name="userManager">The user manager.</param>
-        public Notes2022Service(ILogger<Notes2022Service> logger,
+        public Notes2022Service(/*ILogger<Notes2022Service> logger,*/
             NotesDbContext db,
             IConfiguration configuration,
             RoleManager<IdentityRole> roleManager,
@@ -113,7 +113,7 @@ namespace Notes2022.Server.Services
             UserManager<ApplicationUser> userManager
           )
         {
-            _logger = logger;
+            //_logger = logger;
             _db = db;
             _userManager = userManager;
             _roleManager = roleManager;
@@ -264,7 +264,7 @@ namespace Notes2022.Server.Services
             ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email);
             if (user is null)
             {
-                user = await _userManager.FindByNameAsync(request.Email.Replace(" ", "_"));
+                user = await _userManager.FindByNameAsync(request.Email.Replace(" ", "_").Trim());
             }
             if (user is not null && await _signInManager.CanSignInAsync(user))
             {
@@ -634,7 +634,8 @@ namespace Notes2022.Server.Services
             NoteFile? hpmf = _db.NoteFile.Where(p => p.NoteFileName == "homepagemessages").FirstOrDefault();
             if (hpmf is not null)
             {
-                NoteHeader? hpmh = _db.NoteHeader.Where(p => p.NoteFileId == hpmf.Id && !p.IsDeleted).OrderByDescending(p => p.CreateDate).FirstOrDefault();
+                NoteHeader? hpmh = _db.NoteHeader.Where(p => p.NoteFileId == hpmf.Id && !p.IsDeleted && p.Version == 0)
+                    .OrderByDescending(p => p.CreateDate).FirstOrDefault();
                 if (hpmh is not null)
                 {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -667,8 +668,6 @@ namespace Notes2022.Server.Services
                         List<NoteAccess> myAccesses = _db.NoteAccess.Where(p => p.UserID == appUser.Id).ToList();
                         List<NoteAccess> otherAccesses = _db.NoteAccess.Where(p => p.UserID == Globals.AccessOtherId).ToList();
 
-                        //List<NoteFile> myNoteFiles = new();
-
                         NoteFileList myNoteFiles = new();
 
                         bool isAdmin = await _userManager.IsInRoleAsync(appUser, UserRoles.Admin);
@@ -684,7 +683,6 @@ namespace Notes2022.Server.Services
 
                             }
                         }
-
                         homepageModel.NoteFiles = myNoteFiles;
                     }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -693,7 +691,6 @@ namespace Notes2022.Server.Services
                 {
                 }
             }
-
             return homepageModel;
         }
 
@@ -958,7 +955,7 @@ namespace Notes2022.Server.Services
             {
                 Header = nh,
                 Content = c,
-                //Tags = Tags.GetGTagsList(tags),
+                //Tags = Tags.GetGTagsList(tags),   // see below
                 NoteFile = nf,
                 Access = access,
                 CanEdit = canEdit,
@@ -966,9 +963,60 @@ namespace Notes2022.Server.Services
             };
 
             model.Tags.AddRange(tags);
-
             return model;
         }
+
+        /// <summary>
+        /// Gets the content of the note.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="context">The context.</param>
+        /// <returns>DisplayModel.</returns>
+        [Authorize]
+        public override async Task<DisplayModel> GetPartNoteContent(DisplayModelRequest request, ServerCallContext context)
+        {
+            NoteContent c = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == request.NoteId);
+            List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == request.NoteId).ToListAsync();
+
+            DisplayModel model = new()
+            {
+                Content = c,
+                //Tags = Tags.GetGTagsList(tags),   // see below
+            };
+
+            model.Tags.AddRange(tags);
+            return model;
+        }
+
+        /// <summary>
+        /// Searches the content of the note.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="context">The context.</param>
+        /// <returns>ContentSearchResponse.</returns>
+        [Authorize]
+        public override async Task<ContentSearchResponse> SearchNoteContent(ContentSearchRequest request, ServerCallContext context)
+        {
+            List<NoteHeader> nhl = await _db.NoteHeader.Where(p => p.NoteFileId == request.FileId 
+                    && p.ArchiveId == request.ArcId && !p.IsDeleted && p.Version == 0)
+                    .OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal)
+                    .ToListAsync();
+
+            List<long> ids = nhl.Select(p => p.Id).ToList();
+
+            List<NoteContent> ncl = await _db.NoteContent.Where(p => ids.Contains(p.NoteHeaderId)).ToListAsync();
+
+            ContentSearchResponse resp = new();
+
+            foreach(NoteContent nc  in ncl)
+            {
+                if (nc.NoteBody.Contains(request.Target))
+                    resp.List.Add(nc.NoteHeaderId);
+            }
+
+            return resp;
+        }
+
 
         /// <summary>
         /// Gets the access list.
