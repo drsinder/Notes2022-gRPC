@@ -37,6 +37,26 @@ namespace Notes2022.Proto
         }
 
         /// <summary>
+        /// Lists to string.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <returns>System.String.</returns>
+        public static string ListToString(Google.Protobuf.Collections.RepeatedField<Tags> list)
+        {
+            string s = string.Empty;
+            if (list is null || list.Count < 1)
+                return s;
+
+            foreach (Tags tag in list)
+            {
+                s += tag.Tag + " ";
+            }
+
+            return s.TrimEnd(' ');
+        }
+
+
+        /// <summary>
         /// Strings to list.
         /// </summary>
         /// <param name="s">The s.</param>

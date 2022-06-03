@@ -95,13 +95,13 @@ namespace Notes2022RCL.Pages
             Model.MyNote = stuff.Content.NoteBody;
             Model.MySubject = stuff.Header.NoteSubject;
             Model.DirectorMessage = stuff.Header.DirectorMessage;
-            string tags = "";
-            foreach (var tag in stuff.Tags)
-            {
-                tags += tag + " ";
-            }
+            //string tags = "";
+            //foreach (Tags? tag in stuff.Tags)
+            //{
+            //    tags += tag + " ";
+            //}
 
-            Model.TagLine = tags;
+            Model.TagLine = Tags.ListToString(stuff.Tags);
             go = true;
         }
     }
