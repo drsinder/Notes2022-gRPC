@@ -300,14 +300,25 @@ namespace Notes2022RCL.Panels
             // Get data from the server - just the content -
             // we already have the header in the container (index)
 
-            model = await Client.GetPartNoteContentAsync(new DisplayModelRequest()
-            { Vers = Vers, NoteId = NoteId}, myState.AuthHeader);
-            model = model is not null ? model : new();
+            if (true ) // MyNoteIndex.CurrentNoteId != NoteId)
+            {
+                model = await Client.GetNoteContentAsync(new DisplayModelRequest()
+                { Vers = Vers, NoteId = NoteId }, myState.AuthHeader);
+                model = model is not null ? model : new();
+            }
+            else
+            {
+                model = await Client.GetPartNoteContentAsync(new DisplayModelRequest()
+                { Vers = Vers, NoteId = NoteId }, myState.AuthHeader);
 
-            model.Header = MyNoteIndex.GetModel().AllNotes.Single(p => p.Id == NoteId);
-            model.Access = MyNoteIndex.GetModel().MyAccess;
-            model.CanEdit = MyNoteIndex.GetModel().MyAccess.UserID == myState.UserInfo.Subject || myState.IsAdmin;
-            model.IsAdmin = myState.IsAdmin;
+                model = model is not null ? model : new();
+                model.Header = MyNoteIndex.GetModel().AllNotes.Single(p => p.Id == NoteId);
+                model.Access = MyNoteIndex.GetModel().MyAccess;
+                model.CanEdit = MyNoteIndex.GetModel().MyAccess.UserID == myState.UserInfo.Subject || myState.IsAdmin;
+                model.IsAdmin = myState.IsAdmin;
+            }
+
+
 
             // set text to be displayed re responses
             respX = respY = "";

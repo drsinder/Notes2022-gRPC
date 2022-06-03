@@ -85,7 +85,7 @@ else                    @*    Index mode        *@
                                     }
                                     @if (ShowContent)
                                     {
-                                        <NotePanel NoteId="@current.Id" ShowChild="false" IsRootNote="false" IsMini="true"></NotePanel>
+                                        <NotePanel NoteId="@current.Id" ShowChild="false" IsRootNote="false" IsMini="true" MyNoteIndex="@this"></NotePanel>
                                     }
                                     @if (Resp is not null && Resp.Count > 0)
                                     {
