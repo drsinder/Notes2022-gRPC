@@ -275,10 +275,10 @@ namespace Notes2022.Proto {
         __Marshaller_notes2022server_DisplayModel);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel> __Method_GetPartNoteContent = new grpc::Method<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel>(
+    static readonly grpc::Method<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel> __Method_Get1PartNoteContent = new grpc::Method<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "GetPartNoteContent",
+        "Get1PartNoteContent",
         __Marshaller_notes2022server_DisplayModelRequest,
         __Marshaller_notes2022server_DisplayModel);
 
@@ -779,7 +779,7 @@ namespace Notes2022.Proto {
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.DisplayModel> GetPartNoteContent(global::Notes2022.Proto.DisplayModelRequest request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Notes2022.Proto.DisplayModel> Get1PartNoteContent(global::Notes2022.Proto.DisplayModelRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -1956,9 +1956,9 @@ namespace Notes2022.Proto {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Notes2022.Proto.DisplayModel GetPartNoteContent(global::Notes2022.Proto.DisplayModelRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Notes2022.Proto.DisplayModel Get1PartNoteContent(global::Notes2022.Proto.DisplayModelRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return GetPartNoteContent(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return Get1PartNoteContent(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
       /// gets the content of a note - shortest version
@@ -1967,9 +1967,9 @@ namespace Notes2022.Proto {
       /// <param name="options">The options for the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Notes2022.Proto.DisplayModel GetPartNoteContent(global::Notes2022.Proto.DisplayModelRequest request, grpc::CallOptions options)
+      public virtual global::Notes2022.Proto.DisplayModel Get1PartNoteContent(global::Notes2022.Proto.DisplayModelRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.BlockingUnaryCall(__Method_GetPartNoteContent, null, options, request);
+        return CallInvoker.BlockingUnaryCall(__Method_Get1PartNoteContent, null, options, request);
       }
       /// <summary>
       /// gets the content of a note - shortest version
@@ -1980,9 +1980,9 @@ namespace Notes2022.Proto {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.DisplayModel> GetPartNoteContentAsync(global::Notes2022.Proto.DisplayModelRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.DisplayModel> Get1PartNoteContentAsync(global::Notes2022.Proto.DisplayModelRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return GetPartNoteContentAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return Get1PartNoteContentAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
       /// gets the content of a note - shortest version
@@ -1991,9 +1991,9 @@ namespace Notes2022.Proto {
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.DisplayModel> GetPartNoteContentAsync(global::Notes2022.Proto.DisplayModelRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Notes2022.Proto.DisplayModel> Get1PartNoteContentAsync(global::Notes2022.Proto.DisplayModelRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncUnaryCall(__Method_GetPartNoteContent, null, options, request);
+        return CallInvoker.AsyncUnaryCall(__Method_Get1PartNoteContent, null, options, request);
       }
       /// <summary>
       /// gets the content of a note - short version
@@ -3867,7 +3867,7 @@ namespace Notes2022.Proto {
           .AddMethod(__Method_GetUserRoles, serviceImpl.GetUserRoles)
           .AddMethod(__Method_GetHeaderForNoteId, serviceImpl.GetHeaderForNoteId)
           .AddMethod(__Method_GetNoteContent, serviceImpl.GetNoteContent)
-          .AddMethod(__Method_GetPartNoteContent, serviceImpl.GetPartNoteContent)
+          .AddMethod(__Method_Get1PartNoteContent, serviceImpl.Get1PartNoteContent)
           .AddMethod(__Method_Get2PartNoteContent, serviceImpl.Get2PartNoteContent)
           .AddMethod(__Method_GetAccessAndUserList, serviceImpl.GetAccessAndUserList)
           .AddMethod(__Method_GetAccessList, serviceImpl.GetAccessList)
@@ -3930,7 +3930,7 @@ namespace Notes2022.Proto {
       serviceBinder.AddMethod(__Method_GetUserRoles, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.AppUserRequest, global::Notes2022.Proto.EditUserViewModel>(serviceImpl.GetUserRoles));
       serviceBinder.AddMethod(__Method_GetHeaderForNoteId, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.NoteId, global::Notes2022.Proto.NoteHeader>(serviceImpl.GetHeaderForNoteId));
       serviceBinder.AddMethod(__Method_GetNoteContent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel>(serviceImpl.GetNoteContent));
-      serviceBinder.AddMethod(__Method_GetPartNoteContent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel>(serviceImpl.GetPartNoteContent));
+      serviceBinder.AddMethod(__Method_Get1PartNoteContent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel>(serviceImpl.Get1PartNoteContent));
       serviceBinder.AddMethod(__Method_Get2PartNoteContent, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.DisplayModelRequest, global::Notes2022.Proto.DisplayModel>(serviceImpl.Get2PartNoteContent));
       serviceBinder.AddMethod(__Method_GetAccessAndUserList, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.AccessAndUserListRequest, global::Notes2022.Proto.AccessAndUserList>(serviceImpl.GetAccessAndUserList));
       serviceBinder.AddMethod(__Method_GetAccessList, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Notes2022.Proto.AccessAndUserListRequest, global::Notes2022.Proto.NoteAccessList>(serviceImpl.GetAccessList));

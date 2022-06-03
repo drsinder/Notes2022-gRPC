@@ -996,7 +996,7 @@ namespace Notes2022.Server.Services
         /// <param name="context">The context.</param>
         /// <returns>DisplayModel.</returns>
         [Authorize]
-        public override async Task<DisplayModel> GetPartNoteContent(DisplayModelRequest request, ServerCallContext context)
+        public override async Task<DisplayModel> Get1PartNoteContent(DisplayModelRequest request, ServerCallContext context)
         {
             NoteContent c = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == request.NoteId);
             List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == request.NoteId).ToListAsync();
