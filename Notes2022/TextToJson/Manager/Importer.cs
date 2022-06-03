@@ -130,7 +130,7 @@ namespace Notes2022.TextToJson.Manager
                             _ = await GetLineAsync();
                             _ = await GetLineAsync();
                             _ = await GetLineAsync();
-                            var platoLine5 = await GetLineAsync();    // has base year
+                            string? platoLine5 = await GetLineAsync();    // has base year
                             _ = await GetLineAsync();
                             _ = await GetLineAsync();
 
@@ -178,7 +178,7 @@ namespace Notes2022.TextToJson.Manager
                                 makeHeader = new NoteHeader();
 
                                 // get title at start of line
-                                var title = line[..40].TrimEnd(spaceTrim);
+                                string? title = line[..40].TrimEnd(spaceTrim);
                                 makeHeader.NoteSubject = title;
                                 isResp = head.Contains("Response");  // is this a response?
 

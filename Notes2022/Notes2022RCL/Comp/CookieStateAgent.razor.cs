@@ -332,7 +332,7 @@ namespace Notes2022RCL.Comp
         {
             get
             {
-                var headers = new Metadata();
+                Metadata? headers = new Metadata();
                 if (LoginReply is not null && LoginReply.Status == 200)
                     headers.Add("Authorization", $"Bearer {LoginReply.Jwt}");
                 return headers;

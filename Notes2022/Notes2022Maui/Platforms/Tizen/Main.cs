@@ -10,7 +10,7 @@ namespace Notes2022Maui
 
         static void Main(string[] args)
         {
-            var app = new Program();
+            Program app = new Program();
             app.Run(args);
         }
     }

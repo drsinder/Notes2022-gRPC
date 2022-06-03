@@ -967,7 +967,7 @@ namespace Notes2022.Server.Services
         }
 
         /// <summary>
-        /// Gets the partial content of the note.
+        /// Gets the partial content of the note. Content and header
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
@@ -990,7 +990,7 @@ namespace Notes2022.Server.Services
             return model;
         }
         /// <summary>
-        /// Gets the partial content of the note.
+        /// Gets the partial content of the note.  Content only
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
