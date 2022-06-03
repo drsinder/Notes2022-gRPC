@@ -33,27 +33,27 @@
 
 <div>
 
-<h2 class="center">Welcome to Notes 2022 @myState.UserInfo?.Displayname</h2>
+    <h2 class="center">Welcome to Notes 2022 @myState.UserInfo?.Displayname</h2>
 
-<div>
-    <h5 class="center">
-        <Clock Interval="1000"></Clock>
-    </h5>
-    @if (!myState.IsAuthenticated)
-    {
-        <p class="center"><strong>You are not logged in.  Please log in.  Register first if you need to.</strong></p>
-    }
-    @if (hpModel != null && !string.IsNullOrEmpty(hpModel.Message))
-    {
-        <div>@((MarkupString)@hpModel.Message)</div>
-    }
-    @if (myState.IsAuthenticated && hpModel == null)
-    {
-        <p class="center"><em>Checking login status...</em></p>
-    }
-    else if (hpModel != null)
+    <div>
+        <h5 class="center">
+            <Clock Interval="1000"></Clock>
+        </h5>
+        @if (!myState.IsAuthenticated)
         {
-             <div class="row">
+            <p class="center"><strong>You are not logged in.  Please log in.  Register first if you need to.</strong></p>
+        }
+        @if (hpModel is not null && !string.IsNullOrEmpty(hpModel.Message))
+        {
+            <div>@((MarkupString)@hpModel.Message)</div>
+        }
+        @if (myState.IsAuthenticated && hpModel == null)
+        {
+            <p class="center"><em>Checking login status...</em></p>
+        }
+        else if (hpModel is not null)
+        {
+            <div class="row">
                 <div class="col-md-4"></div>
                 <div class="col-md-4 roundedindex keep-center">
                     <EditForm Model="@dummyFile">
@@ -62,28 +62,28 @@
                                 <label>
                                     <strong>Enter a NoteFile Name and press Enter:</strong>
                                     <InputText class="form-control short-input"
-                                               ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                               Value="@dummyFile.NoteFileName"
-                                               ValueExpression="@( () => dummyFile.NoteFileName )" />
+                                           ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                           Value="@dummyFile.NoteFileName"
+                                           ValueExpression="@( () => dummyFile.NoteFileName )" />
                                 </label>
                             </p>
                             <p class="center">
                                 Or select a file<br />
                                 <div class="btn btn-file form-control short-input">
-                                <SfDropDownList TValue="int" TItem="NoteFile" Placeholder="Select a File" DataSource="@fileList" >
-                                    <DropDownListEvents TItem="NoteFile" TValue="int" ValueChange="@ValueChangeHandler" ></DropDownListEvents>
-                                    <DropDownListFieldSettings Value="Id" Text="NoteFileName"></DropDownListFieldSettings>
-                                </SfDropDownList>
+                                    <SfDropDownList TValue="int" TItem="NoteFile" Placeholder="Select a File" DataSource="@fileList">
+                                        <DropDownListEvents TItem="NoteFile" TValue="int" ValueChange="@ValueChangeHandler"></DropDownListEvents>
+                                        <DropDownListFieldSettings Value="Id" Text="NoteFileName"></DropDownListFieldSettings>
+                                    </SfDropDownList>
                                 </div>
                             </p>
 
                             <p class="center">
                                 Or select a title<br />
                                 <div class="btn btn-title form-control short-input">
-                                <SfDropDownList TValue="int" TItem="NoteFile" Placeholder="Select a Title" DataSource="@nameList.List" >
-                                    <DropDownListEvents TItem="NoteFile" TValue="int" ValueChange="@ValueChangeHandler" ></DropDownListEvents>
-                                    <DropDownListFieldSettings Value="Id" Text="NoteFileTitle"></DropDownListFieldSettings>
-                                </SfDropDownList>
+                                    <SfDropDownList TValue="int" TItem="NoteFile" Placeholder="Select a Title" DataSource="@nameList.List">
+                                        <DropDownListEvents TItem="NoteFile" TValue="int" ValueChange="@ValueChangeHandler"></DropDownListEvents>
+                                        <DropDownListFieldSettings Value="Id" Text="NoteFileTitle"></DropDownListFieldSettings>
+                                    </SfDropDownList>
                                 </div>
                             </p>
                         </ChildContent>
@@ -102,9 +102,9 @@
                     <ul>
                         @for (int i = 0; i < impfileList.List.Count; i++)
                         {
-                             item = impfileList.List[i];
+                            item = impfileList.List[i];
                             <li>
-                               <FileButton NoteFile="@item"></FileButton>
+                                <FileButton NoteFile="@item"></FileButton>
                             </li>
                         }
                     </ul>
@@ -114,17 +114,14 @@
                     <ul>
                         @for (int i = 0; i < histfileList.List.Count; i++)
                         {
-                             item = histfileList.List[i];
+                            item = histfileList.List[i];
                             <li>
-                               <FileButton NoteFile="@item"></FileButton>
+                                <FileButton NoteFile="@item"></FileButton>
                             </li>
                         }
                     </ul>
                 </div>
             </div>
-    } 
+        }
+    </div>
 </div>
-
-</div>
-
-

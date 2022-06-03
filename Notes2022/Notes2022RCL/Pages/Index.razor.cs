@@ -39,14 +39,14 @@ using System.Timers;
 namespace Notes2022RCL.Pages
 {
     /// <summary>
-    /// Class Index.
+    /// Class Index.  Main entry point to the app
     /// Implements the <see cref="ComponentBase" />
     /// </summary>
     /// <seealso cref="ComponentBase" />
     public partial class Index
     {
         /// <summary>
-        /// Gets or sets the hp model.
+        /// Gets or sets the home page model.
         /// </summary>
         /// <value>The hp model.</value>
         private HomePageModel? hpModel { get; set; }
@@ -68,21 +68,21 @@ namespace Notes2022RCL.Pages
         private List<NoteFile> fileList { get; set; }
 
         /// <summary>
-        /// List of files ordered by title
+        /// List of files ordered by name
         /// </summary>
-        /// <value>The name list.</value>
+        /// <value>The name ordered list.</value>
         private NoteFileList nameList { get; set; }
 
         /// <summary>
         /// Important file list
         /// </summary>
-        /// <value>The impfile list.</value>
+        /// <value>The important file list.</value>
         private NoteFileList impfileList { get; set; }
 
         /// <summary>
         /// History file list
         /// </summary>
-        /// <value>The histfile list.</value>
+        /// <value>The historty file list.</value>
         private NoteFileList histfileList { get; set; }
 
         // For clock update
@@ -93,29 +93,27 @@ namespace Notes2022RCL.Pages
         private System.Timers.Timer timer2 { get; set; }
 
         /// <summary>
-        /// For access to server via Http
+        /// For access to Navigation object
         /// </summary>
         /// <value>The navigation.</value>
         [Inject]
         NavigationManager Navigation { get; set; }
 
         /// <summary>
-        /// Gets or sets the client.
+        /// Gets or sets the grpc client.
         /// </summary>
         /// <value>The client.</value>
         [Inject]
         Notes2022Server.Notes2022ServerClient Client { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Index" /> class.
         /// </summary>
-        public Index() // Needed for above Injection
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
+        public Index() // Needed for above Injections
         {
         }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
         /// Method invoked after each time the component has been rendered.
@@ -130,9 +128,8 @@ namespace Notes2022RCL.Pages
         {
             if (firstRender)
             {
-                timer2 = new System.Timers.Timer(1000);
+                timer2 = new System.Timers.Timer(1000);     // update top bar every 1 second to start
 #pragma warning disable CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
-
                 timer2.Elapsed += TimerTick2;
 #pragma warning restore CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
 
@@ -147,10 +144,10 @@ namespace Notes2022RCL.Pages
         /// </summary>
         protected override void OnParametersSet()
         {
-            OnParametersSetAsync().GetAwaiter(); // notified of login status change
+            _ = OnParametersSetAsync().GetAwaiter(); // notified of login status change
             try
             {
-                this.InvokeAsync(() => this.StateHasChanged());
+                InvokeAsync(() => StateHasChanged());
             }
             catch (Exception) { }
         }
@@ -165,7 +162,7 @@ namespace Notes2022RCL.Pages
             nameList = new NoteFileList();
             histfileList = new NoteFileList();
             impfileList = new NoteFileList();
-            if (myState.IsAuthenticated)
+            if (myState.IsAuthenticated)        // user must be autheticated before going on
             {
                 // Set and reset local state vars
                 await sessionStorage.SetItemAsync<int>("ArcId", 0);
@@ -180,10 +177,10 @@ namespace Notes2022RCL.Pages
                 await sessionStorage.SetItemAsync<bool>("InSearch", false);
                 await sessionStorage.RemoveItemAsync("SearchIndex");
                 await sessionStorage.RemoveItemAsync("SearchList");
+
                 hpModel = await Client.GetHomePageModelAsync(new NoRequest(), myState.AuthHeader);
+
                 Globals.Interval = hpModel.UserData.Ipref0;
-                //if (hpModel.NoteFiles == null)
-                //    return;
                 NoteFileList fileList1 = hpModel.NoteFiles;
                 NoteFileList nameList1 = hpModel.NoteFiles;
                 fileList = fileList1.List.ToList().OrderBy(p => p.NoteFileName).ToList();
@@ -214,13 +211,12 @@ namespace Notes2022RCL.Pages
         /// <param name="e">The <see cref="ElapsedEventArgs" /> instance containing the event data.</param>
         protected void TimerTick2(Object source, ElapsedEventArgs e)
         {
-            if (++ticks == 10)
+            if (++ticks == 10)          // after 10 seconds update every 5 seconds
                 timer2.Interval = 5000;
-            else if (++ticks == 60)
+            else if (++ticks == 60)     // after 260 seconds update every 15 seconds
                 timer2.Interval = 15000;
-            Globals.LoginDisplay?.Reload();
-            Globals.NavMenu?.Reload().GetAwaiter();
-            //StateHasChanged();
+            Globals.LoginDisplay?.Reload();         // update login part of top bar
+            Globals.NavMenu?.Reload().GetAwaiter(); // update the nav menu
             try
             {
                 this.InvokeAsync(() => this.StateHasChanged());
@@ -254,7 +250,7 @@ namespace Notes2022RCL.Pages
         }
 
         /// <summary>
-        /// Values the change handler.
+        /// Value change handler for dropdowns
         /// </summary>
         /// <param name="args">The arguments.</param>
         private void ValueChangeHandler(ChangeEventArgs<int, NoteFile> args)
@@ -262,27 +258,26 @@ namespace Notes2022RCL.Pages
             Navigation.NavigateTo("noteindex/" + args.Value); // goto the file
         }
 
-        /// <summary>
-        /// Recent menu item - start sequencing
-        /// </summary>
-        private async Task StartSeq()
-        {
-            // get users list of files
-            //List<Sequencer> sequencers = await DAL.GetSequencer(Http);
-            List<Sequencer> sequencers = (await Client.GetSequencerAsync(new NoRequest(), myState.AuthHeader)).List.ToList();
-            if (sequencers.Count == 0)
-                return;
-            // order them as prefered by user
-            sequencers = sequencers.OrderBy(p => p.Ordinal).ToList();
-            // set up state for sequencing
-            await sessionStorage.SetItemAsync<List<Sequencer>>("SeqList", sequencers);
-            await sessionStorage.SetItemAsync<int>("SeqIndex", 0);
-            await sessionStorage.SetItemAsync<Sequencer>("SeqItem", sequencers[0]);
-            await sessionStorage.SetItemAsync<bool>("IsSeq", true); // flag for noteindex
-            // begin
-            string go = "noteindex/" + sequencers[0].NoteFileId;
-            Navigation.NavigateTo(go);
-            return;
-        }
+        ///// <summary>
+        ///// Option menu item - start sequencing
+        ///// </summary>
+        //private async Task StartSeq()
+        //{
+        //    // get users list of files
+        //    List<Sequencer> sequencers = (await Client.GetSequencerAsync(new NoRequest(), myState.AuthHeader)).List.ToList();
+        //    if (sequencers.Count == 0)
+        //        return;
+        //    // order them as prefered by user
+        //    sequencers = sequencers.OrderBy(p => p.Ordinal).ToList();
+        //    // set up state for sequencing
+        //    await sessionStorage.SetItemAsync<List<Sequencer>>("SeqList", sequencers);
+        //    await sessionStorage.SetItemAsync<int>("SeqIndex", 0);
+        //    await sessionStorage.SetItemAsync<Sequencer>("SeqItem", sequencers[0]);
+        //    await sessionStorage.SetItemAsync<bool>("IsSeq", true); // flag for noteindex
+        //    // begin
+        //    string go = "noteindex/" + sequencers[0].NoteFileId;
+        //    Navigation.NavigateTo(go);
+        //    return;
+        //}
     }
 }
