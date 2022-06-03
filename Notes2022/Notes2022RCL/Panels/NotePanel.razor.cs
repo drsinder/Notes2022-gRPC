@@ -305,9 +305,14 @@ namespace Notes2022RCL.Panels
 
             if (GetFull)
             {
-                model = await Client.GetNoteContentAsync(new DisplayModelRequest()
+                model = await Client.Get2PartNoteContentAsync(new DisplayModelRequest()
                 { Vers = Vers, NoteId = NoteId }, myState.AuthHeader);
+
                 model = model is not null ? model : new();
+
+                model.Access = MyNoteIndex.GetModel().MyAccess;
+                model.CanEdit = MyNoteIndex.GetModel().MyAccess.UserID == myState.UserInfo.Subject || myState.IsAdmin;
+                model.IsAdmin = myState.IsAdmin;
             }
             else
             {
@@ -315,6 +320,7 @@ namespace Notes2022RCL.Panels
                 { Vers = Vers, NoteId = NoteId }, myState.AuthHeader);
 
                 model = model is not null ? model : new();
+
                 model.Header = MyNoteIndex.GetModel().AllNotes.Single(p => p.Id == NoteId);
                 model.Access = MyNoteIndex.GetModel().MyAccess;
                 model.CanEdit = MyNoteIndex.GetModel().MyAccess.UserID == myState.UserInfo.Subject || myState.IsAdmin;

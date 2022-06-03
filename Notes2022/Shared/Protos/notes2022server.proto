@@ -56,7 +56,8 @@ service Notes2022Server {
 	rpc GetUserRoles(AppUserRequest) returns (EditUserViewModel);		// used for editing roles users are in
 	rpc GetHeaderForNoteId(NoteId) returns (NoteHeader);				// gets a note header given its id
 	rpc GetNoteContent(DisplayModelRequest) returns (DisplayModel);		// gets the content of a note
-	rpc GetPartNoteContent(DisplayModelRequest) returns (DisplayModel);	// gets the content of a note - short version
+	rpc GetPartNoteContent(DisplayModelRequest) returns (DisplayModel);	// gets the content of a note - shortest version
+	rpc Get2PartNoteContent(DisplayModelRequest) returns (DisplayModel);// gets the content of a note - short version
 	rpc GetAccessAndUserList(AccessAndUserListRequest) returns (AccessAndUserList);	// gets access data and user list
 	rpc GetAccessList(AccessAndUserListRequest) returns (NoteAccessList);			// gets the access list for a file
 	rpc GetAccess(NoteFileRequest) returns (NoteAccess);				// gets the access for user

@@ -33,6 +33,7 @@
 // <summary></summary>
 using Microsoft.AspNetCore.Components;
 using Notes2022.Proto;
+using Notes2022RCL.Pages;
 using Syncfusion.Blazor.Grids;
 
 namespace Notes2022RCL.Panels
@@ -64,6 +65,9 @@ namespace Notes2022RCL.Panels
         /// <value><c>true</c> if [expand all r]; otherwise, <c>false</c>.</value>
         [Parameter]
         public bool ExpandAllR { get; set; }
+
+        [Parameter]
+        public NoteIndex MyNoteIndex { get; set; }
 
         //[Parameter] public NoteIndex Parent {get; set;}
         //public bool ShowContent { get; set; }

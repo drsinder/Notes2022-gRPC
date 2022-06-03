@@ -973,6 +973,29 @@ namespace Notes2022.Server.Services
         /// <param name="context">The context.</param>
         /// <returns>DisplayModel.</returns>
         [Authorize]
+        public override async Task<DisplayModel> Get2PartNoteContent(DisplayModelRequest request, ServerCallContext context)
+        {
+            NoteHeader nh = await _db.NoteHeader.SingleAsync(p => p.Id == request.NoteId && p.Version == request.Vers);
+            NoteContent c = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == request.NoteId);
+            List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == request.NoteId).ToListAsync();
+
+            DisplayModel model = new()
+            {
+                Header =nh,
+                Content = c
+                //Tags = Tags.GetGTagsList(tags),   // see below
+            };
+
+            model.Tags.AddRange(tags);
+            return model;
+        }
+        /// <summary>
+        /// Gets the partial content of the note.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="context">The context.</param>
+        /// <returns>DisplayModel.</returns>
+        [Authorize]
         public override async Task<DisplayModel> GetPartNoteContent(DisplayModelRequest request, ServerCallContext context)
         {
             NoteContent c = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == request.NoteId);
@@ -980,7 +1003,7 @@ namespace Notes2022.Server.Services
 
             DisplayModel model = new()
             {
-                Content = c,
+                Content = c
                 //Tags = Tags.GetGTagsList(tags),   // see below
             };
 

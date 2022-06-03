@@ -89,7 +89,7 @@ else                    @*    Index mode        *@
                                     }
                                     @if (Resp is not null && Resp.Count > 0)
                                     {
-                                        <Responses Headers="@Resp" ShowContentR="true" ExpandAllR="@ShowContentR"></Responses>
+                                        <Responses Headers="@Resp" ShowContentR="true" ExpandAllR="@ShowContentR" MyNoteIndex="@this"></Responses>
                                     }
 
                                 </DetailTemplate>
