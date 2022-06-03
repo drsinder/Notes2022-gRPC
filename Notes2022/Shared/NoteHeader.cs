@@ -52,8 +52,5 @@ namespace Notes2022.Proto
 
             return nh;
         }
-
-
-
     }
 }
