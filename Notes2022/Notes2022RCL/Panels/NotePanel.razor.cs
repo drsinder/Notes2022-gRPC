@@ -117,6 +117,9 @@ namespace Notes2022RCL.Panels
         [Parameter]
         public NoteIndex MyNoteIndex { get; set; }
 
+        [Parameter]
+        public bool GetFull { get; set; }
+
         /// <summary>
         /// List of responses
         /// </summary>
@@ -300,7 +303,7 @@ namespace Notes2022RCL.Panels
             // Get data from the server - just the content -
             // we already have the header in the container (index)
 
-            if (true ) // MyNoteIndex.CurrentNoteId != NoteId)
+            if (GetFull)
             {
                 model = await Client.GetNoteContentAsync(new DisplayModelRequest()
                 { Vers = Vers, NoteId = NoteId }, myState.AuthHeader);

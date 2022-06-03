@@ -46,7 +46,7 @@ else
                     {
                         var current2 = (context as NoteHeader);
                         current2 = current2 is not null ? current2 : new();
-                        <NotePanel NoteId="@current2.Id" ShowChild="false" IsRootNote="false" IsMini="true"></NotePanel>
+                        <NotePanel NoteId="@current2.Id" ShowChild="false" IsRootNote="false" IsMini="true" GetFull="true"></NotePanel>
                     }
                 </DetailTemplate>
             </GridTemplates>

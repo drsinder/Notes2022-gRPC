@@ -46,7 +46,7 @@
                 {
                     <h4>References</h4>
                 }
-                <NotePanel NoteId="@model.Header.RefId" ShowChild="true" IsRootNote="false" AltStyle="true" ></NotePanel>
+                <NotePanel NoteId="@model.Header.RefId" ShowChild="true" IsRootNote="false" AltStyle="true" NoteParentPanel="@this"></NotePanel>
             }
 
             if (ShowVers)
