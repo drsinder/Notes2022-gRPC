@@ -999,7 +999,7 @@ namespace Notes2022.Server.Services
         {
             List<NoteHeader> nhl = await _db.NoteHeader.Where(p => p.NoteFileId == request.FileId 
                     && p.ArchiveId == request.ArcId && !p.IsDeleted && p.Version == 0)
-                    .OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal)
+                    //.OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal)
                     .ToListAsync();
 
             List<long> ids = nhl.Select(p => p.Id).ToList();
