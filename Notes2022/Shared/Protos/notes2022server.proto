@@ -395,6 +395,7 @@ message DisplayModel {
 message DisplayModelRequest {
 	int32 vers = 1;					// version of note
 	int64 noteId = 2;				// id of note
+	bool full = 3;					// fill all data?
 }
 
 // request use list and access list
