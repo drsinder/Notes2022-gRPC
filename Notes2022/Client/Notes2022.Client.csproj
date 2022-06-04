@@ -8,6 +8,9 @@
     <UserSecretsId>17297ccf-8799-4a7c-b4db-b1f16578bcee</UserSecretsId>
   </PropertyGroup>
 
+    <PropertyGroup>
+		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+	</PropertyGroup>
   <ItemGroup>
     <Compile Remove="Comp\**" />
     <Compile Remove="Dialogs\**" />
@@ -58,4 +61,9 @@
     <ProjectReference Include="..\Notes2022RCL\Notes2022RCL.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<ServiceWorker Include="wwwroot\service-worker.js"
+		  PublishedContent="wwwroot\service-worker.published.js" />
+	</ItemGroup>
+	
 </Project>
