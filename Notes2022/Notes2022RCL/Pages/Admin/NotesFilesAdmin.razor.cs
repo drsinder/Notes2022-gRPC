@@ -405,7 +405,7 @@ namespace Notes2022RCL.Pages.Admin
             NoteFile file = files.List.ToList().Single(x => x.Id == Id);
             filename = file.NoteFileName;
             fileId = file.Id;
-
+#if MAUI
             if (Globals.IsMaui)
             {
                 IModalReference? xx = ShowYesNo("Be sure data to import is in the clipboard!! Ready?");
@@ -431,7 +431,7 @@ namespace Notes2022RCL.Pages.Admin
 
                 return;
             }
-
+#endif
             fileSelect.SelectFiles();
         }
 

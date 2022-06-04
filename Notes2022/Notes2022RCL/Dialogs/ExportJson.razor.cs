@@ -135,10 +135,12 @@ namespace Notes2022RCL.Dialogs
         /// once.</remarks>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+#if (!MAUI)
             if (firstRender && !Globals.IsMaui)
             {
                 module = await JS.InvokeAsync<IJSObjectReference>("import", "./scripts.js");
             }
+#endif
         }
 
         /// <summary>
@@ -160,6 +162,7 @@ namespace Notes2022RCL.Dialogs
         /// <param name="data">The data.</param>
         public async Task SaveAs(string filename, byte[] data)
         {
+#if MAUI
             if (Globals.IsMaui)
             {
                 GAppUser ui = await Client.GetUserDataAsync(new(), myState.AuthHeader);
@@ -168,6 +171,7 @@ namespace Notes2022RCL.Dialogs
                 model.myMenu.ExportDone(fn);
             }
             else
+#endif
             {
 #pragma warning disable CS8604 // Possible null reference argument.
 

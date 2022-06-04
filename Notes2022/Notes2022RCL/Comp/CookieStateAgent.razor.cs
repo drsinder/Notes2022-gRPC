@@ -137,12 +137,14 @@ namespace Notes2022RCL.Comp
             {
                 string? cookie;
 
+#if MAUI
                 if (Globals.IsMaui)
                 {
                     Notes2022MauiLib.MauiFileActions mf = new Notes2022MauiLib.MauiFileActions();
                     cookie = await mf.ReadFromFile(Globals.Cookie + ".json");
                 }
                 else
+#endif
                 {
                     if (module is null)
                         module = await JS.InvokeAsync<IJSObjectReference>("import", "./cookies.js");
@@ -239,6 +241,7 @@ namespace Notes2022RCL.Comp
             {
                 savedLogin = value;
 
+#if MAUI
                 if (Globals.IsMaui)
                 {
                     Notes2022MauiLib.MauiFileActions mf = new Notes2022MauiLib.MauiFileActions();
@@ -254,6 +257,7 @@ namespace Notes2022RCL.Comp
                     NotifyStateChanged(); // notify subscribers
                     return;
                 }
+#endif
 
                 // now save login cookie state
                 if (savedLogin is not null)
@@ -278,9 +282,6 @@ namespace Notes2022RCL.Comp
         /// </summary>
         private void NotifyStateChanged()
         {
-            //if (Globals.IsMaui)
-            //    return;
-
             OnChange?.Invoke();
         }
 

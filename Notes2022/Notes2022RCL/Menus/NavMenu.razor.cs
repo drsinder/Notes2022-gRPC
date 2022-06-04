@@ -333,10 +333,10 @@ namespace Notes2022RCL.Menus
                     new() {Id = "Roles", Text = "Roles"},
                     new() {Id = "Hangfire", Text = "Jobs-Dashboard"}
                 };
-
+#if MAUI
                 if (Globals.IsMaui)
                     item4.Items.RemoveAt(item4.Items.Count - 1);
-
+#endif
                 menuItemsTop.Add(item4);
                 // remove what does not apply to this user
                 if (!isAdmin)

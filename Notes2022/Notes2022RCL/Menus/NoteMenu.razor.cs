@@ -133,7 +133,7 @@ namespace Notes2022RCL.Menus
             if (Model.Access.ReadAccess)
             {
                 MenuItem item2;
-
+#if MAUI
                 if (Globals.IsMaui)
                 {
                     item2 = new()
@@ -147,6 +147,7 @@ namespace Notes2022RCL.Menus
                     };
                 }
                 else
+#endif
                 {
                     item2 = new()
                     {
@@ -399,8 +400,10 @@ namespace Notes2022RCL.Menus
 
         public void ExportDone(string fn)
         {
+#if MAUI
             if (Globals.IsMaui)
                 ShowMessage("Export has been placed in clipboard! And to file\n<br />" + fn);
+#endif
         }
     }
 }

@@ -410,6 +410,7 @@ namespace Notes2022RCL.Dialogs
         /// <param name="data">The data.</param>
         public async Task SaveAs(string filename, byte[] data)
         {
+#if MAUI
             if (Globals.IsMaui)
             {
                 GAppUser ui = await Client.GetUserDataAsync(new(), myState.AuthHeader);
@@ -417,7 +418,7 @@ namespace Notes2022RCL.Dialogs
                 SavedFileName = await mauiFileActions.SaveToFileAndClipBoard(filename, data, ui.Pref1);
                 return;
             }
-
+#endif
 #pragma warning disable CS8604 // Possible null reference argument.
 
             await module.InvokeVoidAsync("saveAsFile", filename, Convert.ToBase64String(data));

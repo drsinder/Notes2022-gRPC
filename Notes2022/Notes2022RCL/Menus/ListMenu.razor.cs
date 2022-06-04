@@ -426,6 +426,7 @@ namespace Notes2022RCL.Menus
 
         public void ExportDone(string fn)
         {
+#if MAUI
             if (Globals.IsMaui)
             {
                 bool cliptoo = Model.UserData.Pref1;
@@ -437,6 +438,7 @@ namespace Notes2022RCL.Menus
 
                 ShowMessage(mess);
             }
+#endif
         }
 
         /// <summary>
@@ -511,7 +513,7 @@ namespace Notes2022RCL.Menus
             NoteFile file = Model.NoteFile;
             filename = file.NoteFileName;
             fileId = file.Id;
-
+#if MAUI
             if (Globals.IsMaui)
             {
                 IModalReference? xx = ShowYesNo("Be sure data to import is in the clipboard!!  Ready?");
@@ -532,6 +534,7 @@ namespace Notes2022RCL.Menus
 
                 return;
             }
+#endif
 
             fileSelect.SelectFiles();
         }
