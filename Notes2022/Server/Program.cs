@@ -33,13 +33,15 @@ string? sentry = configuration["Sentry:Flag"];
 string? GrpcReflect = configuration["GrpcReflect"];
 string? connectionString = configuration.GetConnectionString("DefaultConnection");
 
+// User Sentry?
 if (!string.IsNullOrEmpty(sentry) && sentry == "true")
     builder.WebHost.UseSentry();
 
+// Our database
 builder.Services.AddDbContext<NotesDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Add Hangfire services.
+// Add Hangfire services.  Uses same database.
 builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
     .UseSimpleAssemblyNameTypeSerializer()
@@ -56,7 +58,7 @@ builder.Services.AddHangfire(configuration => configuration
 // Add the processing server as IHostedService
 builder.Services.AddHangfireServer();
 
-// For Identity
+// For Identity.  Uses same database
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<NotesDbContext>()
@@ -107,16 +109,31 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // Add Grpc
-builder.Services.AddGrpc()
-        .AddServiceOptions<Notes2022Service>(options =>
-        {
-            options.MaxReceiveMessageSize = 50 * 1024 * 1024; // 50 MB
-            options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
-            if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
-                options.Interceptors.Add<ServerLoggingInterceptor>();
+string? transcode = configuration["JsonTranscoding"];
+if (!string.IsNullOrEmpty(transcode) && transcode == "true")
+{
+    builder.Services.AddGrpc()
+            .AddServiceOptions<Notes2022Service>(options =>
+            {
+                options.MaxReceiveMessageSize = 50 * 1024 * 1024; // 50 MB
+                options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
+                if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
+                    options.Interceptors.Add<ServerLoggingInterceptor>();
             //options.Interceptors.Add<RestInterceptor>();
-        })
-        .AddJsonTranscoding();
+            })
+            .AddJsonTranscoding();
+}
+else
+{
+    builder.Services.AddGrpc()
+            .AddServiceOptions<Notes2022Service>(options =>
+            {
+                options.MaxReceiveMessageSize = 50 * 1024 * 1024; // 50 MB
+                options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
+                if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
+                    options.Interceptors.Add<ServerLoggingInterceptor>();
+            });
+}
 
 // GRPC Reflection?
 if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
@@ -158,7 +175,13 @@ catch { }
 WebApplication? app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+string? debug = configuration["Debug"];
+bool Debug = false;
+if (!string.IsNullOrEmpty(debug) && debug == "true")
+    Debug = true;
+
+if (app.Environment.IsDevelopment() || Debug)
 {
     app.UseWebAssemblyDebugging();
 }
