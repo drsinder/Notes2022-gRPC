@@ -265,11 +265,11 @@ namespace Notes2022RCL.Comp
                 {
                     string ser = JsonSerializer.Serialize(savedLogin);
 
-                    WriteCookie(Globals.Cookie, ser, savedLogin.Hours).GetAwaiter();
+                    //WriteCookie(Globals.Cookie, ser, savedLogin.Hours).GetAwaiter();
                 }
                 else
                 {
-                    WriteCookie(Globals.Cookie, JsonSerializer.Serialize(new LoginReply()), 0).GetAwaiter();
+                    //WriteCookie(Globals.Cookie, JsonSerializer.Serialize(new LoginReply()), 0).GetAwaiter();
                 }
 
                 NotifyStateChanged(); // notify subscribers

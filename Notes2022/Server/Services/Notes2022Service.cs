@@ -326,7 +326,19 @@ namespace Notes2022.Server.Services
                 if (userInfo.IsAdmin)
                     userInfo.Hangfire = Globals.HangfireAddress;
 
-                return new LoginReply() { Status = StatusCodes.Status200OK, Message = "Login successful.", Info = userInfo, Jwt = stoken };
+                LoginReply ret = new LoginReply() { Status = StatusCodes.Status200OK, Message = "Login successful.", Info = userInfo, Jwt = stoken, Hours = request.Hours };
+                string? ser = JsonSerializer.Serialize(ret);
+                string? enc = Globals.CookieName + "=" + Globals.Base64Encode(ser);
+                context.GetHttpContext().Response.Headers.Remove("Set-Cookie");
+
+                DateTime dt = DateTime.UtcNow.AddHours(request.Hours);
+                string exp = dt.ToString("r");
+
+                string suffix = $"; expires={exp}; path=/; secure; samesite=lax";
+
+                context.GetHttpContext().Response.Headers.Add("Set-Cookie", enc + suffix );
+
+                return ret;
             }
 
             return new LoginReply() { Status = StatusCodes.Status500InternalServerError, Message = "User Login failed! Please check user details and try again." };
@@ -471,6 +483,19 @@ namespace Notes2022.Server.Services
         public override async Task<AuthReply> Logout(NoRequest request, ServerCallContext context)
         {
             await _signInManager.SignOutAsync();
+
+            LoginReply ret = new LoginReply();
+            string? ser = JsonSerializer.Serialize(ret);
+            string? enc = Globals.CookieName + "=" + Globals.Base64Encode(ser);
+            context.GetHttpContext().Response.Headers.Remove("Set-Cookie");
+
+            DateTime dt = DateTime.UtcNow.AddHours(-1);
+            string exp = dt.ToString("r");
+
+            string suffix = $"; expires={exp}; path=/; secure; samesite=lax";
+
+            context.GetHttpContext().Response.Headers.Add("Set-Cookie", enc + suffix);
+
             return new AuthReply() { Status = StatusCodes.Status200OK, Message = "User logged out!" };
         }
 
