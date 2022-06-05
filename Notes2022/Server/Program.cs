@@ -62,18 +62,18 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<NotesDbContext>()
     .AddDefaultTokenProviders();
 
-// Adding Authentication
+// Add Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-// Adding Jwt Bearer
+// Add Jwt Bearer
 .AddJwtBearer(options =>
 {
     options.SaveToken = true;
-    options.RequireHttpsMetadata = false;
+    options.RequireHttpsMetadata = true;
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuer = true,
@@ -84,7 +84,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add services to the container.
+// Configure Identity options.
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Default Lockout settings.
@@ -93,12 +93,13 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 
     // Default Password settings.
-    options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
+
     options.User.RequireUniqueEmail = true;
 });
 
@@ -117,9 +118,6 @@ builder.Services.AddGrpc()
         })
         .AddJsonTranscoding();
 
-
-builder.Services.AddSingleton<ApplicationUser>();
-
 // GRPC Reflection?
 if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
     builder.Services.AddGrpcReflection();
@@ -136,7 +134,7 @@ builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
 //builder.Services.AddControllers();
 //builder.Services.AddRazorPages();
 
-// Set Globals
+// Set Globals from configuration
 Globals.SendGridApiKey = configuration["SendGridApiKey"];
 Globals.SendGridEmail = configuration["SendGridEmail"];
 Globals.SendGridName = configuration["SendGridName"];
@@ -149,6 +147,7 @@ try
 {
     Globals.ErrorThreshold = long.Parse(configuration["GrpcErrorThreshold"]);
     Globals.WarnThreshold = long.Parse(configuration["GrpcWarnThreshold"]);
+
     Globals.ImportMailInterval = int.Parse(configuration["ImportMailInterval"]);
 }
 catch { }
