@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using Notes2022.Proto;
+using Notes2022.Server.Proto;
 
 namespace Notes2022.Server.Data
 {

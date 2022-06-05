@@ -113,7 +113,12 @@ builder.Services.AddGrpc()
             options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
             if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
                 options.Interceptors.Add<ServerLoggingInterceptor>();
-        });
+            //options.Interceptors.Add<RestInterceptor>();
+        })
+        .AddJsonTranscoding();
+
+
+builder.Services.AddSingleton<ApplicationUser>();
 
 // GRPC Reflection?
 if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
@@ -137,6 +142,7 @@ Globals.SendGridEmail = configuration["SendGridEmail"];
 Globals.SendGridName = configuration["SendGridName"];
 Globals.ImportRoot = configuration["ImportRoot"];
 Globals.AppUrl = configuration["AppUrl"];
+Globals.CookieName = configuration["CookieName"];
 Globals.StartTime = DateTime.UtcNow;
 
 try

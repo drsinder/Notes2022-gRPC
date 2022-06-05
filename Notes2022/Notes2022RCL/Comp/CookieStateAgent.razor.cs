@@ -218,6 +218,7 @@ namespace Notes2022RCL.Comp
             {
                 try
                 {
+                    string stuff = Globals.Base64Encode(newCookie);
                     _ = await module.InvokeAsync<string>("CreateCookie", cookieName, Globals.Base64Encode(newCookie), hours);
                 }
                 catch (Exception)
@@ -262,7 +263,9 @@ namespace Notes2022RCL.Comp
                 // now save login cookie state
                 if (savedLogin is not null)
                 {
-                    WriteCookie(Globals.Cookie, JsonSerializer.Serialize(savedLogin), savedLogin.Hours).GetAwaiter();
+                    string ser = JsonSerializer.Serialize(savedLogin);
+
+                    WriteCookie(Globals.Cookie, ser, savedLogin.Hours).GetAwaiter();
                 }
                 else
                 {

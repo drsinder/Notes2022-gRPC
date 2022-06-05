@@ -40,7 +40,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
-using Notes2022.Proto;
+using Notes2022.Server.Proto;
 using Notes2022.Server.Data;
 using Notes2022.Shared;
 using System.IdentityModel.Tokens.Jwt;
@@ -94,6 +94,10 @@ namespace Notes2022.Server.Services
         /// </summary>
         private readonly IEmailSender _emailSender;
 
+        private IHttpContextAccessor _httpContextAccessor;
+
+        private ApplicationUser _user;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Notes2022Service" /> class.
         /// </summary>
@@ -111,7 +115,8 @@ namespace Notes2022.Server.Services
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
-            UserManager<ApplicationUser> userManager
+            UserManager<ApplicationUser> userManager,
+            IHttpContextAccessor httpContextAccessor
           )
         {
             //_logger = logger;
@@ -121,6 +126,7 @@ namespace Notes2022.Server.Services
             _signInManager = signInManager;
             _configuration = configuration;
             _emailSender = emailSender;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -335,6 +341,8 @@ namespace Notes2022.Server.Services
         [Authorize] // IT IS VITAL THAT THIS IS AUTHORIZED HERE!  
         public override async Task<NoRequest> ReLogin(NoRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser user = await GetAppUser(context);
 
             await _signInManager.SignInAsync(user, isPersistent: true);
@@ -430,9 +438,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request received from the client.</param>
         /// <param name="context">The context of the server-side call handler being invoked.</param>
         /// <returns>The response to send back to the client (wrapped by a task).</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<AuthReply> ChangePassword(ResetPasswordRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             AuthReply ar = new() { Status = 500, Message = "Something went wrong" };
 
             ApplicationUser? user = await GetAppUser(context);
@@ -499,9 +509,13 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GAppUserList.</returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<GAppUserList> GetUserList(NoRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+            if (! await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
             List<ApplicationUser> list = await _userManager.Users.ToListAsync();
             return ApplicationUser.GetGAppUserList(list);
         }
@@ -512,9 +526,13 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>EditUserViewModel.</returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<EditUserViewModel> GetUserRoles(AppUserRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+            if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
             EditUserViewModel model = new()
             {
                 RolesList = new CheckedUserList()
@@ -545,9 +563,13 @@ namespace Notes2022.Server.Services
         /// <param name="model">The model.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoRequest> UpdateUserRoles(EditUserViewModel model, ServerCallContext context)
         {
+            context = BindAuth(context);
+            if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
             ApplicationUser user = await _userManager.FindByIdAsync(model.UserData.Id);
             IList<string>? myRoles = await _userManager.GetRolesAsync(user);
             foreach (CheckedUser item in model.RolesList.List)
@@ -582,11 +604,11 @@ namespace Notes2022.Server.Services
         /// <returns>ApplicationUser.</returns>
         private async Task<ApplicationUser> GetAppUser(ServerCallContext context)
         {
-            ClaimsPrincipal? user = context.GetHttpContext().User;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            ApplicationUser appUser = await _userManager.FindByIdAsync(user.FindFirst(ClaimTypes.NameIdentifier).Value);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            return appUser;
+////            ClaimsPrincipal? user = context.GetHttpContext().User;
+////#pragma warning disable CS8602 // Dereference of a possibly null reference.
+////            ApplicationUser appUser = await _userManager.FindByIdAsync(user.FindFirst(ClaimTypes.NameIdentifier).Value);
+////#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            return _user;
         }
 
         /// <summary>
@@ -595,9 +617,13 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>System.Nullable&lt;GNotefile&gt;.</returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoteFile?> CreateNoteFile(NoteFile request, ServerCallContext context)
         {
+            context = BindAuth(context);
+            if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
             ApplicationUser appUser = await GetAppUser(context);
 
             await NoteDataManager.CreateNoteFile(_db, appUser.Id, request.NoteFileName, request.NoteFileTitle);
@@ -607,15 +633,81 @@ namespace Notes2022.Server.Services
             return newfile;
         }
 
+        public ServerCallContext BindAuth(ServerCallContext ctx)
+        {
+            const string NET = ".AspNetCore.Identity.Application=";
+
+            Dictionary<string, string>? d = ctx.RequestHeaders.ToDictionary(x => x.Key, x => x.Value);
+            string? auth;
+            try
+            {
+                auth = d["authorization"];      // exception if not exists
+                auth = auth.Substring(7);
+
+                JwtSecurityTokenHandler hand = new();
+                JwtSecurityToken token = hand.ReadJwtToken(auth);
+
+                _user = _userManager.FindByIdAsync(token.Subject).GetAwaiter().GetResult();
+            }
+            catch (Exception)                   // no auth header - try cookie
+            {
+                try
+                {
+                    string? cookiex = d["cookie"];
+
+                    string[] cookies = cookiex.Split(',');
+
+                    foreach (string cookie in cookies)
+                    {
+                        if (cookie.StartsWith(Globals.CookieName))
+                        {
+                            string val = cookie.Substring(Globals.CookieName.Length + 1);
+                            val = Globals.Base64Decode(val);
+                            LoginReply? reply = JsonSerializer.Deserialize<LoginReply>(val);
+                            ctx.RequestHeaders.Add("Authorization", $"Bearer {reply.Jwt}");
+
+                            _user = _userManager.FindByIdAsync(reply.Info.Subject).GetAwaiter().GetResult();
+                            break;
+                        }
+                    }
+                    //if (_user is null)
+                    //{
+                    //    foreach (string cookie in cookies)
+                    //    {
+                    //        if (cookie.StartsWith(NET))
+                    //        {
+                    //            string val = cookie.Substring(NET.Length);
+                    //            ClaimsPrincipal? user = _httpContextAccessor.HttpContext.User;
+                    //            string? z = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    //            _user = _userManager.FindByIdAsync(z).GetAwaiter().GetResult();
+                    //            break;
+                    //        }
+                    //    }
+                    //}
+                }
+                catch (Exception)
+                {
+                    throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+                }
+            }
+
+            if (_user is null)
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
+            return ctx;
+        }
+
         /// <summary>
         /// Gets the home page model.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>HomePageModel.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<HomePageModel> GetHomePageModel(NoRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             return await GetBaseHomePageModelAsync(request, context);
         }
 
@@ -625,9 +717,13 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>HomePageModel.</returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<HomePageModel> GetAdminPageModel(NoRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+            if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
             HomePageModel homepageModel = await GetBaseHomePageModelAsync(request, context);
 
             List<ApplicationUser> udl = _db.Users.ToList();
@@ -672,13 +768,13 @@ namespace Notes2022.Server.Services
                 }
             }
 
-            if (context.GetHttpContext().User != null)
+            if (_user is not null)
             {
                 try
                 {
-                    ClaimsPrincipal user = context.GetHttpContext().User;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                    if (user.FindFirst(ClaimTypes.NameIdentifier) is not null && user.FindFirst(ClaimTypes.NameIdentifier).Value != null)
+//                    ClaimsPrincipal user = context.GetHttpContext().User;
+//#pragma warning disable CS8602 // Dereference of a possibly null reference.
+//                    if (user.FindFirst(ClaimTypes.NameIdentifier) is not null && user.FindFirst(ClaimTypes.NameIdentifier).Value != null)
                     {
                         ApplicationUser appUser;
                         try
@@ -730,9 +826,13 @@ namespace Notes2022.Server.Services
         /// <returns>
         /// NoteFile.
         /// </returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoteFile> UpdateNoteFile(NoteFile noteFile, ServerCallContext context)
         {
+            context = BindAuth(context);
+            if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
             NoteFile nf = await NoteDataManager.GetFileById(_db, noteFile.Id);
             nf.NoteFileName = noteFile.NoteFileName;
             nf.NoteFileTitle = noteFile.NoteFileTitle;
@@ -747,9 +847,13 @@ namespace Notes2022.Server.Services
         /// <param name="noteFile">The note file.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize(Roles = UserRoles.Admin)]
+        //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<NoRequest> DeleteNoteFile(NoteFile noteFile, ServerCallContext context)
         {
+            context = BindAuth(context);
+            if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+
             NoteFile nf = await NoteDataManager.GetFileById(_db, noteFile.Id);
 
             // remove tags
@@ -786,9 +890,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request received from the client.</param>
         /// <param name="context">The context of the server-side call handler being invoked.</param>
         /// <returns>NoRequest</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> ImportJson(ImportRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser;
 
             try
@@ -831,7 +937,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoteDisplayIndexModel.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteDisplayIndexModel> GetNoteFileIndexData(NoteFileRequest request, ServerCallContext context)
         {
             ClaimsPrincipal user;
@@ -840,13 +946,15 @@ namespace Notes2022.Server.Services
             bool isAdmin;
             bool isUser;
 
+            context = BindAuth(context);
+
             int arcId = request.ArcId;
 
             user = context.GetHttpContext().User;
             try
             {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                if (user.FindFirst(ClaimTypes.NameIdentifier) != null && user.FindFirst(ClaimTypes.NameIdentifier).Value != null)
+                //if (user.FindFirst(ClaimTypes.NameIdentifier) != null && user.FindFirst(ClaimTypes.NameIdentifier).Value != null)
                 {
                     try
                     {
@@ -919,9 +1027,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>DisplayModel.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<DisplayModel> GetNoteContent(DisplayModelRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
 
             bool isAdmin = await _userManager.IsInRoleAsync(appUser, "Admin");
@@ -962,9 +1072,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>DisplayModel.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<DisplayModel> Get2PartNoteContent(DisplayModelRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             NoteHeader nh = await _db.NoteHeader.SingleAsync(p => p.Id == request.NoteId && p.Version == request.Vers);
             NoteContent c = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == request.NoteId);
             List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == request.NoteId).ToListAsync();
@@ -985,9 +1097,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>DisplayModel.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<DisplayModel> Get1PartNoteContent(DisplayModelRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             NoteContent c = await _db.NoteContent.SingleAsync(p => p.NoteHeaderId == request.NoteId);
             List<Tags> tags = await _db.Tags.Where(p => p.NoteHeaderId == request.NoteId).ToListAsync();
 
@@ -1007,9 +1121,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>ContentSearchResponse.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<ContentSearchResponse> SearchNoteContent(ContentSearchRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             List<NoteHeader> nhl = await _db.NoteHeader.Where(p => p.NoteFileId == request.FileId 
                     && p.ArchiveId == request.ArcId && !p.IsDeleted && p.Version == 0)
                     .ToListAsync();
@@ -1036,7 +1152,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteAccessList.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteAccessList> GetAccessList(AccessAndUserListRequest request, ServerCallContext context)
         {
             NoteAccessList ret = new();
@@ -1050,9 +1166,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>AccessAndUserList.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<AccessAndUserList> GetAccessAndUserList(AccessAndUserListRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             AccessAndUserList accessAndUserList = new()
             {
                 UserAccess = await AccessManager.GetAccess(_db, request.UserId, request.FileId, request.ArcId)
@@ -1070,9 +1188,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteAccess.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteAccess> UpdateAccessItem(NoteAccess request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             NoteAccess access = (request);
             ApplicationUser appUser = await GetAppUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, access.NoteFileId, access.ArchiveId);
@@ -1091,9 +1211,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> DeleteAccessItem(NoteAccess request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             NoteAccess access = (request);
             ApplicationUser appUser = await GetAppUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, access.NoteFileId, access.ArchiveId);
@@ -1112,7 +1234,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteAccess.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteAccess> AddAccessItem(NoteAccess request, ServerCallContext context)
         {
             ApplicationUser appUser = await GetAppUser(context);
@@ -1132,9 +1254,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GAppUser.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<GAppUser> GetUserData(NoRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
             return appUser.GetGAppUser();
         }
@@ -1145,9 +1269,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GAppUser.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<GAppUser> UpdateUserData(GAppUser request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
 
             if (appUser.Id != request.Id)   // can onlt update self
@@ -1167,9 +1293,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteHeaderList.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteHeaderList> GetVersions(GetVersionsRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
 
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, request.FileId, request.ArcId);
@@ -1194,9 +1322,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GSequencerList.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<SequencerList> GetSequencer(NoRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
 
             // My list
@@ -1226,9 +1356,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> CreateSequencer(SCheckModel request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
 
             List<Sequencer> mine = await _db.Sequencer.Where(p => p.UserId == appUser.Id).OrderByDescending(p => p.Ordinal).ToListAsync();
@@ -1265,9 +1397,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> DeleteSequencer(SCheckModel request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -1288,9 +1422,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> UpdateSequencerOrdinal(Sequencer request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             Sequencer modified = await _db.Sequencer.SingleAsync(p => p.UserId == request.UserId && p.NoteFileId == request.NoteFileId);
 
             modified.LastTime = request.LastTime;
@@ -1308,9 +1444,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> UpdateSequencer(Sequencer request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             Sequencer modified = await _db.Sequencer.SingleAsync(p => p.UserId == request.UserId && p.NoteFileId == request.NoteFileId);
 
             modified.Active = request.Active;
@@ -1335,9 +1473,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNotefile.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteFile> GetNoteFile(NoteFileRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, request.NoteFileId, 0);
             if (na.Write || na.ReadAccess || na.EditAccess || na.Respond)      // TODO is this right??
@@ -1356,9 +1496,11 @@ namespace Notes2022.Server.Services
         /// <param name="TextViewModel">The TVM.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteHeader.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteHeader> CreateNewNote(TextViewModel tvm, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             if (tvm.MyNote is null || tvm.MySubject is null)
                 return new NoteHeader();
 
@@ -1420,9 +1562,11 @@ namespace Notes2022.Server.Services
         /// <param name="tvm">The TVM.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteHeader.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteHeader> UpdateNote(TextViewModel tvm, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             if (tvm.MyNote is null || tvm.MySubject is null)
                 return new NoteHeader();
 
@@ -1463,9 +1607,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteHeader.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteHeader> GetHeaderForNoteId(NoteId request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
             bool isAdmin = await _userManager.IsInRoleAsync(appUser, "Admin");
 
@@ -1514,9 +1660,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request received from the client.</param>
         /// <param name="context">The context of the server-side call handler being invoked.</param>
         /// <returns>The response to send back to the client (wrapped by a task).</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> SendEmailAuth(GEmail request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             await _emailSender.SendEmailAsync(request.Address, request.Subject, request.Body);
             return new NoRequest();
         }
@@ -1527,9 +1675,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNoteContent.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteContent> GetExport2(NoteId request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             NoteContent nc = _db.NoteContent.Single(p => p.NoteHeaderId == request.Id);
 
             NoteHeader nh = _db.NoteHeader.Single(p => p.Id == request.Id);
@@ -1548,9 +1698,11 @@ namespace Notes2022.Server.Services
         /// <param name="fv">The fv.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> DoForward(ForwardViewModel fv, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, fv.FileID, fv.ArcID);
             if (!na.ReadAccess)
@@ -1570,9 +1722,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>GNotefileList.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteFileList> GetNoteFilesOrderedByName(NoRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             List<NoteFile> noteFiles = await _db.NoteFile.OrderBy(p => p.NoteFileName).ToListAsync();
 
             NoteFileList ret = new();
@@ -1586,9 +1740,11 @@ namespace Notes2022.Server.Services
         /// <param name="Model">The model.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> CopyNote(CopyModel Model, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
 
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, Model.Note.NoteFileId, Model.Note.ArchiveId);
@@ -1743,9 +1899,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>NoRequest.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoRequest> DeleteNote(NoteId request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             NoteHeader note = await NoteDataManager.GetNoteByIdWithFile(_db, request.Id);
 
             ApplicationUser appUser = await GetAppUser(context);
@@ -1770,9 +1928,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>JsonExport.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<JsonExport> GetExportJson(ExportRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             JsonExport stuff = new()
             {
                 NoteFile = _db.NoteFile.Single(p => p.Id == request.FileId)
@@ -1815,11 +1975,11 @@ namespace Notes2022.Server.Services
                 Val = string.Empty
             };
 
-            if (request.Val == "syncfusionkey.rsghjjsrsrj43632353")
-            {
-                stuff.Val = _configuration["SyncfusionKey"];
-                return stuff;
-            }
+            //if (request.Val == "syncfusionkey.rsghjjsrsrj43632353")
+            //{
+            //    stuff.Val = _configuration["SyncfusionKey"];
+            //    return stuff;
+            //}
 
             if (request.Val == "CookieName")
             {
@@ -1886,9 +2046,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request received from the client.</param>
         /// <param name="context">The context of the server-side call handler being invoked.</param>
         /// <returns>The response to send back to the client (wrapped by a task).</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteHeaderList> GetNoteHeaders(NoteHeadersRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, request.NoteFileId,request.ArcId);
             if (!na.ReadAccess)
@@ -1984,9 +2146,11 @@ namespace Notes2022.Server.Services
         /// <param name="request">Specifies file and archive</param>
         /// <param name="context">The context of the server-side call handler being invoked.</param>
         /// <returns>Number of base notes.</returns>
-        [Authorize]
+        //[Authorize]
         public override async Task<NoteCount> GetNoteCount(NoteFileRequest request, ServerCallContext context)
         {
+            context = BindAuth(context);
+
             ApplicationUser appUser = await GetAppUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, request.NoteFileId, request.ArcId);
             if (!na.ReadAccess)

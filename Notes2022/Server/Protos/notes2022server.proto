@@ -1,0 +1,812 @@
+﻿/*--------------------------------------------------------------------------
+    **
+    ** Copyright © 2022, Dale Sinder
+    **
+    ** Name: notes2022server.proto
+    **
+    ** Description:
+    **      defines gRPC protocol for app
+    **
+    ** This program is free software: you can redistribute it and/or modify
+    ** it under the terms of the GNU General Public License version 3 as
+    ** published by the Free Software Foundation.   
+    **
+    ** This program is distributed in the hope that it will be useful,
+    ** but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+    ** GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see<http://www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*/
+
+syntax = "proto3";
+
+option csharp_namespace = "Notes2022.Server.Proto";
+
+import "google/api/annotations.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+package notes2022server;
+
+// service defintion
+// some messages are reused in the RPCs - as long as they are compatible no need to
+// add another message
+service Notes2022Server {
+// Account Services
+
+	rpc Register(RegisterRequest) returns (AuthReply)					// register a user - create login
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/Register/{username}/{email}/{password}"
+		};
+	}
+	// register a user - create login
+	rpc Login(LoginRequest) returns (LoginReply)						// log a user in
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/Login/{email}/{password}/{hours}"
+		};
+	}
+	
+	rpc Logout(NoRequest) returns (AuthReply)							// log current user out
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/Logout"
+		};
+	}
+
+	rpc ConfirmEmail(ConfirmEmailRequest) returns (AuthReply)			// user confirms email - login enabled now
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/ConfirmEmail/{userId}/{code}"
+		};
+	}
+	
+	rpc ReLogin(NoRequest) returns (NoRequest);							// Relogs a user in using JWT
+
+	rpc ResendEmail(AString) returns (AuthReply)						// Resend confirmation email
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/ResendEmail/{val}"
+		};
+	}
+
+	rpc ResetPassword(AString) returns (AuthReply)						// Send Password Reset Email
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/ResetPassword/{val}"
+		};
+	}
+
+	rpc ResetPassword2(ResetPasswordRequest) returns (AuthReply)		// Do Password Reset
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/ResetPassword2/{userId}/{code}/{newPassword}"
+		};
+	}
+
+	rpc ChangePassword(ResetPasswordRequest) returns (AuthReply)		// Change Password
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/ChangePassword/{userId}/{code}/{newPassword}"
+		};
+
+	}
+
+
+// Notes Services proper
+
+// These are basic and often deal with a simple datasebase type or list / repeated field
+
+	rpc GetUserData(NoRequest) returns (GAppUser)						// gets data for the current user
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetUserData"
+		};
+	}
+							
+	rpc GetUserList(NoRequest) returns (GAppUserList)					//get list of alll app users/logins
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetUserList"
+		};
+	}
+		
+	rpc GetUserRoles(AppUserRequest) returns (EditUserViewModel)		// used for editing roles users are in
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetUserRoles/{subject}"
+		};
+	}
+		
+	rpc GetHeaderForNoteId(NoteId) returns (NoteHeader) {				// gets a note header given its id
+		option (google.api.http) = 
+		{
+			get: "/v1/GetHeaderForNoteId/{id}"
+		};
+	}
+				
+	rpc GetNoteContent(DisplayModelRequest) returns (DisplayModel)		// gets the content of a note
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetNoteContent/{noteId}/{vers}"
+		};
+	}
+
+	rpc Get1PartNoteContent(DisplayModelRequest) returns (DisplayModel) // gets the content of a note - shortest version
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/Get1PartNoteContent/{noteId}/{vers}"
+		};
+	}
+
+	rpc Get2PartNoteContent(DisplayModelRequest) returns (DisplayModel) // gets the content of a note - short version
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/Get2PartNoteContent/{noteId}/{vers}"
+		};
+	}
+
+	rpc GetAccessAndUserList(AccessAndUserListRequest) returns (AccessAndUserList)	// gets access data and user list
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetAccessAndUserList/{fileId}/{arcId}/{userId}"
+		};
+	}
+
+	rpc GetAccessList(AccessAndUserListRequest) returns (NoteAccessList)			// gets the access list for a file
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetAccessList/{fileId}/{arcId}/{userId}"
+		};
+	}
+
+	rpc GetAccess(NoteFileRequest) returns (NoteAccess)				// gets the access for user
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetAccess/{noteFileId}/{arcId}"
+		};	
+	}
+
+	rpc UpdateUserRoles(EditUserViewModel) returns (NoRequest);			// updates roles for a user
+
+
+	rpc CreateNoteFile(NoteFile) returns (NoteFile);					// create a note file
+
+
+	rpc UpdateNoteFile(NoteFile) returns (NoteFile);					// updates note file data
+
+
+	rpc DeleteNoteFile(NoteFile) returns (NoRequest);					// deletes a note file
+
+
+	rpc ImportJson(ImportRequest) returns (NoRequest);					// runs an import given client side file contents as json byte[]
+
+
+	rpc UpdateAccessItem(NoteAccess) returns (NoteAccess);				// get a single access item
+
+
+	rpc DeleteAccessItem(NoteAccess) returns (NoRequest);				// deletes an access item
+
+
+	rpc AddAccessItem(NoteAccess) returns (NoteAccess);					// adds an access item
+
+
+	rpc UpdateUserData(GAppUser) returns (GAppUser);					// updates user data
+
+
+	rpc GetVersions(GetVersionsRequest) returns (NoteHeaderList)		// gets the non-zero version headers
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetVersions/{fileId}/{arcId}/{noteOrdinal}/{responseOrdinal}"
+		};
+	}
+
+	rpc GetSequencer(NoRequest) returns (SequencerList);				// gets the sequencer list for a user
+
+
+	rpc CreateSequencer(SCheckModel) returns (NoRequest);				// creates a sequencer item
+
+
+	rpc DeleteSequencer(SCheckModel) returns (NoRequest);				// deletes a sequencer item
+
+
+	rpc UpdateSequencer(Sequencer) returns (NoRequest);					// updates a sequencer item - while sequencing
+
+
+	rpc UpdateSequencerOrdinal(Sequencer) returns (NoRequest);			// updates a sequencer item ordinal
+
+
+	rpc GetNoteFile(NoteFileRequest) returns (NoteFile)					// get the notefile for the note index
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetNoteFile/{noteFileId}/{arcId}"
+		};
+	}
+	
+	
+	rpc CreateNewNote(TextViewModel) returns (NoteHeader);				// get a note header
+
+
+	rpc UpdateNote(TextViewModel) returns (NoteHeader);					// updates a note header
+
+
+	rpc SendEmailAuth(GEmail) returns (NoRequest)						// authenticated
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/SendEmailAuth/{address}/{subject}/{body}"
+		};
+	}
+
+	rpc GetExport2(NoteId) returns (NoteContent) {						// gets note content during an export
+		option (google.api.http) = 
+		{
+			get: "/v1/getexport2/{id}"
+		};
+	}		
+	
+
+	rpc DoForward(ForwardViewModel) returns (NoRequest);				// forwards note(s) via email
+
+
+	rpc GetNoteFilesOrderedByName(NoRequest) returns (NoteFileList)		// get list of the note files ordered by name
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetNoteFilesOrderedByName"
+		};
+	}
+	
+		
+	rpc CopyNote(CopyModel) returns (NoRequest);						// copies note(s) to another file
+
+
+	rpc DeleteNote(NoteId) returns (NoRequest);							// deletes a note
+
+
+	rpc GetExportJson(ExportRequest) returns (JsonExport)				// returns data for a json export see GetNoteHeaders for a more flexible way to get filtered data
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetExportJson/{fileId}/{arcId}/{noteOrdinal}/{responseOrdinal}/{nestResponses}"
+		};
+	}
+
+	rpc GetNoteHeaders(NoteHeadersRequest) returns (NoteHeaderList)	// request all or some slice of a note file - headers w or wo content and tags
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetNoteHeaders/{noteFileId}/{arcId}/{noteOrdinal}/{responseOrdinal}/{nestResponses}/{contentAndTags}/{minNote}/{maxNote}"
+		};
+	}
+
+	rpc GetHomePageMessage(NoRequest) returns (AString)				// Gets the current homepage message if any
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetHomePageMessage"
+		};
+	}
+
+	rpc GetNoteCount(NoteFileRequest) returns (NoteCount)				// Gets the number of base notes.
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetNoteCount/{noteFileId}/{arcId}"
+		};
+	}
+
+	rpc SearchNoteContent(ContentSearchRequest) returns (ContentSearchResponse)
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/SearchNoteContent/{fileId}/{arcId}/{target}"
+		};
+	}
+
+
+// These are crafted for the specific user interface I've provided and may return more or less than you want.
+// The basics above will permit more targeted access to data but may require more round trips.
+
+	rpc GetHomePageModel(NoRequest) returns (HomePageModel)				// get data needed for home page
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetHomePageModel"
+		};
+	}
+		
+	rpc GetAdminPageModel(NoRequest) returns (HomePageModel)			// a bit more data than home page
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetAdminPageModel"
+		};
+	}
+	
+	rpc GetNoteFileIndexData(NoteFileRequest) returns (NoteDisplayIndexModel)	// get data for the index of a notefile
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetNoteFileIndexData/{noteFileId}/{arcId}"
+		};	
+	}
+	
+	rpc GetAbout(NoRequest) returns (AboutModel)						// gets data for the about page
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetAbout"
+		};
+	}
+	rpc GetTextFile(AString) returns (AString)							// files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetTextFile/{val}"
+		};
+	}
+	
+	rpc NoOp(NoRequest) returns (NoRequest)		// just for pinging the server
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/NoOp"
+		};
+	}
+								
+}
+
+
+// Database Entities
+
+// data for a note file - Included in database context
+message NoteFile {
+	int32 id = 1;				// file Id
+	int32 numberArchives = 2;	// number of archives it has
+	string ownerId = 3;			// owner id/subject
+	string noteFileName = 4;	// name of the file
+	string noteFileTitle = 5;	// title of the file
+	google.protobuf.Timestamp lastEdited = 6;	// when was the file last edited	
+}
+
+// list of note files
+message NoteFileList {
+	repeated NoteFile list = 1;
+}
+
+// header for a note - Included in database context
+message NoteHeader {
+	int64 id = 1;					// note Id
+	int32 noteFileId = 2;			// Id of file to which it belongs
+	int32 archiveId = 3;			// archive number
+	int64 baseNoteId = 4;			// Id of this notes base note
+	int32 noteOrdinal = 5;			// display order of the note - Note number
+	int32 responseOrdinal = 6;		// response number - 0 for a base note
+	string noteSubject = 7;			// subject of the note
+	google.protobuf.Timestamp lastEdited = 8;		// when was it last edited
+	google.protobuf.Timestamp threadLastEdited = 9;	// when was any not in the thread last edited
+	google.protobuf.Timestamp createDate = 10;		// when wsa it create
+	int32 responseCount = 11;						// for a base note, the number of responses in the thread
+	string authorID = 12;							// Id / subject of the author
+	string authorName = 13;							// display name of the author
+	string linkGuid = 14;							// used to keep track of linked Notes
+	int64 refId = 15;								// Id of note being responded to
+	bool isDeleted = 16;							// has this note been deleted - invisible	
+	int32 version = 17;								// version of the note - used when reediting a note
+	string directorMessage = 18;					// director message
+	NoteContent content = 19;						// for GetNoteHeaders and JsonExport/Import only
+	TagsList tags = 20;								// for GetNoteHeaders and JsonExport/Import only
+	NoteHeaderList responses = 21;					// for GetNoteHeaders and JsonExport/Import only
+}
+
+// list of note headers
+message NoteHeaderList {
+	repeated NoteHeader list = 1;
+}
+
+// note content - Included in database context
+message NoteContent {
+	int64 id = 1;				// just for Ident in DB
+	int64 noteHeaderId = 2;		// Connection to NoteHeader
+	string noteBody = 3;		// Content of a note
+}
+
+// list of note content
+message NoteContentList {
+	repeated NoteContent list = 1;
+}
+
+// tag for a note - Included in database context
+message Tags {
+	int32 noteFileId = 1;		// file Id
+	int32 archiveId = 2;		// archive Id
+	int64 noteHeaderId = 3;		// header Id - what note is this for
+	string tag = 4;				// text of tag
+}
+
+// list of tags
+message TagsList {
+	repeated Tags list = 1;
+}
+
+// access item/token for a user - Included in database context
+message NoteAccess {
+	string userID = 1;			// Id / subject
+	int32 noteFileId = 2;		// file Id
+	int32 archiveId = 3;		// archive id/number
+	bool readAccess = 4;		// is permitted to read the file
+	bool respond = 5;			// is permitted to responsd to a note
+	bool write = 6;				// is permitted to write notes - base notes or respond
+	bool setTag = 7;			// is permitted to set tags and director message
+	bool deleteEdit = 8;		// is permitted to delete and edit notes
+	bool viewAccess = 9;		// is permitted to view the access controls for a file
+	bool editAccess = 10;		// is permitted to view and edit access controls for a file
+}
+
+// list of access tokens
+message NoteAccessList {
+	repeated NoteAccess list = 1;
+}
+
+// sequencer item - Included in database context
+message Sequencer {
+	string userId = 1;							// user Id / subject
+	int32 noteFileId = 2;						// note file Id
+	int32 ordinal = 3;							// order in which to use
+	google.protobuf.Timestamp lastTime = 4;		// when did this file last get sequenced
+	google.protobuf.Timestamp startTime = 5;	// when did this file get started sequencing on this run
+	bool active = 6;							// is it currently the active sequencer item for user
+}
+
+// list of sequencer items
+message SequencerList {
+	repeated Sequencer list = 1;
+}
+
+// used to request user data
+message AppUserRequest {
+	string subject = 1;		// user Id - subject in JWT terms
+}
+
+
+//////////////////////////////////////////////
+
+// Includes user defined elements and Id  - Included in database context
+message GAppUser {
+	string id = 1;			// = Subject in Jwt
+	string displayName = 2;	// users name for display
+	int32 timeZoneID = 3;	// obsolete
+	int32 ipref0 = 4;		// minutes between new notes check - 0 means don't check
+	int32 ipref1 = 5;
+	int32 ipref2 = 6;		// page size for note file index
+	int32 ipref3 = 7;
+	int32 ipref4 = 8;
+	int32 ipref5 = 9;
+	int32 ipref6 = 10;
+	int32 ipref7 = 11;
+	int32 ipref8 = 12;
+	int32 ipref9 = 13;
+	bool pref0 = 14;		// login turned off flag
+	bool pref1 = 15;		// Maui write clipboad flag
+	bool pref2 = 16;
+	bool pref3 = 17;		// Show Responses by default
+	bool pref4 = 18;		// Flip Response order by default
+	bool pref5 = 19;		// Show Response Content on index by default when expanded
+	bool pref6 = 20;
+	bool pref7 = 21;		// Show Content on index by default when expanded
+	bool pref8 = 22;
+	bool pref9 = 23;
+}
+
+// list of app users
+message GAppUserList {
+	repeated GAppUser list = 1;
+}
+
+
+///////////////////////////////////////////////////////
+
+// used generically -  used when no data needed for request or response
+message NoRequest {
+}
+
+///////////////////////////////////////////////
+//
+// Login, Logout, and Register stuff
+//
+// register a user
+message RegisterRequest {
+	string username = 1;		// user display name
+	string email = 2;			// user email address (login)
+	string password = 3;		// Password to set
+}
+
+// holds login information
+message LoginRequest {
+	string email = 1;		// email or name supported
+	string password = 2;	// password for login attempt
+	int32 hours = 3;		// number of hours to keep user logged in via cookies
+}
+
+// vital info about user
+message UserInfo {
+	string subject = 1;				// userId/JWT subject
+	string email = 2;				// user email address (login)
+	string displayname = 3;			// user display name
+	reserved 4;						// obsolete/not working with cookies
+	bool isAdmin = 5;				// is user an admin
+	bool isUser = 6;				// is user in role user
+	string hangfire = 7;			// address of hangfire for Admins ONLY
+
+}
+
+// used to return status during accout operations
+message AuthReply {
+	int32 status = 1;				// http status code
+	string message = 2;				// user friendly message
+}
+
+// reply for a login attempt
+message LoginReply {
+	int32 status = 1;		// 200 if Ok - http status code
+	string message = 2;		// user friendly message
+	UserInfo info = 3;		// vital info about user
+	string jwt = 4;			// JWT for cookie and credentials for authenticated gRPC calls
+	int32 hours = 5;		// hours for keep user logged in
+}
+
+// used when user confirms email
+message ConfirmEmailRequest {
+	string userId = 1;		// user id / subject
+	string code = 2;		// EF IF generated code
+}
+
+message ResetPasswordRequest {
+	string userId = 1;		// user id / subject
+	string code = 2;		// EF IF generated code or old password for ChangePassword
+	string newPassword = 3; // new password
+}
+
+/////////////////////////////////////////////////
+//
+// For Role editing - represents a user role item
+message UserRole {
+	string roleName = 1;	// name of the role
+	string roleId = 2;		// database Id of role
+}
+
+// a user role and membership flag
+message CheckedUser {
+	UserRole theRole = 1;	// the role
+	bool isMember = 2;		// membership flag
+}
+
+// list of role/mambership items
+message CheckedUserList {
+	repeated CheckedUser list = 1;
+}
+
+// used while editing role memberships
+message EditUserViewModel {
+	GAppUser userData = 1;				// a representation of the user
+	CheckedUserList rolesList = 2;		// their role/memberships
+}
+
+///////////////////////////////////////////////
+//
+// Not Entites directly - Models for transfer of info to pages
+//
+
+// data needed for home page
+message HomePageModel {
+	NoteFileList noteFiles = 1;			// list of files available to user
+	NoteAccessList noteAccesses = 2;	// access items for the files
+	string message = 3;					// banner message text to display
+	GAppUser userData = 4;				// user data
+	GAppUserList userDataList = 5;		// list of all users
+}
+
+message ImportRequest {
+	string noteFile = 1;			// file name to import to
+	string payload = 2;				// import contents
+	string jsonFileName = 3;		// name of disk file or "clipboad"
+}
+
+// used to display the note file index
+message NoteDisplayIndexModel
+{
+	NoteFile noteFile = 1;				// the note file to display
+	int32 arcId = 2;					// which archive - usually 0
+	NoteAccess myAccess = 3;			// users access item/token
+	bool isMarked = 4;					// are there marked notes
+	//string rPath = 5;					// never Used
+	//string scroller = 6;				// never Used
+	//int32 expandOrdinal = 7;			// never Used
+	reserved 5, 6, 7;
+	repeated NoteHeader notes = 8;		// list of base notes
+	repeated NoteHeader allNotes = 9;	// list of all notes
+	string linkedText = 10;				// extra text to be displayed for a linked file
+	string message = 11;				// (error) message to display
+	GAppUser userData = 12;				// user data
+	repeated Tags tags = 13;			// all tags for file
+}
+
+// used to requst a NoteDisplayIndexModel or other items related to a specific file/archive
+message NoteFileRequest {
+	int32 noteFileId = 1;				// file Id
+	int32 arcId = 2;					// which archive if any
+}
+
+// used to display a note
+message DisplayModel {
+	NoteFile noteFile = 1;			// the note file
+	NoteHeader header = 2;			// the note header
+	NoteContent content = 3;		// note body
+	repeated Tags tags = 4;			// tags for this note
+	NoteAccess access = 5;			// access item/token for file/user
+	bool canEdit = 6;				// can user edit the note
+	bool isAdmin = 7;				// is user an admin
+}
+
+// request a DisplayModel
+message DisplayModelRequest {
+	int32 vers = 1;					// version of note
+	int64 noteId = 2;				// id of note
+}
+
+// request use list and access list
+message AccessAndUserListRequest {
+	int32 fileId = 1;				// file id
+	int32 arcId = 2;				// archive id
+	string userId = 3;				// user id / subject
+}
+
+// user list, access list, and users access token/item
+message AccessAndUserList
+{
+	repeated NoteAccess accessList = 1;	// entire access list for file
+	GAppUserList appUsers = 2;			// list of notes users
+	NoteAccess userAccess = 3;			// access for current user
+}
+
+// get versions for a note 
+message GetVersionsRequest {
+	int32 fileId = 1;			// file id
+	int32 noteOrdinal = 2;		// note ordinal
+	int32 responseOrdinal = 3;	// response ordinal
+	int32 arcId = 4;			// archive id
+}
+
+// used for checkbox managment
+message SCheckModel {
+	bool isChecked = 1;			// checked flag
+	int32 fileId = 2;			// file id this is for
+}
+
+// used for creating and editing notes
+message TextViewModel {
+	string myNote = 1;				// note body
+	string mySubject = 2;			// note subject
+	int32 noteFileID = 3;			// file Id
+	int64 baseNoteHeaderID = 4;		// 0 for a base note - Id of the base note header for a response
+	int64 noteID = 5;				// note Id
+	string tagLine = 6;				// string of tags  to parse to a list of tag objects
+	string directorMessage = 7;		// director message
+	int64 refId = 8;				// Id of note header we are responding to
+}
+
+// encapsulates a note id
+message NoteId {
+	int64 id = 1;					// note Id
+}
+
+// configurable data for about page
+message AboutModel {
+	string primeAdminName = 1;				// name of the local Admin
+	string primeAdminEmail = 2;				// email of the local Admin
+	string hostUri = 3;						// Uri of the server
+	google.protobuf.Duration upTime = 4;	// how long the server has been up
+}
+
+// container for an email
+message GEmail {
+	string address = 1;			// send to
+	string subject = 2;			// subject
+	string body = 3;			// text of email
+}
+
+// Request export data
+message ExportRequest {
+	int32 fileId = 1;			// file id
+	int32 arcId = 2;			// archive id
+	int32 noteOrdinal = 3;		// note ordinal
+	int32 responseOrdinal = 4;	// response ordinal
+	bool nestResponses = 5;
+}
+
+// used to forward note(s) to an email address
+message ForwardViewModel {
+    NoteFile noteFile = 1;		// Note file
+    int64 noteID = 2;			// note Id
+	int32 fileID = 3;			// file Id
+    int32 arcID = 4;			// archive id
+    int32 noteOrdinal = 5;		// note ordinal
+    string noteSubject = 6;		// note subject
+    bool wholestring = 7;		// include note an responses
+    bool hasstring = 8;			// is part of a string of notes
+    bool isAdmin = 9;			// is user an admin
+    bool toAllUsers = 10;		// send to all users
+    string toEmail = 11;		// email addess to send to
+}
+
+// used to copy note(s) to another file
+message CopyModel {
+	NoteHeader note = 1;		// note header to copy
+	int32 fileId = 2;			// file id to copy to
+	bool wholeString = 3;		// base note an responses
+}
+
+// Used to get a representation of the whole file - to be serialized as json
+message JsonExport {
+	NoteFile noteFile = 1;			// notefile to export
+	NoteAccess noteAccess = 2;		// access token for requesting user
+	NoteHeaderList noteHeaders = 3;	// list of headers - includes Content and Tags!
+}
+
+// string wrapper for requests and responses
+message AString {
+	string val = 1;				// just a string
+}
+
+message NoteHeadersRequest {
+	int32 noteFileId = 1;		// notefile id
+	int32 noteOrdinal = 2;		// 0 for all base notes, -1 basenotes and resposnses, else specifc noteordinal
+	int32 responseOrdinal = 3;	// -1 for all responses, 0 for base only, else specific response
+	bool contentAndTags = 4;	// include content and tags?
+	int32 arcId = 5;			// archive id
+	int32 minNote = 6;			// min base ordinal to include
+	int32 maxNote = 7;			// max base ordinal to include
+	string fileName = 8;		// used only for export of a note string
+	bool nestResponses = 9;		// extra processing to nest responses inside base notes
+}
+
+// count of base notes in a file
+message NoteCount {
+	int32 count = 1;			// the count
+}
+
+message ContentSearchRequest {
+	int32 fileId = 1;			// file Id
+	int32 arcId = 2;			//Acrhive Id
+	string target = 3;			// target of search
+}
+
+message ContentSearchResponse
+{
+	repeated int64 list = 1;
+}

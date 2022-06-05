@@ -38,7 +38,7 @@
 
 
 using Notes2022.Server.Data;
-using Notes2022.Proto;
+using Notes2022.Server.Proto;
 using Microsoft.EntityFrameworkCore;
 using Notes2022.Server.Services;
 
