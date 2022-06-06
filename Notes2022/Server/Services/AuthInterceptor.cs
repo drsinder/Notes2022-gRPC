@@ -51,7 +51,7 @@ namespace Notes2022.Server.Services
         {
             if (NeedsAuth(context))             // check method name to see if it needs authorized
             {
-                context = BindAuth(context);    // do the authorization
+                context = await BindAuth(context);    // do the authorization
             }
             return await continuation(request, context);
         }
@@ -94,7 +94,7 @@ namespace Notes2022.Server.Services
         /// <param name="context">The call context.</param>
         /// <returns>ServerCallContext with (added) authorization</returns>
         /// <exception cref="Notes2022.Server.Proto.AuthReply.Status">Call not authorized!</exception>
-        private ServerCallContext BindAuth(ServerCallContext context)
+        private async Task<ServerCallContext> BindAuth(ServerCallContext context)
         {   // get the headers
             ApplicationUser user = new();
             Dictionary<string, string>? dict = context.RequestHeaders.ToDictionary(x => x.Key, x => x.Value);
@@ -104,7 +104,7 @@ namespace Notes2022.Server.Services
                 auth = auth.Substring(7);               // skip "bearer "
                 JwtSecurityTokenHandler hand = new();
                 JwtSecurityToken token = hand.ReadJwtToken(auth);
-                user = _userManager.FindByIdAsync(token.Subject).GetAwaiter().GetResult();
+                user = await _userManager.FindByIdAsync(token.Subject);
             }
             catch (Exception)                           // no auth header (gRPC) - try cookie (Json Transcoding)
             {
@@ -118,7 +118,7 @@ namespace Notes2022.Server.Services
                             string val = cookie.Substring(Globals.CookieName.Length + 1);
                             LoginReply? reply = JsonSerializer.Deserialize<LoginReply>(Globals.Base64Decode(val));
                             context.RequestHeaders.Add("authorization", $"Bearer {reply.Jwt}");
-                            user = _userManager.FindByIdAsync(reply.Info.Subject).GetAwaiter().GetResult();
+                            user = await _userManager.FindByIdAsync(reply.Info.Subject);
                             break;
                         }
                     }
@@ -131,7 +131,7 @@ namespace Notes2022.Server.Services
             if (user is null)
                 throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
 
-            CheckRoles(context, user);
+            await CheckRoles(context, user);
             context.UserState.Add("User", user);    // this will be used by the gRPC service method
 
             return context;
@@ -142,7 +142,7 @@ namespace Notes2022.Server.Services
         /// </summary>
         /// <param name="context">The ServerCallContext.</param>
         /// <exception cref="Notes2022.Server.Proto.AuthReply.Status">Call not authorized!</exception>
-        private void CheckRoles(ServerCallContext context, ApplicationUser user)
+        private async Task CheckRoles(ServerCallContext context, ApplicationUser user)
         {
             string[] strings = context.Method.Split('/');
             string method = strings[strings.Length - 1];
@@ -157,7 +157,7 @@ namespace Notes2022.Server.Services
                 case "UpdateNoteFile":
                 case "DeleteNoteFile":
 
-                    if (!_userManager.IsInRoleAsync(user, UserRoles.Admin).GetAwaiter().GetResult())
+                    if (! await _userManager.IsInRoleAsync(user, UserRoles.Admin))
                         throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
                     break;
 
