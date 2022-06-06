@@ -53,10 +53,10 @@ namespace Notes2022RCL.Comp
         /// Dealing with login related info
         /// </summary>
         private LoginReply? savedLogin;
-        /// <summary>
-        /// The saved login value used while updating cookies
-        /// </summary>
-        private LoginReply? savedLoginValue; // used while updating cookies
+        ///// <summary>
+        ///// The saved login value used while updating cookies
+        ///// </summary>
+        //private LoginReply? savedLoginValue; // used while updating cookies
         /// <summary>
         /// The module for calling javascript
         /// </summary>
@@ -107,7 +107,7 @@ namespace Notes2022RCL.Comp
 
             if (myState.IsAuthenticated) // nothing more to do here!
                 return;
-            savedLoginValue = myState.LoginReply; // should be null
+            //savedLoginValue = myState.LoginReply; // should be null
             try
             {
                 await GetLoginReplyAsync(); // try to get a cookie to authenticate
@@ -155,8 +155,8 @@ namespace Notes2022RCL.Comp
                 if (!string.IsNullOrEmpty(cookie))
                 {
                     // found a cookie!
-                    savedLoginValue = JsonSerializer.Deserialize<LoginReply>(cookie);
-                    savedLogin = savedLoginValue; // save the value - login
+                    savedLogin = JsonSerializer.Deserialize<LoginReply>(cookie);
+//                    savedLogin = savedLoginValue; // save the value - login
 
                     // Login at server
                     await Client.ReLoginAsync(new NoRequest(), myState.AuthHeader);
