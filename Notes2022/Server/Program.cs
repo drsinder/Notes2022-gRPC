@@ -119,7 +119,7 @@ if (!string.IsNullOrEmpty(transcode) && transcode == "true")
                 options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
                 if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
                     options.Interceptors.Add<ServerLoggingInterceptor>();
-            //options.Interceptors.Add<RestInterceptor>();
+                options.Interceptors.Add<AuthInterceptor>();
             })
             .AddJsonTranscoding();
 }
@@ -132,6 +132,7 @@ else
                 options.MaxSendMessageSize = 50 * 1024 * 1024; // 50 MB
                 if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
                     options.Interceptors.Add<ServerLoggingInterceptor>();
+                options.Interceptors.Add<AuthInterceptor>();
             });
 }
 
