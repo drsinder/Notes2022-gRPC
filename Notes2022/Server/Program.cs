@@ -29,6 +29,9 @@ WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 ConfigurationManager configuration = builder.Configuration;
 
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8601 // Possible null reference assignment.
+
 string? sentry = configuration["Sentry:Flag"];
 string? GrpcReflect = configuration["GrpcReflect"];
 string? connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -231,6 +234,9 @@ app.UseEndpoints(endpoints =>
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8604 // Possible null reference argument.
 
 
 public class MyAuthorizationFilter : IDashboardAuthorizationFilter

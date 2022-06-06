@@ -210,14 +210,16 @@ namespace Notes2022.Server.Services
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>ApplicationUser.</returns>
-        private ApplicationUser GetUser(ServerCallContext context)
+        private ApplicationUser? GetUser(ServerCallContext context)
         {
             if (__user is null)
             {
-                ApplicationUser user;
-                object xx;
-                context.UserState.TryGetValue("User", out xx);
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8601 // Possible null reference assignment.
+                context.UserState.TryGetValue("User", out object xx);
                 __user = (ApplicationUser)xx;
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             }
 
             return __user;
@@ -388,13 +390,15 @@ namespace Notes2022.Server.Services
                     user.DisplayName = String.Empty;
 
                 // form login response with JWT
-                List<Claim>? authClaims = new List<Claim>
+#pragma warning disable CS8604 // Possible null reference argument.
+                List<Claim> authClaims = new()
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email)
                 };
+#pragma warning restore CS8604 // Possible null reference argument.
 
                 List<string> roles = new();
                 foreach (string? userRole in userRoles)
@@ -420,7 +424,7 @@ namespace Notes2022.Server.Services
                 if (userInfo.IsAdmin)
                     userInfo.Hangfire = Globals.HangfireAddress;
 
-                LoginReply ret = new LoginReply() { Status = StatusCodes.Status200OK, Message = "Login successful.", Info = userInfo, Jwt = stoken, Hours = request.Hours };
+                LoginReply ret = new() { Status = StatusCodes.Status200OK, Message = "Login successful.", Info = userInfo, Jwt = stoken, Hours = request.Hours };
                 string? enc = Globals.CookieName + "=" + Globals.Base64Encode(JsonSerializer.Serialize(ret));
                 context.GetHttpContext().Response.Headers.Remove("Set-Cookie");
 
@@ -429,8 +433,10 @@ namespace Notes2022.Server.Services
 
                 string suffix = $"; expires={exp}; path=/; secure; samesite=lax";
 
-                Metadata md = new Metadata();
-                md.Add("Set-Cookie", enc + suffix);
+                Metadata md = new()
+                {
+                    { "Set-Cookie", enc + suffix }
+                };
                 await context.WriteResponseHeadersAsync(md);
 
                 //context.GetHttpContext().Response.Headers.Add("Set-Cookie", enc + suffix );
@@ -581,7 +587,7 @@ namespace Notes2022.Server.Services
         {
             await _signInManager.SignOutAsync();
 
-            LoginReply ret = new LoginReply();
+            LoginReply ret = new();
             string? enc = Globals.CookieName + "=" + Globals.Base64Encode(JsonSerializer.Serialize(ret));
             context.GetHttpContext().Response.Headers.Remove("Set-Cookie");
 
@@ -590,8 +596,10 @@ namespace Notes2022.Server.Services
 
             string suffix = $"; expires={exp}; path=/; secure; samesite=lax";
 
-            Metadata md = new Metadata();
-            md.Add("Set-Cookie", enc + suffix);
+            Metadata md = new()
+            {
+                { "Set-Cookie", enc + suffix }
+            };
             await context.WriteResponseHeadersAsync(md);
 
             //context.GetHttpContext().Response.Headers.Add("Set-Cookie", enc + suffix);
@@ -607,16 +615,16 @@ namespace Notes2022.Server.Services
         /// <returns>JwtSecurityToken.</returns>
         private JwtSecurityToken GetToken(List<Claim> authClaims, int hours)
         {
-            SymmetricSecurityKey? authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTAuth:SecretKey"]));
-
-            JwtSecurityToken? token = new JwtSecurityToken(
+#pragma warning disable CS8604 // Possible null reference argument.
+            SymmetricSecurityKey? authSigningKey = new(Encoding.UTF8.GetBytes(_configuration["JWTAuth:SecretKey"]));
+            JwtSecurityToken? token = new (
                 issuer: _configuration["JWTAuth:ValidIssuerURL"],
                 audience: _configuration["JWTAuth:ValidAudienceURL"],
                 expires: DateTime.Now.AddHours(hours),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
-
+#pragma warning restore CS8604 // Possible null reference argument.
             return token;
         }
 
@@ -662,12 +670,14 @@ namespace Notes2022.Server.Services
             {
                 RolesList = new CheckedUserList()
             };
-            string Id = request.Subject;
-            ApplicationUser user = await _userManager.FindByIdAsync(Id);
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+            ApplicationUser user = await _userManager.FindByIdAsync(request.Subject);
             model.UserData = user.GetGAppUser();
             List<IdentityRole>? allRoles = _roleManager.Roles.ToList();
 
-            foreach (IdentityRole? role in allRoles)
+            foreach (IdentityRole role in allRoles)
             {
                 CheckedUser cu = new()
                 {
@@ -678,7 +688,9 @@ namespace Notes2022.Server.Services
                 cu.IsMember = await _userManager.IsInRoleAsync(user, role.Name);
                 model.RolesList.List.Add(cu);
             }
-
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             return model;
         }
 
@@ -695,6 +707,8 @@ namespace Notes2022.Server.Services
             //if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
             //    throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8604 // Possible null reference argument.
             ApplicationUser user = await _userManager.FindByIdAsync(model.UserData.Id);
             IList<string>? myRoles = await _userManager.GetRolesAsync(user);
             foreach (CheckedUser item in model.RolesList.List)
@@ -708,7 +722,8 @@ namespace Notes2022.Server.Services
                     await _userManager.RemoveFromRoleAsync(user, item.TheRole.RoleName);
                 }
             }
-
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             return new NoRequest();
         }
 
@@ -727,14 +742,18 @@ namespace Notes2022.Server.Services
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>ApplicationUser.</returns>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+#pragma warning disable CS8603 // Possible null reference return.
         private async Task<ApplicationUser> GetAppUser(ServerCallContext context)
         {
-////            ClaimsPrincipal? user = context.GetHttpContext().User;
-////#pragma warning disable CS8602 // Dereference of a possibly null reference.
-////            ApplicationUser appUser = await _userManager.FindByIdAsync(user.FindFirst(ClaimTypes.NameIdentifier).Value);
-////#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            ////            ClaimsPrincipal? user = context.GetHttpContext().User;
+            ////#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            ////            ApplicationUser appUser = await _userManager.FindByIdAsync(user.FindFirst(ClaimTypes.NameIdentifier).Value);
+            ////#pragma warning restore CS8602 // Dereference of a possibly null reference.
             return GetUser(context);
         }
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         /// <summary>
         /// Creates a note file.
@@ -769,7 +788,7 @@ namespace Notes2022.Server.Services
         {
             //context = BindAuth(context);
 
-            return await GetBaseHomePageModelAsync(request, context);
+            return await GetBaseHomePageModelAsync(context);
         }
 
         /// <summary>
@@ -785,7 +804,7 @@ namespace Notes2022.Server.Services
             //if (!await _userManager.IsInRoleAsync(_user, UserRoles.Admin))
             //    throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
 
-            HomePageModel homepageModel = await GetBaseHomePageModelAsync(request, context);
+            HomePageModel homepageModel = await GetBaseHomePageModelAsync(context);
 
             List<ApplicationUser> udl = _db.Users.ToList();
             homepageModel.UserDataList = new GAppUserList();
@@ -812,7 +831,7 @@ namespace Notes2022.Server.Services
         /// <param name="request">The request.</param>
         /// <param name="context">The context.</param>
         /// <returns>A Task&lt;HomePageModel&gt; representing the asynchronous operation.</returns>
-        private async Task<HomePageModel> GetBaseHomePageModelAsync(NoRequest request, ServerCallContext context)
+        private async Task<HomePageModel> GetBaseHomePageModelAsync(ServerCallContext context)
         {
             HomePageModel homepageModel = new();
 
@@ -870,7 +889,6 @@ namespace Notes2022.Server.Services
                         }
                         homepageModel.NoteFiles = myNoteFiles;
                     }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 }
                 catch (Exception)
                 {
@@ -974,8 +992,10 @@ namespace Notes2022.Server.Services
                 return new NoRequest();
             }
 
-            JsonData data = new JsonData();
-            data.JsonText = request.Payload;
+            JsonData data = new()
+            {
+                JsonText = request.Payload
+            };
             Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<JsonData>? ent =_db.JsonData.Add(data);
             await _db.SaveChangesAsync();
 
@@ -983,8 +1003,10 @@ namespace Notes2022.Server.Services
             int fileId = (int)ent.Member("Id").CurrentValue;
 #pragma warning restore CS8605 // Unboxing a possibly null value.
 
-            Importer imp = new Importer(_db);
+            Importer imp = new(_db);
+#pragma warning disable CS8604 // Possible null reference argument.
             BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile, request.JsonFileName, appUser.Email));
+#pragma warning restore CS8604 // Possible null reference argument.
 
             Thread.Sleep(2000);
 
@@ -1014,7 +1036,6 @@ namespace Notes2022.Server.Services
             user = context.GetHttpContext().User;
             try
             {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 //if (user.FindFirst(ClaimTypes.NameIdentifier) != null && user.FindFirst(ClaimTypes.NameIdentifier).Value != null)
                 {
                     try
@@ -1072,7 +1093,6 @@ namespace Notes2022.Server.Services
                         idxModel.Message = ex1.Message;
                     }
                 }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
             catch (Exception ex)
             {
@@ -1340,8 +1360,12 @@ namespace Notes2022.Server.Services
             if (appUser.Id != request.Id)   // can onlt update self
                 return request;
 
-            ApplicationUser appUserBase = await _userManager.FindByIdAsync(request.Id);
+#pragma warning disable CS8604 // Possible null reference argument.
+
+            ApplicationUser? appUserBase = await _userManager.FindByIdAsync(request.Id);
             ApplicationUser merged = ApplicationUser.MergeApplicationUser(request, appUserBase);
+
+#pragma warning restore CS8604 // Possible null reference argument.
 
             await _userManager.UpdateAsync(merged);
 
@@ -1702,8 +1726,10 @@ namespace Notes2022.Server.Services
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             TimeSpan span = DateTime.UtcNow - Globals.StartTime;
-            Google.Protobuf.WellKnownTypes.Duration dur = new Google.Protobuf.WellKnownTypes.Duration();
-            dur.Seconds = (long)span.TotalSeconds;
+            Google.Protobuf.WellKnownTypes.Duration dur = new()
+            {
+                Seconds = (long)span.TotalSeconds
+            };
 
             return new AboutModel()
             {

@@ -70,9 +70,10 @@ namespace Notes2022.Server.Services
             try
             {   // check for direct gRPC
                 string? auth = dict["authorization"];   // works for direct gRPC calls not transcoded Json - exception if not exists
-                auth = auth.Substring(7);               // skip "bearer "
+                auth = auth[7..];                       // skip "bearer "
                 JwtSecurityTokenHandler hand = new();
                 JwtSecurityToken token = hand.ReadJwtToken(auth);
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 user = await _userManager.FindByIdAsync(token.Subject);
             }
             catch (Exception)                           // no auth header (gRPC) - try cookie (Json Transcoding)
@@ -84,10 +85,13 @@ namespace Notes2022.Server.Services
                     {
                         if (cookie.StartsWith(Globals.CookieName))
                         {
-                            string val = cookie.Substring(Globals.CookieName.Length + 1);
+                            string val = cookie[(Globals.CookieName.Length + 1)..];
                             LoginReply? reply = JsonSerializer.Deserialize<LoginReply>(Globals.Base64Decode(val));
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                             context.RequestHeaders.Add("authorization", $"Bearer {reply.Jwt}");
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                             user = await _userManager.FindByIdAsync(reply.Info.Subject);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                             break;
                         }
                     }
@@ -111,30 +115,16 @@ namespace Notes2022.Server.Services
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns><c>true</c> if auth needed, <c>false</c> otherwise.</returns>
-        private bool NeedsAuth(ServerCallContext context)
+        private static bool NeedsAuth(ServerCallContext context)
         {
             string[] strings = context.Method.Split('/');
-            string method = strings[strings.Length - 1];
+            string method = strings[^1];
 
-            switch (method)      // check for methods requiring No Auththorization
+            return method switch      // check for methods requiring No Auththorization
             {
-                case "Register":
-                case "Login":
-                case "Logout":
-                case "ConfirmEmail":
-                case "ResendEmail":
-                case "ResetPassword":
-                case "ResetPassword2":
-
-                case "NoOp":
-                case "GetAbout":
-                case "GetTextFile":
-                case "GetHomePageMessage":
-                    return false;
-
-                default:
-                    return true;
-            }
+                "Register" or "Login" or "Logout" or "ConfirmEmail" or "ResendEmail" or "ResetPassword" or "ResetPassword2" or "NoOp" or "GetAbout" or "GetTextFile" or "GetHomePageMessage" => false,
+                _ => true,
+            };
         }
 
         /// <summary>

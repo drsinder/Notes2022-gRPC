@@ -65,7 +65,7 @@ namespace Notes2022RCL.Comp
         /// Gets or sets the pinger.
         /// </summary>
         /// <value>The pinger.</value>
-        private System.Timers.Timer pinger { get; set; }
+        private System.Timers.Timer Pinger { get; set; }
 
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
@@ -89,10 +89,10 @@ namespace Notes2022RCL.Comp
         /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task OnParametersSetAsync()
         {
-            pinger = new(60000); // ping server every 60 seconds to keep it alive
-            pinger.Elapsed += Ping;
-            pinger.Enabled = true;
-            pinger.Start();
+            Pinger = new(60000); // ping server every 60 seconds to keep it alive
+            Pinger.Elapsed += Ping;
+            Pinger.Enabled = true;
+            Pinger.Start();
 
             AString cookiename = await Client.GetTextFileAsync(new AString()
             { Val = "CookieName" });
@@ -336,7 +336,7 @@ namespace Notes2022RCL.Comp
         {
             get
             {
-                Metadata? headers = new Metadata();
+                Metadata? headers = new();
                 if (LoginReply is not null && LoginReply.Status == 200)
                     headers.Add("Authorization", $"Bearer {LoginReply.Jwt}");
                 return headers;
