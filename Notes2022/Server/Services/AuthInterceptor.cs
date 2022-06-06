@@ -57,38 +57,7 @@ namespace Notes2022.Server.Services
         }
 
         /// <summary>
-        /// Checks is method needs authorization.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns><c>true</c> if auth needed, <c>false</c> otherwise.</returns>
-        private bool NeedsAuth(ServerCallContext context)
-        {
-            string[] strings = context.Method.Split('/');
-            string method = strings[strings.Length - 1];
-
-            switch (method)      // check for methods requiring No Auththorization
-            {
-                case "Register":         
-                case "Login":     
-                case "Logout":
-                case "ConfirmEmail":
-                case "ResendEmail":
-                case "ResetPassword":
-                case "ResetPassword2":
-
-                case "NoOp":
-                case "GetAbout":
-                case "GetTextFile":
-                case "GetHomePageMessage":
-                    return false;
-
-                default:
-                    return true;
-            }
-        }
-
-        /// <summary>
-        /// Sets the _user var and may add the authorization
+        /// Sets the User var and may add the authorization
         /// Used instead of [Authorize] attribute for Json transcoding
         /// </summary>
         /// <param name="context">The call context.</param>
@@ -128,13 +97,44 @@ namespace Notes2022.Server.Services
                     throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
                 }
             }
-            if (user is null)
+            if (user is null || string.IsNullOrEmpty(user.Email))
                 throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
 
             await CheckRoles(context, user);
             context.UserState.Add("User", user);    // this will be used by the gRPC service method
 
             return context;
+        }
+
+        /// <summary>
+        /// Checks if method needs authorization.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns><c>true</c> if auth needed, <c>false</c> otherwise.</returns>
+        private bool NeedsAuth(ServerCallContext context)
+        {
+            string[] strings = context.Method.Split('/');
+            string method = strings[strings.Length - 1];
+
+            switch (method)      // check for methods requiring No Auththorization
+            {
+                case "Register":
+                case "Login":
+                case "Logout":
+                case "ConfirmEmail":
+                case "ResendEmail":
+                case "ResetPassword":
+                case "ResetPassword2":
+
+                case "NoOp":
+                case "GetAbout":
+                case "GetTextFile":
+                case "GetHomePageMessage":
+                    return false;
+
+                default:
+                    return true;
+            }
         }
 
         /// <summary>
@@ -160,6 +160,8 @@ namespace Notes2022.Server.Services
                     if (! await _userManager.IsInRoleAsync(user, UserRoles.Admin))
                         throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
                     break;
+
+                // could add other Roles as needed
 
                 default:
                     break;
