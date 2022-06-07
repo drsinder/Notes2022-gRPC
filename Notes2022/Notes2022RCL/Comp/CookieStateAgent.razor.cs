@@ -46,7 +46,7 @@ using Blazored.Modal.Services;
 namespace Notes2022RCL.Comp
 {
     /// <summary>
-    /// Class CookieStateAgent.
+    /// Class CookieStateAgent.  Handles login state managment. and serves as a client agent for the MasterHub
     /// Implements the <see cref="Microsoft.AspNetCore.Components.ComponentBase" />
     /// Implements the <see cref="System.IAsyncDisposable" />
     /// </summary>
@@ -75,17 +75,35 @@ namespace Notes2022RCL.Comp
         /// <value>The pinger.</value>
         private System.Timers.Timer Pinger { get; set; }
 
+        /// <summary>
+        /// Gets or sets the master hub connection.
+        /// </summary>
+        /// <value>The master hub connection.</value>
         public HubConnection? MasterHubConnection { get; set; }
 
+        /// <summary>
+        /// The active users list
+        /// </summary>
         private List<ActiveUsers> activeUsers;
 
+        /// <summary>
+        /// Gets the active users.
+        /// </summary>
+        /// <value>The active users.</value>
         public List<ActiveUsers> ActiveUsers
         {
             get { return activeUsers; }
         }
 
+        /// <summary>
+        /// The user count
+        /// </summary>
         private int userCount;
 
+        /// <summary>
+        /// Gets the user count.
+        /// </summary>
+        /// <value>The user count.</value>
         public int UserCount {  get { return userCount; } }
 
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
@@ -103,6 +121,7 @@ namespace Notes2022RCL.Comp
                 module = null;
             }
 
+            // tell hub the user is leaving
             if (savedLogin is not null && savedLogin.Status == 200)
                 await MasterHubConnection?.SendAsync("CloseSession", savedLogin.Info.Subject, savedLogin.Info.Displayname);
 
@@ -111,7 +130,6 @@ namespace Notes2022RCL.Comp
                 await MasterHubConnection.DisposeAsync();
                 MasterHubConnection = null;
             }
-
         }
 
         /// <summary>
@@ -119,11 +137,13 @@ namespace Notes2022RCL.Comp
         /// </summary>
         /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task OnParametersSetAsync()
-        {
+        {   // connect to hub
             MasterHubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/masterhub")).Build();
            
+            // handle talk requests
             MasterHubConnection.On<string, string, string, string>("TalkRequest", async (ToclientId, FromclientId, userName, toName) => 
             {
+                // informs user of talk request and asks if they want to accept
                 IModalReference? ret = ShowYesNo($"{userName} wants to talk.");
                 ModalResult x = await ret.Result;
                 if (x.Cancelled)
@@ -131,10 +151,11 @@ namespace Notes2022RCL.Comp
                     await myState.MasterHubConnection?.SendAsync("TalkRejected", FromclientId, toName);
                     return;
                 }
-                
+                // tell hub talk was accepted.  it will create a group and initiate talk dialogs.
                 await myState.MasterHubConnection?.SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
             });
 
+            // Show the talk dailog
             MasterHubConnection.On<string, string, string, string>("TalkAccepted", async (ToclientId, FromclientId, userName, toName) =>
             {
                 ModalParameters? parameters = new ModalParameters();
@@ -145,33 +166,35 @@ namespace Notes2022RCL.Comp
                 parameters.Add("Hub", MasterHubConnection);
 
                 Modal.Show<TalkDialog>("Talk", parameters);
-
             });
 
-
+            // tell caller the call was rejected
             MasterHubConnection.On<string>("TalkRejected", (message) =>
             {
                 ShowMessage(message);
             });
 
+            // receive active user list and count periodically
             MasterHubConnection.On<int, List<ActiveUsers>>("ReceiveActiveUsers", (count, users) =>
             {
                 activeUsers = users;
                 userCount = count;
             });
 
+            // starts the hub connection
             await MasterHubConnection.StartAsync();
-
 
             Pinger = new(60000); // ping server every 60 seconds to keep it alive
             Pinger.Elapsed += Ping;
             Pinger.Enabled = true;
             Pinger.Start();
 
+            // get the configured login cookie name from the server
             AString cookiename = await Client.GetTextFileAsync(new AString()
             { Val = "CookieName" });
             Globals.Cookie = cookiename.Val;
 
+            // load the cokkie read/write javascript
             if (!Globals.IsMaui)
             {
                 // JS injected in .razor file - make sure the cookie.js is loaded
@@ -181,7 +204,7 @@ namespace Notes2022RCL.Comp
 
             if (myState.IsAuthenticated) // nothing more to do here!
                 return;
-            //savedLoginValue = myState.LoginReply; // should be null
+
             try
             {
                 await GetLoginReplyAsync(); // try to get a cookie to authenticate
@@ -191,9 +214,14 @@ namespace Notes2022RCL.Comp
             }
         }
 
+        /// <summary>
+        /// Initializes the talk.
+        /// </summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <param name="userName">Name of the user.</param>
         public async Task InitTalk(string clientId, string userName)
         {
-            string FromId = MasterHubConnection?.ConnectionId;
+            string? FromId = MasterHubConnection?.ConnectionId;
 
             await myState.MasterHubConnection?.SendAsync("TalkRequest", clientId, FromId, myState.UserInfo.Displayname, userName);
         }
@@ -212,6 +240,7 @@ namespace Notes2022RCL.Comp
                 Pinger.Start();
             }
 
+            // efectively a heart beat for the hub to prevent user list deletion
             if (savedLogin is not null && savedLogin.Status == 200)
                 MasterHubConnection?.SendAsync("OpenSession", savedLogin.Info.Subject, savedLogin.Info.Displayname).GetAwaiter();
 
@@ -356,19 +385,6 @@ namespace Notes2022RCL.Comp
                     return;
                 }
 #endif
-
-                //// now save login cookie state
-                //if (savedLogin is not null)
-                //{
-                //    string ser = JsonSerializer.Serialize(savedLogin);
-
-                //    //WriteCookie(Globals.Cookie, ser, savedLogin.Hours).GetAwaiter();
-                //}
-                //else
-                //{
-                //    //WriteCookie(Globals.Cookie, JsonSerializer.Serialize(new LoginReply()), 0).GetAwaiter();
-                //}
-
                 NotifyStateChanged(); // notify subscribers
             }
         }
@@ -457,12 +473,21 @@ namespace Notes2022RCL.Comp
             }
         }
 
+        private DateTime lastUpdate { get; set; }
+
+        TimeSpan minUpdate = TimeSpan.FromMilliseconds(400);
+
         /// <summary>
-        /// Handle state change for expand all switch
+        /// Handle state change.
         /// </summary>
         /// <param name="message">The message.</param>
-        private void ShowMessage(string message)
+        public void ShowMessage(string message)
         {
+            if (DateTime.Now - lastUpdate < minUpdate)
+                return;
+
+            lastUpdate = DateTime.Now;
+
             ModalParameters? parameters = new ModalParameters();
             parameters.Add("MessageInput", message);
             Modal.Show<MessageBox>("", parameters);

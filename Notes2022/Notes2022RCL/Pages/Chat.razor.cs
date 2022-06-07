@@ -13,7 +13,9 @@ namespace Notes2022RCL.Pages
             hubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/chathub")).Build();
             hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
             {
-                var encodedMsg = $"{user}: {message}";
+                if (messages.Count > 20)
+                    messages.RemoveAt(0);
+                string? encodedMsg = $"{user}: {message}";
                 messages.Add(encodedMsg);
                 StateHasChanged();
             });

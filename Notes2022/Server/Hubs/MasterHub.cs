@@ -13,13 +13,12 @@ namespace Notes2022.Server.Hubs
             _db = db;
         }
 
-        //public override Task OnConnectedAsync()
-        //{
-        //    string clientId = Context.ConnectionId;
-
-        //    return base.OnConnectedAsync();
-        //}
-
+        /// <summary>
+        /// Opens the session.  Keeps track of user list at user login/relogin
+        /// and periodic heart beat
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="userName">Name of the user.</param>
         public async Task OpenSession(string userId, string userName)
         {
             string clientId = Context.ConnectionId;
@@ -28,23 +27,25 @@ namespace Notes2022.Server.Hubs
 
             ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
             if (activeUsers is not null)
-            {
+            {   // update the time to prevent cleanup.
                 activeUsers.StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
                 _db.Update(activeUsers);
             }
             else
-            {
-
+            {   // add entry
                 ActiveUsers me = new() { DisplayName = userName, Subject = userId,
                         StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow), ClientId = clientId };
                 _db.ActiveUsers.Add(me);
             }
-
             await _db.SaveChangesAsync();
-
             await SendUpdate();
         }
 
+        /// <summary>
+        /// Closes the session.  Called at logout/disconnect
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="userName">Name of the user.</param>
         public async Task CloseSession(string userId, string userName)
         {
             string clientId = Context.ConnectionId;
@@ -60,6 +61,9 @@ namespace Notes2022.Server.Hubs
             await SendUpdate();
         }
 
+        /// <summary>
+        /// User clean up.  Deletes track for users who hae not had a heart beat in a while
+        /// </summary>
         private async Task UserCleanUp()
         {
             Google.Protobuf.WellKnownTypes.Timestamp then = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
@@ -72,6 +76,9 @@ namespace Notes2022.Server.Hubs
             }
         }
 
+        /// <summary>
+        /// Sends an update to active users.  Count and list.
+        /// </summary>
         private async Task SendUpdate()
         {
             List<ActiveUsers> activeUsers = _db.ActiveUsers.ToList();
@@ -82,6 +89,13 @@ namespace Notes2022.Server.Hubs
             await Clients.All.SendAsync("ReceiveActiveUsers", count, activeUsers);
         }
 
+        /// <summary>
+        /// Talk request.
+        /// </summary>
+        /// <param name="ToclientId">The toclient identifier.</param>
+        /// <param name="FromclientId">The fromclient identifier.</param>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="toName">To name.</param>
         public async Task TalkRequest(string ToclientId, string FromclientId, string userName, string toName)
         {
             if (Context.ConnectionId == ToclientId)
@@ -89,17 +103,27 @@ namespace Notes2022.Server.Hubs
                 await Clients.Single(Context.ConnectionId).SendAsync("TalkRejected", "You can not talk to yourself!");
                 return;
             }
-
-            //string toName = _db.ActiveUsers.Single(p => p.ClientId == ToclientId).DisplayName;
-
+            // send the request to the target
             await Clients.Single(ToclientId).SendAsync("TalkRequest", ToclientId, FromclientId, userName, toName);
         }
 
+        /// <summary>
+        /// Talk was the rejected.  Tell caller.
+        /// </summary>
+        /// <param name="FromclientId">The fromclient identifier.</param>
+        /// <param name="userName">Name of the user.</param>
         public async Task TalkRejected(string FromclientId, string userName)
         {
             await Clients.Single(FromclientId).SendAsync("TalkRejected", $"Your request to talk to {userName} has been rejected.");
         }
 
+        /// <summary>
+        /// Talk accepted.  Create a group.  Tell both parties.
+        /// </summary>
+        /// <param name="ToclientId">The toclient identifier.</param>
+        /// <param name="FromclientId">The fromclient identifier.</param>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="toName">To name.</param>
         public async Task TalkAccepted(string ToclientId, string FromclientId, string userName, string toName)
         {
             string groupid = ToclientId + ":" + FromclientId;
@@ -112,12 +136,24 @@ namespace Notes2022.Server.Hubs
             await Clients.Groups(groupid).SendAsync("PrivateMessage", "Notes 2022", "You are connected!");
         }
 
+        /// <summary>
+        /// Send Private message to sender and receiver
+        /// </summary>
+        /// <param name="ToclientId">The toclient identifier.</param>
+        /// <param name="FromclientId">The fromclient identifier.</param>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="message">The message.</param>
         public async Task PrivateMessage(string ToclientId, string FromclientId, string userName, string message)
         {
             string groupid = ToclientId + ":" + FromclientId;
             await Clients.Groups(groupid).SendAsync("PrivateMessage", userName, message);
         }
 
+        /// <summary>
+        /// Ends the talk.  Tell both parties and remove both from group.
+        /// </summary>
+        /// <param name="ToclientId">The toclient identifier.</param>
+        /// <param name="FromclientId">The fromclient identifier.</param>
         public async Task EndTalk(string ToclientId, string FromclientId)
         {
             string groupid = ToclientId + ":" + FromclientId;
@@ -127,7 +163,5 @@ namespace Notes2022.Server.Hubs
             await Groups.RemoveFromGroupAsync(ToclientId, groupid);
             await Groups.RemoveFromGroupAsync(FromclientId, groupid);
         }
-
-
     }
 }
