@@ -24,6 +24,8 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authorization;
+using Notes2022.Server.Hubs;
+using Microsoft.AspNetCore.ResponseCompression;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -152,6 +154,15 @@ builder.Services.AddCors(o => o.AddPolicy("AllowAll", builder =>
            .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
 }));
 
+builder.Services.AddSignalR();
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
 //builder.Services.AddControllers();
 //builder.Services.AddRazorPages();
 
@@ -178,6 +189,8 @@ catch { }
 
 WebApplication? app = builder.Build();
 
+app.UseResponseCompression();
+
 // Configure the HTTP request pipeline.
 
 string? debug = configuration["Debug"];
@@ -200,8 +213,7 @@ else
 if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
     app.MapGrpcReflectionService();
 
-app.UseHttpsRedirection();  // ?? maybe needed?
-
+app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
@@ -213,8 +225,11 @@ app.UseAuthorization();
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 app.UseCors();
 
-//app.MapRazorPages();
-//app.MapControllers();
+app.MapRazorPages();
+app.MapControllers();
+
+app.MapHub<ChatHub>("/chathub");
+app.MapHub<MasterHub>("/masterhub");
 
 Globals.HangfireAddress = "/hangfire";
 

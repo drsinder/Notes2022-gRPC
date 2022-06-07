@@ -1,0 +1,14 @@
+﻿@page "/userlist"
+
+<h3>Active User List</h3>
+
+<SfGrid @ref="sfGrid1" DataSource="@myState.ActiveUsers" AllowPaging="true" AllowSelection="true" >
+    
+    <GridEvents RowSelected="Talk" TValue="ActiveUsers"></GridEvents>
+
+    <GridColumns>
+        <GridColumn Field=@nameof(ActiveUsers.DisplayName) HeaderText="User Name" TextAlign="TextAlign.Left" ></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<h4>Click or touch  a row to talk to that person.</h4>

@@ -245,6 +245,14 @@ namespace Notes2022RCL.Menus
                     case "Roles":
                         Navigation.NavigateTo("admin/editroles");
                         break;
+
+                    case "Chat":
+                        Navigation.NavigateTo("chat");
+                        break;
+                    case "UserList":
+                        Navigation.NavigateTo("userlist");
+                        break;
+
                     //case "Linked":
                     //    Navigation.NavigateTo("admin/linkindex");
                     //    break;
@@ -313,7 +321,9 @@ namespace Notes2022RCL.Menus
                 {
                     new() { Id = "Recent", Text = "See Recent Notes" },
                     new() {Id = "MRecent", Text = "Manage Recent Notes"}, //new () { Id = "Subscriptions", Text = "Subscriptions" },
-                    new() {Id = "Preferences", Text = "Preferences"}
+                    new() {Id = "Preferences", Text = "Preferences"},
+                    new() {Id = "Chat", Text = "Chat"},
+                    new() {Id = "UserList",  Text = "User List"}
                 };
                 menuItemsTop.Add(item3);
                 item = new()

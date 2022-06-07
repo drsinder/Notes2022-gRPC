@@ -214,6 +214,15 @@ message AppUserRequest {
 	string subject = 1;		// user Id - subject in JWT terms
 }
 
+message ActiveUsers
+{
+	int64 id = 1;
+	string subject = 2;
+	string displayName = 3;
+	google.protobuf.Timestamp startTime = 4;
+	string clientId = 5;
+}
+
 
 //////////////////////////////////////////////
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Notes2022.Server.Data;
 
@@ -11,9 +12,11 @@ using Notes2022.Server.Data;
 namespace Notes2022.Server.Migrations
 {
     [DbContext(typeof(NotesDbContext))]
-    partial class NotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220606173644_ActiveUsers")]
+    partial class ActiveUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -322,9 +325,6 @@ namespace Notes2022.Server.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("ClientId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");

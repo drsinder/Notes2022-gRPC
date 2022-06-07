@@ -27,7 +27,7 @@
     <SfMenu Items="@menuItemsTop" @ref="@topMenu" CssClass="e-std-menu" >
             <MenuEvents TValue="MenuItem" ItemSelected="@OnSelect" ></MenuEvents>
     </SfMenu>
-    @*&nbsp;<span class="clockcolor"><Notes2022RCL.Comp.Clock Interval="10000"></Notes2022RCL.Comp.Clock></span>&nbsp;<span class="clockcolor">@Globals.ServerAddress</span>*@ 
+    &nbsp;<span class="clockcolor">Users: @myState.UserCount</span> 
     <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>    

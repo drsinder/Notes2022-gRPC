@@ -37,6 +37,11 @@ using Notes2022.Proto;
 using System.Text;
 using System.Text.Json;
 using System.Timers;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
+using Blazored.Modal;
+using Notes2022RCL.Dialogs;
+using Blazored.Modal.Services;
 
 namespace Notes2022RCL.Comp
 {
@@ -49,6 +54,9 @@ namespace Notes2022RCL.Comp
     /// <seealso cref="System.IAsyncDisposable" />
     public partial class CookieStateAgent
     {
+        [CascadingParameter]
+        public IModalService Modal { get; set; }
+
         /// <summary>
         /// Dealing with login related info
         /// </summary>
@@ -67,6 +75,19 @@ namespace Notes2022RCL.Comp
         /// <value>The pinger.</value>
         private System.Timers.Timer Pinger { get; set; }
 
+        public HubConnection? MasterHubConnection { get; set; }
+
+        private List<ActiveUsers> activeUsers;
+
+        public List<ActiveUsers> ActiveUsers
+        {
+            get { return activeUsers; }
+        }
+
+        private int userCount;
+
+        public int UserCount {  get { return userCount; } }
+
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
         /// <summary>
@@ -81,6 +102,16 @@ namespace Notes2022RCL.Comp
                 await module.DisposeAsync();
                 module = null;
             }
+
+            if (savedLogin is not null && savedLogin.Status == 200)
+                await MasterHubConnection?.SendAsync("CloseSession", savedLogin.Info.Subject, savedLogin.Info.Displayname);
+
+            if (MasterHubConnection is not null)
+            {
+                await MasterHubConnection.DisposeAsync();
+                MasterHubConnection = null;
+            }
+
         }
 
         /// <summary>
@@ -89,6 +120,49 @@ namespace Notes2022RCL.Comp
         /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task OnParametersSetAsync()
         {
+            MasterHubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/masterhub")).Build();
+           
+            MasterHubConnection.On<string, string, string, string>("TalkRequest", async (ToclientId, FromclientId, userName, toName) => 
+            {
+                IModalReference? ret = ShowYesNo($"{userName} wants to talk.");
+                ModalResult x = await ret.Result;
+                if (x.Cancelled)
+                {
+                    await myState.MasterHubConnection?.SendAsync("TalkRejected", FromclientId, toName);
+                    return;
+                }
+                
+                await myState.MasterHubConnection?.SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
+            });
+
+            MasterHubConnection.On<string, string, string, string>("TalkAccepted", async (ToclientId, FromclientId, userName, toName) =>
+            {
+                ModalParameters? parameters = new ModalParameters();
+                parameters.Add("ToclientId", ToclientId);
+                parameters.Add("FromclientId", FromclientId);
+                parameters.Add("userName", userName);
+                parameters.Add("toName", toName);
+                parameters.Add("Hub", MasterHubConnection);
+
+                Modal.Show<TalkDialog>("Talk", parameters);
+
+            });
+
+
+            MasterHubConnection.On<string>("TalkRejected", (message) =>
+            {
+                ShowMessage(message);
+            });
+
+            MasterHubConnection.On<int, List<ActiveUsers>>("ReceiveActiveUsers", (count, users) =>
+            {
+                activeUsers = users;
+                userCount = count;
+            });
+
+            await MasterHubConnection.StartAsync();
+
+
             Pinger = new(60000); // ping server every 60 seconds to keep it alive
             Pinger.Elapsed += Ping;
             Pinger.Enabled = true;
@@ -117,6 +191,13 @@ namespace Notes2022RCL.Comp
             }
         }
 
+        public async Task InitTalk(string clientId, string userName)
+        {
+            string FromId = MasterHubConnection?.ConnectionId;
+
+            await myState.MasterHubConnection?.SendAsync("TalkRequest", clientId, FromId, myState.UserInfo.Displayname, userName);
+        }
+
         /// <summary>
         /// Pings the specified source.
         /// </summary>
@@ -124,6 +205,16 @@ namespace Notes2022RCL.Comp
         /// <param name="e">The <see cref="ElapsedEventArgs"/> instance containing the event data.</param>
         protected void Ping(Object source, ElapsedEventArgs e)
         {
+            if (Pinger.Interval != 60000)
+            {
+                Pinger.Interval = 60000;    // ping server every 60 seconds to keep it alive
+                Pinger.Enabled = true;
+                Pinger.Start();
+            }
+
+            if (savedLogin is not null && savedLogin.Status == 200)
+                MasterHubConnection?.SendAsync("OpenSession", savedLogin.Info.Subject, savedLogin.Info.Displayname).GetAwaiter();
+
             _ = Client.NoOpAsync(new NoRequest()).GetAwaiter().GetResult();
         }
 
@@ -156,7 +247,6 @@ namespace Notes2022RCL.Comp
                 {
                     // found a cookie!
                     savedLogin = JsonSerializer.Deserialize<LoginReply>(cookie);
-//                    savedLogin = savedLoginValue; // save the value - login
 
                     // Login at server
                     await Client.ReLoginAsync(new NoRequest(), myState.AuthHeader);
@@ -172,9 +262,11 @@ namespace Notes2022RCL.Comp
                     }
 
                     NotifyStateChanged(); // notify subscribers
+
+                    Pinger.Interval = 500;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
             }
         }
@@ -240,6 +332,11 @@ namespace Notes2022RCL.Comp
 
             set
             {
+                if (savedLogin is not null && savedLogin.Status == 200 && (value is null || value.Status != 200))
+                    MasterHubConnection?.SendAsync("CloseSession", savedLogin.Info.Subject, savedLogin.Info.Displayname).GetAwaiter();
+                else if (value is not null && value.Status == 200)
+                    MasterHubConnection?.SendAsync("OpenSession", value.Info.Subject, value.Info.Displayname).GetAwaiter();
+
                 savedLogin = value;
 
 #if MAUI
@@ -360,5 +457,23 @@ namespace Notes2022RCL.Comp
             }
         }
 
+        /// <summary>
+        /// Handle state change for expand all switch
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private void ShowMessage(string message)
+        {
+            ModalParameters? parameters = new ModalParameters();
+            parameters.Add("MessageInput", message);
+            Modal.Show<MessageBox>("", parameters);
+        }
+
+        private IModalReference? ShowYesNo(string message)
+        {
+            ModalParameters? parameters = new ModalParameters();
+            parameters.Add("MessageInput", message);
+            IModalReference? retval = Modal.Show<YesNo>("", parameters);
+            return retval;
+        }
     }
 }
