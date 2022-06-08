@@ -522,7 +522,7 @@ namespace Notes2022.Server.Services
             //context.GetHttpContext().Response.Headers.Add("Set-Cookie", enc + suffix);
 
             //MasterHub? Hub = new MasterHub(_db);
-            //await Hub.CloseSession(user.Id, user.DisplayName);
+            //await Hub.CloseSession(user.Id);
 
             return new AuthReply() { Status = StatusCodes.Status200OK, Message = "User logged out!" };
         }

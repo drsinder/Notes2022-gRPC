@@ -96,13 +96,10 @@ namespace Notes2022RCL.Pages.Admin
         [Inject]
         IModalService Modal { get; set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
         /// <summary>
         /// Initializes a new instance of the <see cref="NotesFilesAdmin" /> class.
         /// </summary>
         public NotesFilesAdmin()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         {
         }
@@ -221,7 +218,7 @@ namespace Notes2022RCL.Pages.Admin
                 await this.InvokeAsync(() => this.StateHasChanged());
             }
             catch (Exception) { }
-            ModalParameters? parameters = new ModalParameters();
+            ModalParameters? parameters = new();
             parameters.Add("FileId", Id);
             IModalReference? xModal = Modal.Show<Dialogs.CreateNoteFile>("Create Notefile", parameters);
             ModalResult? result = await xModal.Result;
@@ -235,9 +232,9 @@ namespace Notes2022RCL.Pages.Admin
         /// </summary>
         /// <param name="other">The other.</param>
         /// <returns>List&lt;GAppUser&gt;.</returns>
-        private List<GAppUser> GetApplicationUsers(GAppUserList other)
+        private static List<GAppUser> GetApplicationUsers(GAppUserList other)
         {
-            List<GAppUser> list = new List<GAppUser>();
+            List<GAppUser> list = new();
             foreach (GAppUser user in other.List)
             {
                 list.Add(user);
@@ -262,13 +259,9 @@ namespace Notes2022RCL.Pages.Admin
                 await this.InvokeAsync(() => this.StateHasChanged());
             }
             catch (Exception) { }
-            ModalParameters? parameters = new ModalParameters();
+            ModalParameters? parameters = new();
             parameters.Add("FileId", Id);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-
             parameters.Add("FileName", file.NoteFileName);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-
             parameters.Add("FileTitle", file.NoteFileTitle);
             IModalReference? xModal = Modal.Show<Dialogs.DeleteNoteFile>("Delete", parameters);
             ModalResult? result = await xModal.Result;
@@ -285,21 +278,18 @@ namespace Notes2022RCL.Pages.Admin
         /// <param name="Id">The identifier.</param>
         async void NoteFileDetails(int Id)
         {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             NoteFile file = files.List.ToList().Find(x => x.Id == Id);
-            ModalParameters? parameters = new ModalParameters();
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+            ModalParameters? parameters = new();
             parameters.Add("FileId", Id);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
 
             parameters.Add("FileName", file.NoteFileName);
             parameters.Add("FileTitle", file.NoteFileTitle);
             parameters.Add("LastEdited", file.LastEdited.ToDateTime());
             parameters.Add("NumberArchives", file.NumberArchives);
             parameters.Add("Owner", model.UserDataList.List.ToList().Find(p => p.Id == file.OwnerId).DisplayName);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
             IModalReference? xModal = Modal.Show<Dialogs.NoteFileDetails>("Details", parameters);
             await xModal.Result;
@@ -315,12 +305,9 @@ namespace Notes2022RCL.Pages.Admin
             NoteFile file = files.List.ToList().Find(x => x.Id == Id);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
-            ModalParameters? parameters = new ModalParameters();
+            ModalParameters? parameters = new();
             parameters.Add("FileId", Id);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-
             parameters.Add("FileName", file.NoteFileName);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             parameters.Add("FileTitle", file.NoteFileTitle);
             parameters.Add("LastEdited", file.LastEdited);
@@ -385,9 +372,9 @@ namespace Notes2022RCL.Pages.Admin
         {
             SelectedFile? selectedFile = selectedFiles[0];
             Stream myFile = await fileSelect.OpenFileStreamAsync(selectedFile.Name); // open a stream on the file
-            StreamReader sr = new StreamReader(myFile); // get a reader
+            StreamReader sr = new(myFile); // get a reader
             string myText = await sr.ReadToEndAsync(); // read entire file as a string
-            ModalParameters? parameters = new ModalParameters();
+            ModalParameters? parameters = new();
             parameters.Add("UploadText", myText);
             parameters.Add("NoteFile", filename);
             parameters.Add("JsonFileName", selectedFile.Name);
@@ -400,7 +387,9 @@ namespace Notes2022RCL.Pages.Admin
         /// Imports the note file2.
         /// </summary>
         /// <param name="Id">The identifier.</param>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         async Task ImportNoteFile2(int Id)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             NoteFile file = files.List.ToList().Single(x => x.Id == Id);
             filename = file.NoteFileName;
@@ -435,17 +424,17 @@ namespace Notes2022RCL.Pages.Admin
             fileSelect.SelectFiles();
         }
 
-        /// <summary>
-        /// Shows the message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        private IModalReference? ShowYesNo(string message)
-        {
-            ModalParameters? parameters = new ModalParameters();
-            parameters.Add("MessageInput", message);
-            IModalReference?  retval = Modal.Show<YesNo>("", parameters);
-            return retval;
-        }
+        ///// <summary>
+        ///// Shows the message.
+        ///// </summary>
+        ///// <param name="message">The message.</param>
+        //private IModalReference? ShowYesNo(string message)
+        //{
+        //    ModalParameters? parameters = new();
+        //    parameters.Add("MessageInput", message);
+        //    IModalReference?  retval = Modal.Show<YesNo>("", parameters);
+        //    return retval;
+        //}
 
     }
 }

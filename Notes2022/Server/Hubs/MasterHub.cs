@@ -6,7 +6,9 @@ namespace Notes2022.Server.Hubs
 {
     public class MasterHub : Hub
     {
+#pragma warning disable CA2211 // Non-constant fields should not be visible
         public static Dictionary<string, ActiveUsers> UserDict;
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 
         private readonly NotesDbContext _db;
 
@@ -75,7 +77,7 @@ namespace Notes2022.Server.Hubs
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>
-        public async Task CloseSession(string userId, string userName)
+        public async Task CloseSession()
         {
             if (UserDict == null)
                 UserDict = new Dictionary<string, ActiveUsers>();
@@ -95,7 +97,7 @@ namespace Notes2022.Server.Hubs
                 return;
             }
 
-            ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
+            ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.ClientId == clientId);
             if (activeUsers is not null)
             {
                 _db.ActiveUsers.Remove(activeUsers);

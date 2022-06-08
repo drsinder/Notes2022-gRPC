@@ -123,7 +123,7 @@ namespace Notes2022RCL.Comp
 
             // tell hub the user is leaving
             if (savedLogin is not null && savedLogin.Status == 200)
-                await MasterHubConnection?.SendAsync("CloseSession", savedLogin.Info.Subject, savedLogin.Info.Displayname);
+                await MasterHubConnection?.SendAsync("CloseSession");
 
             if (MasterHubConnection is not null)
             {
@@ -156,9 +156,9 @@ namespace Notes2022RCL.Comp
             });
 
             // Show the talk dailog
-            MasterHubConnection.On<string, string, string, string>("TalkAccepted", async (ToclientId, FromclientId, userName, toName) =>
+            MasterHubConnection.On<string, string, string, string>("TalkAccepted", (ToclientId, FromclientId, userName, toName) =>
             {
-                ModalParameters? parameters = new ModalParameters();
+                ModalParameters? parameters = new();
                 parameters.Add("ToclientId", ToclientId);
                 parameters.Add("FromclientId", FromclientId);
                 parameters.Add("userName", userName);
@@ -225,7 +225,7 @@ namespace Notes2022RCL.Comp
 
             await myState.MasterHubConnection?.SendAsync("TalkRequest", clientId, FromId, myState.UserInfo.Displayname, userName);
 
-            ModalParameters? parameters = new ModalParameters();
+            ModalParameters? parameters = new();
             parameters.Add("MessageInput", "Requesting talk...");
             parameters.Add("TimeToClose", 1500D);
             Modal.Show<MessageBox>("talk", parameters);
@@ -300,7 +300,7 @@ namespace Notes2022RCL.Comp
                     Pinger.Interval = 500;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -367,7 +367,7 @@ namespace Notes2022RCL.Comp
             set
             {
                 if (savedLogin is not null && savedLogin.Status == 200 && (value is null || value.Status != 200))
-                    MasterHubConnection?.SendAsync("CloseSession", savedLogin.Info.Subject, savedLogin.Info.Displayname).GetAwaiter();
+                    MasterHubConnection?.SendAsync("CloseSession").GetAwaiter();
                 else if (value is not null && value.Status == 200)
                     MasterHubConnection?.SendAsync("OpenSession", value.Info.Subject, value.Info.Displayname).GetAwaiter();
 
@@ -478,9 +478,9 @@ namespace Notes2022RCL.Comp
             }
         }
 
-        private DateTime lastUpdate { get; set; }
+        private DateTime LastUpdate { get; set; }
 
-        TimeSpan minUpdate = TimeSpan.FromMilliseconds(400);
+        private readonly TimeSpan minUpdate = TimeSpan.FromMilliseconds(400);
 
         /// <summary>
         /// Handle state change.
@@ -488,19 +488,19 @@ namespace Notes2022RCL.Comp
         /// <param name="message">The message.</param>
         public void ShowMessage(string message)
         {
-            if (DateTime.Now - lastUpdate < minUpdate)
+            if (DateTime.Now - LastUpdate < minUpdate)
                 return;
 
-            lastUpdate = DateTime.Now;
+            LastUpdate = DateTime.Now;
 
-            ModalParameters? parameters = new ModalParameters();
+            ModalParameters? parameters = new();
             parameters.Add("MessageInput", message);
             Modal.Show<MessageBox>("", parameters);
         }
 
         private IModalReference? ShowYesNo(string message)
         {
-            ModalParameters? parameters = new ModalParameters();
+            ModalParameters? parameters = new();
             parameters.Add("MessageInput", message);
             IModalReference? retval = Modal.Show<YesNo>("", parameters);
             return retval;
