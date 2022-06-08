@@ -6,7 +6,7 @@ namespace Notes2022.Server.Hubs
 {
     public class MasterHub : Hub
     {
-        private static Dictionary<string, ActiveUsers> UserDict;
+        public static Dictionary<string, ActiveUsers> UserDict;
 
         private readonly NotesDbContext _db;
 

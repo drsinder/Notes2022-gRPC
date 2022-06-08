@@ -502,6 +502,10 @@ message ActiveUsers
 	string clientId = 5;
 }
 
+message ActiveUsersList
+{
+	repeated ActiveUsers list = 1;
+}
 
 //////////////////////////////////////////////
 
