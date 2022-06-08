@@ -36,7 +36,7 @@ namespace Notes2022.Server.Hubs
                 try { au = UserDict[clientId]; } catch { au = null; }
                 if (au != null)
                 {
-                    au.StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
+                    au.CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
                     UserDict[clientId] = au;
                 }
                 else
@@ -45,7 +45,7 @@ namespace Notes2022.Server.Hubs
                     {
                         DisplayName = userName,
                         Subject = userId,
-                        StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow),
+                        CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow),
                         ClientId = clientId
                     };
                     UserDict.Add(clientId, me);
@@ -57,13 +57,13 @@ namespace Notes2022.Server.Hubs
             ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
             if (activeUsers is not null)
             {   // update the time to prevent cleanup.
-                activeUsers.StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
+                activeUsers.CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
                 _db.Update(activeUsers);
             }
             else
             {   // add entry
                 ActiveUsers me = new() { DisplayName = userName, Subject = userId,
-                        StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow), ClientId = clientId };
+                    CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow), ClientId = clientId };
                 _db.ActiveUsers.Add(me);
             }
             await _db.SaveChangesAsync();
@@ -116,7 +116,7 @@ namespace Notes2022.Server.Hubs
                 List<KeyValuePair<string, ActiveUsers>>? aul = UserDict.ToList();
                 foreach(var au in aul)
                 {
-                    if (au.Value.StartTime <= then)
+                    if (au.Value.CheckinTime <= then)
                     {
                         UserDict.Remove(au.Key);
                     }
@@ -124,7 +124,7 @@ namespace Notes2022.Server.Hubs
                 return;
             }
 
-            List<ActiveUsers> inactiveUsers = _db.ActiveUsers.Where(p => p.StartTime <= then ).ToList();
+            List<ActiveUsers> inactiveUsers = _db.ActiveUsers.Where(p => p.CheckinTime <= then ).ToList();
 
             if (inactiveUsers != null && inactiveUsers.Count > 0)
             {

@@ -223,7 +223,7 @@ namespace Notes2022.Server.Data
               .HasConversion(v => v.ToDateTimeOffset(), v => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(v));
 
             builder.Entity<ActiveUsers>()
-              .Property(m => m.StartTime)
+              .Property(m => m.CheckinTime)
               .HasConversion(v => v.ToDateTimeOffset(), v => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(v));
 
 
