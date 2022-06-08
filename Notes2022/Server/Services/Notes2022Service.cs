@@ -1099,6 +1099,12 @@ namespace Notes2022.Server.Services
             return resp;
         }
 
+        /// <summary>
+        /// Gets the active users.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="context">The context.</param>
+        /// <returns>ActiveUsersList.</returns>
         public override async Task<ActiveUsersList> GetActiveUsers(NoRequest request, ServerCallContext context)
         {
             ActiveUsersList aul = new();

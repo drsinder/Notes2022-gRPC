@@ -26,6 +26,7 @@ using Syncfusion.Blazor.LinearGauge;
 using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.SplitButtons;
 using Syncfusion.Blazor.Calendars;
+using System.Timers;
 
 namespace Notes2022RCL.Dialogs
 {
@@ -45,12 +46,33 @@ namespace Notes2022RCL.Dialogs
         [Parameter]
         public string MessageInput { get; set; }
 
+        [Parameter]
+        public double TimeToClose { get; set; } = 0;
+
         /// <summary>
         /// Cancels this instance.
         /// </summary>
         private void Cancel()
         {
             ModalInstance.CancelAsync();
+        }
+
+        System.Timers.Timer ticker;
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender && TimeToClose > 0)
+            {
+                ticker = new System.Timers.Timer(TimeToClose);
+                ticker.Elapsed += AutoClose;
+                ticker.Enabled = true;
+                ticker.Start();
+            }
+            base.OnAfterRender(firstRender);
+        }
+
+        protected void AutoClose(Object source, ElapsedEventArgs e)
+        {
+            Cancel();
         }
     }
 }

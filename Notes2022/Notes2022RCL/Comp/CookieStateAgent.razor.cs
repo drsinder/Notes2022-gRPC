@@ -224,6 +224,11 @@ namespace Notes2022RCL.Comp
             string? FromId = MasterHubConnection?.ConnectionId;
 
             await myState.MasterHubConnection?.SendAsync("TalkRequest", clientId, FromId, myState.UserInfo.Displayname, userName);
+
+            ModalParameters? parameters = new ModalParameters();
+            parameters.Add("MessageInput", "Requesting talk...");
+            parameters.Add("TimeToClose", 1500D);
+            Modal.Show<MessageBox>("talk", parameters);
         }
 
         /// <summary>
