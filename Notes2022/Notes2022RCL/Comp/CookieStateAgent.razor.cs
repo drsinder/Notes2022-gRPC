@@ -82,29 +82,16 @@ namespace Notes2022RCL.Comp
         public HubConnection? MasterHubConnection { get; set; }
 
         /// <summary>
-        /// The active users list
-        /// </summary>
-        private List<ActiveUsers> activeUsers;
-
-        /// <summary>
         /// Gets the active users.
         /// </summary>
         /// <value>The active users.</value>
-        public List<ActiveUsers> ActiveUsers
-        {
-            get { return activeUsers; }
-        }
-
-        /// <summary>
-        /// The user count
-        /// </summary>
-        private int userCount;
+        public List<ActiveUsers> ActiveUsers { get; private set; }
 
         /// <summary>
         /// Gets the user count.
         /// </summary>
         /// <value>The user count.</value>
-        public int UserCount {  get { return userCount; } }
+        public int UserCount { get; private set; }
 
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
@@ -175,11 +162,11 @@ namespace Notes2022RCL.Comp
             });
 
             // receive active user list and count periodically
-            MasterHubConnection.On<int, List<ActiveUsers>>("ReceiveActiveUsers", (count, users) =>
+            MasterHubConnection.On("ReceiveActiveUsers", (Action<int, List<ActiveUsers>>)((count, users) =>
             {
-                activeUsers = users;
-                userCount = count;
-            });
+                this.ActiveUsers = users;
+                UserCount = count;
+            }));
 
             // starts the hub connection
             await MasterHubConnection.StartAsync();

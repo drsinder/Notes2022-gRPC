@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Notes2022.Server.Data;
 using Notes2022.Server.Proto;
+using Timestamp = Google.Protobuf.WellKnownTypes.Timestamp;
 
 namespace Notes2022.Server.Hubs
 {
     public class MasterHub : Hub
     {
-#pragma warning disable CA2211 // Non-constant fields should not be visible
         public static Dictionary<string, ActiveUsers> UserDict;
-#pragma warning restore CA2211 // Non-constant fields should not be visible
-
         private readonly NotesDbContext _db;
 
         public MasterHub(NotesDbContext db)
@@ -27,18 +25,15 @@ namespace Notes2022.Server.Hubs
         {
             if (UserDict == null)
                 UserDict = new Dictionary<string, ActiveUsers>();
-
             string clientId = Context.ConnectionId;
-
             await UserCleanUp();
-
             if (Globals.UserDict)
             {
                 ActiveUsers? au;
                 try { au = UserDict[clientId]; } catch { au = null; }
                 if (au != null)
                 {
-                    au.CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
+                    au.CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow);
                     UserDict[clientId] = au;
                 }
                 else
@@ -47,7 +42,7 @@ namespace Notes2022.Server.Hubs
                     {
                         DisplayName = userName,
                         Subject = userId,
-                        CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow),
+                        CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow),
                         ClientId = clientId
                     };
                     UserDict.Add(clientId, me);
@@ -59,7 +54,7 @@ namespace Notes2022.Server.Hubs
             ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
             if (activeUsers is not null)
             {   // update the time to prevent cleanup.
-                activeUsers.CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
+                activeUsers.CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow);
                 _db.Update(activeUsers);
             }
             else
@@ -81,9 +76,7 @@ namespace Notes2022.Server.Hubs
         {
             if (UserDict == null)
                 UserDict = new Dictionary<string, ActiveUsers>();
-
             string clientId = Context.ConnectionId;
-
             await UserCleanUp();
 
             if (Globals.UserDict)
@@ -92,11 +85,9 @@ namespace Notes2022.Server.Hubs
                 try { au = UserDict[clientId]; } catch { au = null; }
                 if (au != null)
                     UserDict.Remove(clientId);
-
                 await SendUpdate();
                 return;
             }
-
             ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.ClientId == clientId);
             if (activeUsers is not null)
             {
@@ -111,23 +102,18 @@ namespace Notes2022.Server.Hubs
         /// </summary>
         private async Task UserCleanUp()
         {
-            Google.Protobuf.WellKnownTypes.Timestamp then = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
-
+           Timestamp then = Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
             if (Globals.UserDict)
             {
                 List<KeyValuePair<string, ActiveUsers>>? aul = UserDict.ToList();
                 foreach(var au in aul)
                 {
                     if (au.Value.CheckinTime <= then)
-                    {
                         UserDict.Remove(au.Key);
-                    }
                 }
                 return;
             }
-
             List<ActiveUsers> inactiveUsers = _db.ActiveUsers.Where(p => p.CheckinTime <= then ).ToList();
-
             if (inactiveUsers != null && inactiveUsers.Count > 0)
             {
                 _db.ActiveUsers.RemoveRange(inactiveUsers);
@@ -183,7 +169,7 @@ namespace Notes2022.Server.Hubs
         /// <param name="userName">Name of the user.</param>
         public async Task TalkRejected(string FromclientId, string userName)
         {
-            await Clients.Single(FromclientId).SendAsync("TalkRejected", $"Your request to talk to {userName} has been rejected.");
+            await Clients.Single(FromclientId).SendAsync("TalkRejected", $"{userName} does not want to talk now.");
         }
 
         /// <summary>
@@ -200,7 +186,6 @@ namespace Notes2022.Server.Hubs
             await Groups.AddToGroupAsync(FromclientId, groupid);
 
             await Clients.Groups(groupid).SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
-
             Thread.Sleep(500);
             await Clients.Groups(groupid).SendAsync("PrivateMessage", "Notes 2022", "You are connected!");
         }
