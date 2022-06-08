@@ -6,6 +6,8 @@ namespace Notes2022.Server.Hubs
 {
     public class MasterHub : Hub
     {
+        private static Dictionary<string, ActiveUsers> UserDict;
+
         private readonly NotesDbContext _db;
 
         public MasterHub(NotesDbContext db)
@@ -21,9 +23,36 @@ namespace Notes2022.Server.Hubs
         /// <param name="userName">Name of the user.</param>
         public async Task OpenSession(string userId, string userName)
         {
+            if (UserDict == null)
+                UserDict = new Dictionary<string, ActiveUsers>();
+
             string clientId = Context.ConnectionId;
 
             await UserCleanUp();
+
+            if (Globals.UserDict)
+            {
+                ActiveUsers? au;
+                try { au = UserDict[clientId]; } catch { au = null; }
+                if (au != null)
+                {
+                    au.StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow);
+                    UserDict[clientId] = au;
+                }
+                else
+                {
+                    ActiveUsers me = new()
+                    {
+                        DisplayName = userName,
+                        Subject = userId,
+                        StartTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow),
+                        ClientId = clientId
+                    };
+                    UserDict.Add(clientId, me);
+                }
+                await SendUpdate();
+                return;
+            }
 
             ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
             if (activeUsers is not null)
@@ -48,9 +77,23 @@ namespace Notes2022.Server.Hubs
         /// <param name="userName">Name of the user.</param>
         public async Task CloseSession(string userId, string userName)
         {
+            if (UserDict == null)
+                UserDict = new Dictionary<string, ActiveUsers>();
+
             string clientId = Context.ConnectionId;
 
             await UserCleanUp();
+
+            if (Globals.UserDict)
+            {
+                ActiveUsers? au;
+                try { au = UserDict[clientId]; } catch { au = null; }
+                if (au != null)
+                    UserDict.Remove(clientId);
+
+                await SendUpdate();
+                return;
+            }
 
             ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
             if (activeUsers is not null)
@@ -67,6 +110,20 @@ namespace Notes2022.Server.Hubs
         private async Task UserCleanUp()
         {
             Google.Protobuf.WellKnownTypes.Timestamp then = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
+
+            if (Globals.UserDict)
+            {
+                List<KeyValuePair<string, ActiveUsers>>? aul = UserDict.ToList();
+                foreach(var au in aul)
+                {
+                    if (au.Value.StartTime <= then)
+                    {
+                        UserDict.Remove(au.Key);
+                    }
+                }
+                return;
+            }
+
             List<ActiveUsers> inactiveUsers = _db.ActiveUsers.Where(p => p.StartTime <= then ).ToList();
 
             if (inactiveUsers != null && inactiveUsers.Count > 0)
@@ -81,6 +138,16 @@ namespace Notes2022.Server.Hubs
         /// </summary>
         private async Task SendUpdate()
         {
+            if (UserDict == null)
+                UserDict = new Dictionary<string, ActiveUsers>();
+
+            if (Globals.UserDict)
+            {
+                List<ActiveUsers> aul = UserDict.Values.ToList();
+                await Clients.All.SendAsync("ReceiveActiveUsers", aul.Count, aul);
+                return;
+            }
+
             List<ActiveUsers> activeUsers = _db.ActiveUsers.ToList();
             int count = 0;
             if (activeUsers != null && activeUsers.Count > 0)

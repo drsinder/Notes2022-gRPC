@@ -181,6 +181,7 @@ try
     Globals.WarnThreshold = long.Parse(configuration["GrpcWarnThreshold"]);
 
     Globals.ImportMailInterval = int.Parse(configuration["ImportMailInterval"]);
+    Globals.UserDict = configuration["UserDict"] == "true";
 }
 catch { }
 

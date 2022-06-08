@@ -68,17 +68,21 @@ namespace Notes2022.Server
         /// <value>The send grid API key.</value>
         public static string SendGridApiKey { get; set; } = "";
 
-        public static string HangfireAddress { get; set; } = "";
+        public static string HangfireAddress { get; set; } = "/hangfire";
 
         public static string AppUrl { get; set; }
 
         public static string CookieName { get; set; }
 
         public static long ErrorThreshold { get; set; } = 1000L;
+        
         public static long WarnThreshold { get; set; } = 500L;
 
         public static int ImportMailInterval { get; set; } = 200;
+
         public static DateTime StartTime { get; set; }
+
+        public static bool UserDict { get; set; }
 
         /// <summary>
         /// Base64s the encode.
