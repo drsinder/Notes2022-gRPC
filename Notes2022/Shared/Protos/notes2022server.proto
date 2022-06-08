@@ -90,6 +90,7 @@ service Notes2022Server {
 	rpc GetHomePageMessage(NoRequest) returns (AString);				// Gets the current homepage message if any
 	rpc GetNoteCount(NoteFileRequest) returns (NoteCount);				// Gets the number of base notes.
 	rpc SearchNoteContent(ContentSearchRequest) returns (ContentSearchResponse);
+	rpc GetActiveUsers(NoRequest) returns (ActiveUsersList);
 
 // These are crafted for the specific user interface I've provided and may return more or less than you want.
 // The basics above will permit more targeted access to data but may require more round trips.

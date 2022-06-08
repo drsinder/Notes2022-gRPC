@@ -328,6 +328,14 @@ service Notes2022Server {
 		};
 	}
 
+	rpc GetActiveUsers(NoRequest) returns (ActiveUsersList)
+	{
+		option (google.api.http) = 
+		{
+			get: "/v1/GetActiveUsers"
+		};
+	}
+
 
 // These are crafted for the specific user interface I've provided and may return more or less than you want.
 // The basics above will permit more targeted access to data but may require more round trips.

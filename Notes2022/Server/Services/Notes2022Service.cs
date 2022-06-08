@@ -47,6 +47,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Notes2022.Server.Hubs;
 
 namespace Notes2022.Server.Services
 {
@@ -1098,6 +1099,30 @@ namespace Notes2022.Server.Services
             return resp;
         }
 
+        public override async Task<ActiveUsersList> GetActiveUsers(NoRequest request, ServerCallContext context)
+        {
+            ActiveUsersList aul = new();
+            if (Globals.UserDict)
+            {
+                try
+                {
+                    List<ActiveUsers>? l = MasterHub.UserDict.Values.ToList();
+                    aul.List.AddRange(l);
+                }
+                catch { }
+            }
+            else
+            {
+                try
+                {
+                    List<ActiveUsers>? l = await _db.ActiveUsers.ToListAsync();
+                    aul.List.AddRange(l);
+                }
+                catch { }
+            }
+
+            return aul;
+        }
 
         /// <summary>
         /// Gets the access list.
