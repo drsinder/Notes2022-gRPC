@@ -122,7 +122,7 @@ namespace Notes2022.Server.Services
 
             return method switch      // check for methods requiring No Auththorization
             {
-                "Register" or "Login" or "Logout" or "ConfirmEmail" or "ResendEmail" or "ResetPassword" or "ResetPassword2" or "NoOp" or "GetAbout" or "GetTextFile" or "GetHomePageMessage" => false,
+                "Register" or "Login" or "ConfirmEmail" or "ResendEmail" or "ResetPassword" or "ResetPassword2" or "NoOp" or "GetAbout" or "GetTextFile" or "GetHomePageMessage" => false,
                 _ => true,
             };
         }

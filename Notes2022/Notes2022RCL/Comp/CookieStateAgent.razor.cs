@@ -11,7 +11,7 @@
 // Name: CookieStateAgent.razor.cs
 //
 // Description:
-//      TODO
+//      Handles login state managment. and serves as a client agent for the MasterHub
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License version 3 as

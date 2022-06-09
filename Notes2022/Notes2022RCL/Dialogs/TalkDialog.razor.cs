@@ -9,7 +9,7 @@ namespace Notes2022RCL.Dialogs
     public partial class TalkDialog
     {
         [CascadingParameter]
-        BlazoredModalInstance ModalInstance { get; set; }
+        private BlazoredModalInstance ModalInstance { get; set; }
 
         [Parameter]
         public HubConnection Hub { get; set; }
@@ -26,13 +26,13 @@ namespace Notes2022RCL.Dialogs
         [Parameter]
         public string toName { get; set; }
 
-        protected string messageInput { get; set; }
+        private string messageInput { get; set; }
 
-        protected List<string> messages { get; set; } = new();
+        private List<string> messages { get; set; } = new();
 
         private DateTime lastUpdate { get; set; }
 
-        TimeSpan minUpdate = TimeSpan.FromMilliseconds(400);
+        private readonly TimeSpan minUpdate = TimeSpan.FromMilliseconds(400);
 
         /// <summary>
         /// Method invoked when the component has received parameters from its parent in

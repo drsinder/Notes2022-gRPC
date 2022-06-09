@@ -360,6 +360,18 @@ namespace Notes2022.Server.Services
                     { "Set-Cookie", enc + suffix }
                 };
                 await context.WriteResponseHeadersAsync(md);
+
+                LoginLog log = new()
+                {
+                    TheTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    UserId = userInfo.Subject,
+                    UserName = userInfo.Displayname,
+                    EventName = "Login"
+                };
+
+                _db.LoginLog.Add(log);
+                await _db.SaveChangesAsync();
+
                 return ret;
             }
 
@@ -376,6 +388,17 @@ namespace Notes2022.Server.Services
         public override async Task<NoRequest> ReLogin(NoRequest request, ServerCallContext context)
         {
             ApplicationUser user = await GetAppUser(context);
+
+            LoginLog log = new()
+            {
+                TheTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                UserId = user.Id,
+                UserName = user.DisplayName,
+                EventName = "ReLogin"
+            };
+
+            _db.LoginLog.Add(log);
+            await _db.SaveChangesAsync();
 
             await _signInManager.SignInAsync(user, isPersistent: true);
 
@@ -500,7 +523,18 @@ namespace Notes2022.Server.Services
         /// <returns>AuthReply.</returns>
         public override async Task<AuthReply> Logout(NoRequest request, ServerCallContext context)
         {
-            //ApplicationUser? user = await GetAppUser(context);
+            ApplicationUser? user = await GetAppUser(context);
+
+            LoginLog log = new()
+            {
+                TheTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                UserId = user.Id,
+                UserName = user.DisplayName,
+                EventName = "Logout"
+            };
+
+            _db.LoginLog.Add(log);
+            await _db.SaveChangesAsync();
 
             await _signInManager.SignOutAsync();
 

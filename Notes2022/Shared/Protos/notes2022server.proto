@@ -245,6 +245,20 @@ message TalkLogList
 	repeated TalkLog list = 1; 
 }
 
+message LoginLog
+{
+	int64 id = 1;
+	google.protobuf.Timestamp theTime = 2;
+	string userId = 3;
+	string userName = 4;
+	string eventName = 5;
+}
+
+message LoginLogList
+{
+	repeated LoginLog list = 1;
+}
+
 
 //////////////////////////////////////////////
 

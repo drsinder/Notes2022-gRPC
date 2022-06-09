@@ -2,6 +2,8 @@
 using Notes2022.Server.Data;
 using Notes2022.Server.Proto;
 using Timestamp = Google.Protobuf.WellKnownTypes.Timestamp;
+using UserDictEntry = System.Collections.Generic.KeyValuePair<string, Notes2022.Server.Proto.ActiveUsers>;
+using UserDictList = System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, Notes2022.Server.Proto.ActiveUsers>>;
 
 namespace Notes2022.Server.Hubs
 {
@@ -13,7 +15,7 @@ namespace Notes2022.Server.Hubs
         /// <summary>
         /// holds list of users if so configured
         /// </summary>
-        public static Dictionary<string, ActiveUsers> UserDict;
+        public static Dictionary<string, ActiveUsers> UserDict { get; private set; }
         /// <summary>
         /// database for logging and holding user list if not configured for UserDict
         /// </summary>
@@ -72,7 +74,7 @@ namespace Notes2022.Server.Hubs
                 {
                     DisplayName = userName,
                     Subject = userId,
-                    CheckinTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(DateTime.UtcNow),
+                    CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow),
                     ClientId = clientId
                 };
                 _db.ActiveUsers.Add(me);
@@ -119,11 +121,24 @@ namespace Notes2022.Server.Hubs
             Timestamp then = Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
             if (Globals.UserDict)
             {
-                List<KeyValuePair<string, ActiveUsers>>? aul = UserDict.ToList();
-                foreach (KeyValuePair<string, ActiveUsers> au in aul)
+                UserDictList? aul = UserDict.ToList();
+                foreach (UserDictEntry au in aul)
                 {
                     if (au.Value.CheckinTime <= then)
+                    {
+                        LoginLog log = new()
+                        {
+                            TheTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                            UserId = au.Value.Subject,
+                            UserName = au.Value.DisplayName,
+                            EventName = "DeGhost - Not active"
+                        };
+
+                        _db.LoginLog.Add(log);
+                        await _db.SaveChangesAsync();
+
                         UserDict.Remove(au.Key);
+                    }
                 }
                 return;
             }

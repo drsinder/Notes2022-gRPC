@@ -283,6 +283,14 @@
                 </li>
               
                 <li>
+                  <a href="#notes2022server.LoginLog"><span class="badge">M</span>LoginLog</a>
+                </li>
+              
+                <li>
+                  <a href="#notes2022server.LoginLogList"><span class="badge">M</span>LoginLogList</a>
+                </li>
+              
+                <li>
                   <a href="#notes2022server.LoginReply"><span class="badge">M</span>LoginReply</a>
                 </li>
               
@@ -1556,6 +1564,82 @@
                   <td><a href="#notes2022server.NoteHeaderList">NoteHeaderList</a></td>
                   <td></td>
                   <td><p>list of headers - includes Content and Tags! </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="notes2022server.LoginLog">LoginLog</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>theTime</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>userId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>userName</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>eventName</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="notes2022server.LoginLogList">LoginLogList</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>list</td>
+                  <td><a href="#notes2022server.LoginLog">LoginLog</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>
