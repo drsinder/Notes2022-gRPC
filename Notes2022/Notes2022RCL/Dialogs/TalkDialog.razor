@@ -1,18 +1,16 @@
-﻿
-@inject IModalService Modal
-
+﻿@inject IModalService Modal
 
 <div class="dialogs">
     <h3>Private talk: @userName - @toName</h3>
-    Message: <input @bind="messageInput" size="100" />
+    Message: <SfTextBox @bind-Value="@messageInput" @onkeyup="@InputHandler" Placeholder="Enter your message..." />  
     <button type="button" @onclick="Send">Send</button> <button type="button" @onclick="Cancel">Quit</button>
 
-<hr />
+    <hr />
 
-<ul id="messagesList">
-    @foreach (string message in messages)
-    {
-        <li>@message</li>
-    }
-</ul>
+    <ul id="messagesList">
+        @foreach (string message in messages)
+        {
+            <li>@message</li>
+        }
+    </ul>
 </div>

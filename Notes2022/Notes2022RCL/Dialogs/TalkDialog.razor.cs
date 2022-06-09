@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Blazored.Modal;
 using Microsoft.AspNetCore.SignalR.Client;
+using Syncfusion.Blazor.Inputs;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Notes2022RCL.Dialogs
 {
@@ -79,6 +81,12 @@ namespace Notes2022RCL.Dialogs
         {
             await Hub.SendAsync("PrivateMessage", ToclientId, FromclientId, myState.UserInfo.Displayname, messageInput);
             messageInput = String.Empty;
+        }
+
+        private async Task InputHandler(KeyboardEventArgs args)
+        {
+            if (args.Key == "Enter")
+                await Send();
         }
     }
 }
