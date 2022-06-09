@@ -135,7 +135,7 @@ namespace Notes2022RCL.Comp
                 ModalResult x = await ret.Result;
                 if (x.Cancelled)
                 {
-                    await myState.MasterHubConnection?.SendAsync("TalkRejected", FromclientId, toName);
+                    await myState.MasterHubConnection?.SendAsync("TalkRejected", ToclientId, FromclientId, toName);
                     return;
                 }
                 // tell hub talk was accepted.  it will create a group and initiate talk dialogs.
