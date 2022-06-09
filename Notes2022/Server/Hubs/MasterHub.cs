@@ -199,6 +199,29 @@ namespace Notes2022.Server.Hubs
         /// <param name="message">The message.</param>
         public async Task PrivateMessage(string ToclientId, string FromclientId, string userName, string message)
         {
+            ActiveUsers to = UserDict[ToclientId];
+            ActiveUsers from;
+            if (userName == to.DisplayName)
+            {
+                from = to;
+                to = UserDict[FromclientId];
+            }
+            else
+                from = UserDict[FromclientId];
+
+            TalkLog talkLog = new()
+            {
+                FromId = from.Subject,
+                ToId = to.Subject,
+                FromName = from.DisplayName,
+                ToName = to.DisplayName,
+                Message = message,
+                MessageTime = Timestamp.FromDateTime(DateTime.UtcNow)
+            };
+
+            _db.TalkLog.Add(talkLog);
+            await _db.SaveChangesAsync();
+
             string groupid = ToclientId + ":" + FromclientId;
             await Clients.Groups(groupid).SendAsync("PrivateMessage", userName, message);
         }

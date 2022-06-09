@@ -26,7 +26,7 @@ namespace Notes2022RCL.Pages
         {
             if (hubConnection is not null)
             {
-                await hubConnection.SendAsync("SendMessage", myState.UserInfo.Displayname, messageInput);
+                await hubConnection.SendAsync("SendMessage", myState.UserInfo.Displayname, myState.UserInfo.Subject, messageInput);
             }
         }
 

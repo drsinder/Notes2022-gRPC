@@ -229,6 +229,23 @@ message ActiveUsersList
 	repeated ActiveUsers list = 1;
 }
 
+message TalkLog
+{
+	int64 id = 1;
+	google.protobuf.Timestamp messageTime = 2;
+	string fromId = 3;
+	string toId = 4;
+	string fromName = 5;
+	string toName = 6;
+	string message = 7;
+}
+
+message TalkLogList
+{
+	repeated TalkLog list = 1; 
+}
+
+
 //////////////////////////////////////////////
 
 // Includes user defined elements and Id  - Included in database context

@@ -64,8 +64,9 @@ namespace Notes2022.Server.Data
 
         public DbSet<JsonData> JsonData { get; set; }
 
-
         public DbSet<ActiveUsers> ActiveUsers { get; set; }
+
+        public DbSet<TalkLog> TalkLog { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotesDbContext"/> class.
@@ -103,6 +104,8 @@ namespace Notes2022.Server.Data
             builder.Entity<ActiveUsers>()
                 .HasKey(new string[] { "Id" });
 
+            builder.Entity<TalkLog>()
+                .HasKey(new string[] { "Id" });
 
             builder.Entity<NoteAccess>()
                 .HasKey(new string[] { "UserID", "NoteFileId", "ArchiveId" });
@@ -226,6 +229,9 @@ namespace Notes2022.Server.Data
               .Property(m => m.CheckinTime)
               .HasConversion(v => v.ToDateTimeOffset(), v => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(v));
 
+            builder.Entity<TalkLog>()
+              .Property(m => m.MessageTime)
+              .HasConversion(v => v.ToDateTimeOffset(), v => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTimeOffset(v));
 
 
             // Exclude three columns from NoteHeader Table in DB but make them available for use in gRPC.
