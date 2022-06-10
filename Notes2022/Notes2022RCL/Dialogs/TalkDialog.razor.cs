@@ -72,6 +72,7 @@ namespace Notes2022RCL.Dialogs
         private async Task Cancel()
         {
             await Hub.SendAsync("EndTalk", ToclientId, FromclientId, myState.UserInfo.Displayname);
+            await ModalInstance.CancelAsync();
         }
 
         /// <summary>
