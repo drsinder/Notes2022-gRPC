@@ -117,7 +117,7 @@ namespace Notes2022.Server.Hubs
         /// <summary>
         /// User clean up/de-ghosting.  Deletes tracking for users who have not had a heart beat in a while
         /// </summary>
-        private async Task UserCleanUp()
+        public async Task UserCleanUp()
         {
             Timestamp then = Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
             if (Globals.UserDict)
@@ -129,7 +129,7 @@ namespace Notes2022.Server.Hubs
                     {
                         LoginLog log = new()
                         {
-                            TheTime = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                            TheTime = Timestamp.FromDateTime(DateTime.UtcNow),
                             UserId = au.Value.Subject,
                             UserName = au.Value.DisplayName,
                             EventName = "DeGhost - Not active"

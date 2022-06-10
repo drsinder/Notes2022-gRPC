@@ -732,6 +732,10 @@ namespace Notes2022.Server.Services
         //[Authorize(Roles = UserRoles.Admin)]
         public override async Task<HomePageModel> GetAdminPageModel(NoRequest request, ServerCallContext context)
         {
+            MasterHub hub = new(_db);
+            RecurringJob.AddOrUpdate("UserCleanup", () => hub.UserCleanUp(), "0 */5 * ? * *");
+
+
             HomePageModel homepageModel = await GetBaseHomePageModelAsync(context);
 
             List<ApplicationUser> udl = _db.Users.ToList();
