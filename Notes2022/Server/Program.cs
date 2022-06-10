@@ -210,18 +210,18 @@ else
     app.UseHsts();
 }
 
-// GRPC Reflection?
-if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
-    app.MapGrpcReflectionService();
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
+// GRPC Reflection?
+if (!string.IsNullOrEmpty(GrpcReflect) && GrpcReflect == "true")
+    app.MapGrpcReflectionService();
 
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 app.UseCors();
@@ -236,7 +236,7 @@ Globals.HangfireAddress = "/hangfire";
 
 app.UseHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
 {
-    Authorization = new[] { new MyAuthorizationFilter() }
+    Authorization = new List<IDashboardAuthorizationFilter> { new MyAuthorizationFilter() }
 });
 
 if (!string.IsNullOrEmpty(sentry) && sentry == "true")
@@ -245,6 +245,11 @@ if (!string.IsNullOrEmpty(sentry) && sentry == "true")
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapGrpcService<Notes2022Service>().EnableGrpcWeb().RequireCors("AllowAll");
+    //endpoints.MapHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
+    //{
+    //    Authorization = new List<IDashboardAuthorizationFilter> { new MyAuthorizationFilter() }
+    //});
+    //endpoints.MapControllers();
 });
 
 app.MapFallbackToFile("index.html");
@@ -257,7 +262,7 @@ app.Run();
 
 public class MyAuthorizationFilter : IDashboardAuthorizationFilter
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public bool Authorize(DashboardContext context)
     {
         return true;
