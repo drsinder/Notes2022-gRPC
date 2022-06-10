@@ -860,9 +860,12 @@ option csharp_namespace = "Notes2022.Proto";
  
 package notes2022server;
  
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
  
 // service defintion
+// some messages are reused in the RPCs - as long as they are compatible no need to
+// add another message
 service Notes2022Server {
 // Account Services
  
@@ -885,6 +888,8 @@ service Notes2022Server {
  rpc GetUserRoles(AppUserRequest) returns (EditUserViewModel);  // used for editing roles users are in
  rpc GetHeaderForNoteId(NoteId) returns (NoteHeader);    // gets a note header given its id
  rpc GetNoteContent(DisplayModelRequest) returns (DisplayModel);  // gets the content of a note
+ rpc Get1PartNoteContent(DisplayModelRequest) returns (DisplayModel);// gets the content of a note - shortest version
+ rpc Get2PartNoteContent(DisplayModelRequest) returns (DisplayModel);// gets the content of a note - short version
  rpc GetAccessAndUserList(AccessAndUserListRequest) returns (AccessAndUserList); // gets access data and user list
  rpc GetAccessList(AccessAndUserListRequest) returns (NoteAccessList);   // gets the access list for a file
  rpc GetAccess(NoteFileRequest) returns (NoteAccess);    // gets the access for user
@@ -892,7 +897,6 @@ service Notes2022Server {
  rpc CreateNoteFile(NoteFile) returns (NoteFile);     // create a note file
  rpc UpdateNoteFile(NoteFile) returns (NoteFile);     // updates note file data
  rpc DeleteNoteFile(NoteFile) returns (NoRequest);     // deletes a note file
-// rpc Import(ImportRequest) returns (NoRequest);      // runs an import given client side file contents as byte[]
  rpc ImportJson(ImportRequest) returns (NoRequest);     // runs an import given client side file contents as json byte[]
  rpc UpdateAccessItem(NoteAccess) returns (NoteAccess);    // get a single access item
  rpc DeleteAccessItem(NoteAccess) returns (NoRequest);    // deletes an access item
@@ -917,6 +921,8 @@ service Notes2022Server {
  rpc GetNoteHeaders(NoteHeadersRequest) returns (NoteHeaderList); // request all or some slice of a note file - headers w or wo content and tags
  rpc GetHomePageMessage(NoRequest) returns (AString);    // Gets the current homepage message if any
  rpc GetNoteCount(NoteFileRequest) returns (NoteCount);    // Gets the number of base notes.
+ rpc SearchNoteContent(ContentSearchRequest) returns (ContentSearchResponse);
+ rpc GetActiveUsers(NoRequest) returns (ActiveUsersList);
  
 // These are crafted for the specific user interface I've provided and may return more or less than you want.
 // The basics above will permit more targeted access to data but may require more round trips.
@@ -925,11 +931,8 @@ service Notes2022Server {
  rpc GetAdminPageModel(NoRequest) returns (HomePageModel);   // a bit more data than home page
  rpc GetNoteFileIndexData(NoteFileRequest) returns (NoteDisplayIndexModel);  // get data for the index of a notefile
  rpc GetAbout(NoRequest) returns (AboutModel);      // gets data for the about page
-// rpc SendEmail(GEmail) returns (NoRequest);       // unauthenticated - slower - use it too much and it really hurts you!
-// rpc GetExport(ExportRequest) returns (GNoteHeaderList);    // gets a note header list during an Export
  rpc GetTextFile(AString) returns (AString); // files: about.html | help.html | helpdialog.html | helpdialog2.html | license.html
- rpc NoOp(NoRequest) returns (NoRequest);
- //rpc TalkToSelf(NoRequest) returns (NoRequest);
+ rpc NoOp(NoRequest) returns (NoRequest);       // just for pinging the server
 }
  
  
@@ -945,8 +948,9 @@ message NoteFile {
  google.protobuf.Timestamp lastEdited = 6; // when was the file last edited 
 }
  
+// list of note files
 message NoteFileList {
- repeated NoteFile List = 1;
+ repeated NoteFile list = 1;
 }
  
 // header for a note - Included in database context
@@ -969,11 +973,12 @@ message NoteHeader {
  bool isDeleted = 16;       // has this note been deleted - invisible 
  int32 version = 17;        // version of the note - used when reediting a note
  string directorMessage = 18;     // director message
- NoteContent content = 19;      // for GetNoteHeaders and JsonExport only
- TagsList tags = 20;        // for GetNoteHeaders and JsonExport only
- NoteHeaderList responses = 21;     // for GetNoteHeaders and JsonExport only
+ NoteContent content = 19;      // for GetNoteHeaders and JsonExport/Import only
+ TagsList tags = 20;        // for GetNoteHeaders and JsonExport/Import only
+ NoteHeaderList responses = 21;     // for GetNoteHeaders and JsonExport/Import only
 }
  
+// list of note headers
 message NoteHeaderList {
  repeated NoteHeader list = 1;
 }
@@ -981,8 +986,8 @@ message NoteHeaderList {
 // note content - Included in database context
 message NoteContent {
  int64 id = 1;    // just for Ident in DB
- int64 noteHeaderId = 2;
- string noteBody = 3;
+ int64 noteHeaderId = 2;  // Connection to NoteHeader
+ string noteBody = 3;  // Content of a note
 }
  
 // list of note content
@@ -1042,6 +1047,50 @@ message AppUserRequest {
  string subject = 1;  // user Id - subject in JWT terms
 }
  
+message ActiveUsers
+{
+ int64 id = 1;
+ string subject = 2;
+ string displayName = 3;
+ google.protobuf.Timestamp checkinTime = 4;
+ string clientId = 5;
+}
+ 
+message ActiveUsersList
+{
+ repeated ActiveUsers list = 1;
+}
+ 
+message TalkLog
+{
+ int64 id = 1;
+ google.protobuf.Timestamp messageTime = 2;
+ string fromId = 3;
+ string toId = 4;
+ string fromName = 5;
+ string toName = 6;
+ string message = 7;
+}
+ 
+message TalkLogList
+{
+ repeated TalkLog list = 1; 
+}
+ 
+message LoginLog
+{
+ int64 id = 1;
+ google.protobuf.Timestamp theTime = 2;
+ string userId = 3;
+ string userName = 4;
+ string eventName = 5;
+}
+ 
+message LoginLogList
+{
+ repeated LoginLog list = 1;
+}
+ 
  
 //////////////////////////////////////////////
  
@@ -1090,40 +1139,40 @@ message NoRequest {
 //
 // register a user
 message RegisterRequest {
- string username = 1;
- string email = 2;
- string password = 3;
+ string username = 1;  // user display name
+ string email = 2;   // user email address (login)
+ string password = 3;  // Password to set
 }
  
 // holds login information
 message LoginRequest {
  string email = 1;  // email or name supported
- string password = 2;
+ string password = 2; // password for login attempt
  int32 hours = 3;  // number of hours to keep user logged in via cookies
 }
  
 // vital info about user
 message UserInfo {
- string subject = 1;  // userId
- string email = 2;
- string displayname = 3;
- //repeated string roles = 4;  // obsolete/not working with cookies
- bool isAdmin = 5;
- bool isUser = 6;
- string hangfire = 7;  // address of hangfire for Admins ONLY
+ string subject = 1;    // userId/JWT subject
+ string email = 2;    // user email address (login)
+ string displayname = 3;   // user display name
+ reserved 4;      // obsolete/not working with cookies
+ bool isAdmin = 5;    // is user an admin
+ bool isUser = 6;    // is user in role user
+ string hangfire = 7;   // address of hangfire for Admins ONLY
  
 }
  
 // used to return status during accout operations
 message AuthReply {
- int32 status = 1;
- string message = 2;
+ int32 status = 1;    // http status code
+ string message = 2;    // user friendly message
 }
  
 // reply for a login attempt
 message LoginReply {
- int32 status = 1;  // 200 if Ok
- string message = 2;  // text message
+ int32 status = 1;  // 200 if Ok - http status code
+ string message = 2;  // user friendly message
  UserInfo info = 3;  // vital info about user
  string jwt = 4;   // JWT for cookie and credentials for authenticated gRPC calls
  int32 hours = 5;  // hours for keep user logged in
@@ -1131,28 +1180,28 @@ message LoginReply {
  
 // used when user confirms email
 message ConfirmEmailRequest {
- string userId = 1;
- string code = 2;
+ string userId = 1;  // user id / subject
+ string code = 2;  // EF IF generated code
 }
  
 message ResetPasswordRequest {
- string userId = 1;
- string code = 2;
- string newPassword = 3;
+ string userId = 1;  // user id / subject
+ string code = 2;  // EF IF generated code or old password for ChangePassword
+ string newPassword = 3; // new password
 }
  
 /////////////////////////////////////////////////
 //
 // For Role editing - represents a user role item
 message UserRole {
- string roleName = 1;
- string roleId = 2; 
+ string roleName = 1; // name of the role
+ string roleId = 2;  // database Id of role
 }
  
 // a user role and membership flag
 message CheckedUser {
- UserRole theRole = 1;
- bool isMember = 2;
+ UserRole theRole = 1; // the role
+ bool isMember = 2;  // membership flag
 }
  
 // list of role/mambership items
@@ -1183,31 +1232,32 @@ message HomePageModel {
 message ImportRequest {
  string noteFile = 1;   // file name to import to
  string payload = 2;    // import contents
- string jsonFileName = 3;
+ string jsonFileName = 3;  // name of disk file or "clipboad"
 }
  
 // used to display the note file index
 message NoteDisplayIndexModel
 {
- NoteFile noteFile = 1;   // the note file to display
- int32 arcId = 2;    // which archive - usually 0
- NoteAccess myAccess = 3;  // users access item/token
- bool isMarked = 4;    // are there marked notes
- string rPath = 5;
- string scroller = 6;
- int32 expandOrdinal = 7;
+ NoteFile noteFile = 1;    // the note file to display
+ int32 arcId = 2;     // which archive - usually 0
+ NoteAccess myAccess = 3;   // users access item/token
+ bool isMarked = 4;     // are there marked notes
+ //string rPath = 5;     // never Used
+ //string scroller = 6;    // never Used
+ //int32 expandOrdinal = 7;   // never Used
+ reserved 5, 6, 7;
  repeated NoteHeader notes = 8;  // list of base notes
  repeated NoteHeader allNotes = 9; // list of all notes
  string linkedText = 10;    // extra text to be displayed for a linked file
- string message = 11;   
+ string message = 11;    // (error) message to display
  GAppUser userData = 12;    // user data
  repeated Tags tags = 13;   // all tags for file
 }
  
 // used to requst a NoteDisplayIndexModel or other items related to a specific file/archive
 message NoteFileRequest {
- int32 noteFileId = 1;
- int32 arcId = 2;
+ int32 noteFileId = 1;    // file Id
+ int32 arcId = 2;     // which archive if any
 }
  
 // used to display a note
@@ -1223,23 +1273,23 @@ message DisplayModel {
  
 // request a DisplayModel
 message DisplayModelRequest {
- int32 vers = 1;
- int64 noteId = 2;
+ int32 vers = 1;     // version of note
+ int64 noteId = 2;    // id of note
 }
  
 // request use list and access list
 message AccessAndUserListRequest {
- int32 fileId = 1;
- int32 arcId = 2;
- string userId = 3;
+ int32 fileId = 1;    // file id
+ int32 arcId = 2;    // archive id
+ string userId = 3;    // user id / subject
 }
  
 // user list, access list, and users access token/item
 message AccessAndUserList
 {
- repeated NoteAccess accessList = 1;
- GAppUserList appUsers = 2;
- NoteAccess userAccess = 3;
+ repeated NoteAccess accessList = 1; // entire access list for file
+ GAppUserList appUsers = 2;   // list of notes users
+ NoteAccess userAccess = 3;   // access for current user
 }
  
 // get versions for a note 
@@ -1250,9 +1300,10 @@ message GetVersionsRequest {
  int32 arcId = 4;   // archive id
 }
  
+// used for checkbox managment
 message SCheckModel {
- bool isChecked = 1;
- int32 fileId = 2;
+ bool isChecked = 1;   // checked flag
+ int32 fileId = 2;   // file id this is for
 }
  
 // used for creating and editing notes
@@ -1269,22 +1320,22 @@ message TextViewModel {
  
 // encapsulates a note id
 message NoteId {
- int64 id = 1;
+ int64 id = 1;     // note Id
 }
  
 // configurable data for about page
 message AboutModel {
- string primeAdminName = 1;
- string primeAdminEmail = 2;
- string hostUri = 3;
- google.protobuf.Timestamp upTime = 4;
+ string primeAdminName = 1;    // name of the local Admin
+ string primeAdminEmail = 2;    // email of the local Admin
+ string hostUri = 3;      // Uri of the server
+ google.protobuf.Duration upTime = 4; // how long the server has been up
 }
  
 // container for an email
 message GEmail {
  string address = 1;   // send to
- string subject = 2;
- string body = 3;
+ string subject = 2;   // subject
+ string body = 3;   // text of email
 }
  
 // Request export data
@@ -1325,12 +1376,13 @@ message JsonExport {
  NoteHeaderList noteHeaders = 3; // list of headers - includes Content and Tags!
 }
  
+// string wrapper for requests and responses
 message AString {
- string val = 1;
+ string val = 1;    // just a string
 }
  
 message NoteHeadersRequest {
- int32 noteFileId = 1;
+ int32 noteFileId = 1;  // notefile id
  int32 noteOrdinal = 2;  // 0 for all base notes, -1 basenotes and resposnses, else specifc noteordinal
  int32 responseOrdinal = 3; // -1 for all responses, 0 for base only, else specific response
  bool contentAndTags = 4; // include content and tags?
@@ -1341,8 +1393,20 @@ message NoteHeadersRequest {
  bool nestResponses = 9;  // extra processing to nest responses inside base notes
 }
  
+// count of base notes in a file
 message NoteCount {
- int32 count = 1;
+ int32 count = 1;   // the count
+}
+ 
+message ContentSearchRequest {
+ int32 fileId = 1;   // file Id
+ int32 arcId = 2;   //Acrhive Id
+ string target = 3;   // target of search
+}
+ 
+message ContentSearchResponse
+{
+ repeated int64 list = 1;
 }vsdocman_escaped2_]_]_></code>
 <para></para>
 </summary>vsdocman_escaped_]_]_></comment>
@@ -1395,8 +1459,6 @@ message NoteCount {
     <add key="VBdocman_Notes2022.Client"><![CDATA[default]]></add>
     <add key="VBdocman_Notes2022.Server"><![CDATA[default]]></add>
     <add key="VBdocman_Notes2022.Shared"><![CDATA[default]]></add>
-    <add key="VBdocman_Notes2022Maui"><![CDATA[default]]></add>
-    <add key="VBdocman_Notes2022MauiLib"><![CDATA[default]]></add>
     <add key="VBdocman_Notes2022RCL"><![CDATA[default]]></add>
     <add key="VBdocman_Proto"><![CDATA[default]]></add>
     <add key="VBdocman_TextToJson"><![CDATA[default]]></add>

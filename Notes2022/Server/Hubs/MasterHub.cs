@@ -27,8 +27,9 @@ namespace Notes2022.Server.Hubs
         }
 
         /// <summary>
-        /// Opens the session.  Keeps track of user list at user login/relogin
-        /// and periodic heart beat
+        /// Opens the session.  Keeps track of user list at user login/relogin and periodic heart beat.  Calls: SendUpdate()
+        /// 
+        /// Sends
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>
@@ -151,9 +152,9 @@ namespace Notes2022.Server.Hubs
         }
 
         /// <summary>
-        /// Sends an update to active users.  Count and list.
+        /// Sends an update to active users: Count and list: await Clients.All.SendAsync("ReceiveActiveUsers", count, activeUsers);
         /// </summary>
-        private async Task SendUpdate()
+        public async Task SendUpdate()
         {
             if (UserDict == null)
                 UserDict = new Dictionary<string, ActiveUsers>();
@@ -169,12 +170,12 @@ namespace Notes2022.Server.Hubs
             int count = 0;
             if (activeUsers != null && activeUsers.Count > 0)
                 count = activeUsers.Count;
-
+            // targets should update their local values.
             await Clients.All.SendAsync("ReceiveActiveUsers", count, activeUsers);
         }
 
         /// <summary>
-        /// Talk request.
+        /// Talk request. Logged. Sends: await Clients.Single(ToclientId).SendAsync("TalkRequest", ToclientId, FromclientId, userName, toName);
         /// </summary>
         /// <param name="ToclientId">The toclient identifier.</param>
         /// <param name="FromclientId">The fromclient identifier.</param>
@@ -189,24 +190,24 @@ namespace Notes2022.Server.Hubs
                 await Clients.Single(Context.ConnectionId).SendAsync("TalkRejected", "You can not talk to yourself!");
                 return;
             }
-            // send the request to the target
+            // send the request to the target.  Target should ask user if they want to talk...
             await Clients.Single(ToclientId).SendAsync("TalkRequest", ToclientId, FromclientId, userName, toName);
         }
 
         /// <summary>
-        /// Talk was the rejected.  Tell caller.
+        /// Talk was the rejected. Logged.  Sends: await Clients.Single(FromclientId).SendAsync("TalkRejected", $"{userName} does not want to talk now.");
         /// </summary>
         /// <param name="FromclientId">The fromclient identifier.</param>
         /// <param name="userName">Name of the user.</param>
         public async Task TalkRejected(string ToclientId, string FromclientId, string userName)
         {
             await LogMessage(ToclientId, FromclientId, userName, ">>>>> Talk Rejected <<<<<");
-
+            // Target should inform user of message.
             await Clients.Single(FromclientId).SendAsync("TalkRejected", $"{userName} does not want to talk now.");
         }
 
         /// <summary>
-        /// Talk accepted.  Create a group.  Tell both parties.
+        /// Talk accepted.  Create a group. Sends: await Clients.Groups(groupid).SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
         /// </summary>
         /// <param name="ToclientId">The toclient identifier.</param>
         /// <param name="FromclientId">The fromclient identifier.</param>
@@ -219,14 +220,14 @@ namespace Notes2022.Server.Hubs
             string groupid = ToclientId + ":" + FromclientId;
             await Groups.AddToGroupAsync(ToclientId, groupid);
             await Groups.AddToGroupAsync(FromclientId, groupid);
-
+            // clients should open talk dialog/window/page
             await Clients.Groups(groupid).SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
             await Task.Delay(500);
             await Clients.Groups(groupid).SendAsync("PrivateMessage", "Notes 2022", "You are connected!");
         }
 
         /// <summary>
-        /// Send Private message to sender and receiver
+        /// Send Private message to sender and receiver. Sends: await Clients.Groups(groupid).SendAsync("PrivateMessage", userName, message);
         /// </summary>
         /// <param name="ToclientId">The toclient identifier.</param>
         /// <param name="FromclientId">The fromclient identifier.</param>
@@ -237,11 +238,12 @@ namespace Notes2022.Server.Hubs
             await LogMessage(ToclientId, FromclientId, userName, message);
 
             string groupid = ToclientId + ":" + FromclientId;
+            // targets should add to local message list.
             await Clients.Groups(groupid).SendAsync("PrivateMessage", userName, message);
         }
 
         /// <summary>
-        /// Ends the talk.  Tell both parties and remove both from group.
+        /// Ends the talk.  Tell both parties and remove both from group.  Sends: await Clients.Groups(groupid).SendAsync("EndTalk");
         /// </summary>
         /// <param name="ToclientId">The toclient identifier.</param>
         /// <param name="FromclientId">The fromclient identifier.</param>
@@ -250,7 +252,7 @@ namespace Notes2022.Server.Hubs
             await LogMessage(ToclientId, FromclientId, userName, ">>>>> Talk Ended <<<<<");
 
             string groupid = ToclientId + ":" + FromclientId;
-
+            // targets should close talk dialog/window/page.
             await Clients.Groups(groupid).SendAsync("EndTalk");
 
             await Groups.RemoveFromGroupAsync(ToclientId, groupid);
@@ -281,7 +283,6 @@ namespace Notes2022.Server.Hubs
             };
             _db.TalkLog.Add(talkLog);
             await _db.SaveChangesAsync();
-
         }
     }
 }
