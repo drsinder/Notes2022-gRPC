@@ -925,7 +925,7 @@ namespace Notes2022.Server.Services
             BackgroundJob.Enqueue(() => imp.Import(fileId, request.NoteFile, request.JsonFileName, appUser.Email));
 #pragma warning restore CS8604 // Possible null reference argument.
 
-            Thread.Sleep(2000);
+            await Task.Delay(2000);
 
             return new NoRequest();
         }

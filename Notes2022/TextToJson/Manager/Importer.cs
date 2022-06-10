@@ -113,7 +113,7 @@ namespace Notes2022.TextToJson.Manager
             {
                 string line;
                 NoteHeader newHeader = new();
-                Thread.Sleep(200);
+                await Task.Delay(200);
                 while ((line = await GetLineAsync()) is not null)
                 {
                     if (flag)   // first line of input file

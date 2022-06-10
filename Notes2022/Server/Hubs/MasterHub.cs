@@ -221,7 +221,7 @@ namespace Notes2022.Server.Hubs
             await Groups.AddToGroupAsync(FromclientId, groupid);
 
             await Clients.Groups(groupid).SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
-            Thread.Sleep(500);
+            await Task.Delay(500);
             await Clients.Groups(groupid).SendAsync("PrivateMessage", "Notes 2022", "You are connected!");
         }
 
