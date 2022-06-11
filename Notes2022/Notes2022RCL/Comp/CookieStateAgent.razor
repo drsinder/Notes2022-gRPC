@@ -6,4 +6,6 @@
 
 @inject Notes2022Server.Notes2022ServerClient Client
 @inject IJSRuntime JS;
-@inject NavigationManager NavigationManager
+@*@inject NavigationManager NavigationManager*@
+
+<MasterHubClient @ref="@MasterHubClient" Host="@this"/>

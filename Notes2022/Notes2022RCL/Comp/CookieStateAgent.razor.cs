@@ -57,6 +57,9 @@ namespace Notes2022RCL.Comp
         [CascadingParameter]
         public IModalService Modal { get; set; }
 
+        [Parameter]
+        public MasterHubClient MasterHubClient { get; set; }
+
         /// <summary>
         /// Dealing with login related info
         /// </summary>
@@ -85,13 +88,13 @@ namespace Notes2022RCL.Comp
         /// Gets the active users.
         /// </summary>
         /// <value>The active users.</value>
-        public List<ActiveUsers> ActiveUsers { get; private set; }
+        public List<ActiveUsers> ActiveUsers { get; set; }
 
         /// <summary>
         /// Gets the user count.
         /// </summary>
         /// <value>The user count.</value>
-        public int UserCount { get; private set; }
+        public int UserCount { get; set; }
 
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
@@ -109,7 +112,7 @@ namespace Notes2022RCL.Comp
             }
 
             // tell hub the user is leaving
-            if (savedLogin is not null && savedLogin.Status == 200)
+            if (savedLogin is not null && savedLogin.Status == 200 && MasterHubConnection is not null)
                 await MasterHubConnection?.SendAsync("CloseSession");
 
             if (MasterHubConnection is not null)
@@ -124,53 +127,7 @@ namespace Notes2022RCL.Comp
         /// </summary>
         /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task OnParametersSetAsync()
-        {   // connect to hub
-            MasterHubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/masterhub")).Build();
-           
-            // handle talk requests
-            MasterHubConnection.On<string, string, string, string>("TalkRequest", async (ToclientId, FromclientId, userName, toName) => 
-            {
-                // informs user of talk request and asks if they want to accept
-                IModalReference? ret = ShowYesNo($"{userName} wants to talk.");
-                ModalResult x = await ret.Result;
-                if (x.Cancelled)
-                {
-                    await myState.MasterHubConnection?.SendAsync("TalkRejected", ToclientId, FromclientId, toName);
-                    return;
-                }
-                // tell hub talk was accepted.  it will create a group and initiate talk dialogs.
-                await myState.MasterHubConnection?.SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
-            });
-
-            // Show the talk dailog
-            MasterHubConnection.On<string, string, string, string>("TalkAccepted", (ToclientId, FromclientId, userName, toName) =>
-            {
-                ModalParameters? parameters = new();
-                parameters.Add("ToclientId", ToclientId);
-                parameters.Add("FromclientId", FromclientId);
-                parameters.Add("userName", userName);
-                parameters.Add("toName", toName);
-                parameters.Add("Hub", MasterHubConnection);
-
-                Modal.Show<TalkDialog>("Talk", parameters);
-            });
-
-            // tell caller the call was rejected
-            MasterHubConnection.On<string>("TalkRejected", (message) =>
-            {
-                ShowMessage(message);
-            });
-
-            // receive active user list and count periodically
-            MasterHubConnection.On("ReceiveActiveUsers", (Action<int, List<ActiveUsers>>)((count, users) =>
-            {
-                this.ActiveUsers = users;
-                UserCount = count;
-            }));
-
-            // starts the hub connection
-            await MasterHubConnection.StartAsync();
-
+        {
             Pinger = new(60000); // ping server every 60 seconds to keep it alive
             Pinger.Elapsed += Ping;
             Pinger.Enabled = true;
@@ -199,23 +156,6 @@ namespace Notes2022RCL.Comp
             catch (Exception)
             {
             }
-        }
-
-        /// <summary>
-        /// Initializes the talk.
-        /// </summary>
-        /// <param name="clientId">The client identifier.</param>
-        /// <param name="userName">Name of the user.</param>
-        public async Task InitTalk(string clientId, string userName)
-        {
-            string? FromId = MasterHubConnection?.ConnectionId;
-
-            await myState.MasterHubConnection?.SendAsync("TalkRequest", clientId, FromId, myState.UserInfo.Displayname, userName);
-
-            ModalParameters? parameters = new();
-            parameters.Add("MessageInput", "Requesting talk...");
-            parameters.Add("TimeToClose", 1500D);
-            Modal.Show<MessageBox>("talk", parameters);
         }
 
         /// <summary>
@@ -463,34 +403,6 @@ namespace Notes2022RCL.Comp
 
                 return null;
             }
-        }
-
-        private DateTime LastUpdate { get; set; }
-
-        private readonly TimeSpan minUpdate = TimeSpan.FromMilliseconds(400);
-
-        /// <summary>
-        /// Handle state change.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        public void ShowMessage(string message)
-        {
-            if (DateTime.Now - LastUpdate < minUpdate)
-                return;
-
-            LastUpdate = DateTime.Now;
-
-            ModalParameters? parameters = new();
-            parameters.Add("MessageInput", message);
-            Modal.Show<MessageBox>("", parameters);
-        }
-
-        private IModalReference? ShowYesNo(string message)
-        {
-            ModalParameters? parameters = new();
-            parameters.Add("MessageInput", message);
-            IModalReference? retval = Modal.Show<YesNo>("", parameters);
-            return retval;
         }
     }
 }

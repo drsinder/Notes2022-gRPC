@@ -48,7 +48,7 @@ namespace Notes2022RCL.Pages
         /// <param name="args">The arguments.</param>
         protected async Task Talk(RowSelectEventArgs<ActiveUsers> args)
         {
-            await myState.InitTalk(args.Data.ClientId, args.Data.DisplayName);
+            await myState.MasterHubClient.InitTalk(args.Data.ClientId, args.Data.DisplayName);
         }
     }
 }

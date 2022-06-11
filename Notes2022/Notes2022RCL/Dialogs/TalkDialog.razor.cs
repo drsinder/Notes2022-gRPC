@@ -60,7 +60,7 @@ namespace Notes2022RCL.Dialogs
             {
                 ModalInstance.CancelAsync();
 
-                myState.ShowMessage("Talk ended!");
+                myState.MasterHubClient.ShowMessage("Talk ended!");
             });
 
             return Task.CompletedTask;
