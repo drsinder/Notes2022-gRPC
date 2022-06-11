@@ -34,13 +34,10 @@
 using Grpc.Core;
 using Microsoft.JSInterop;
 using Notes2022.Proto;
-using System.Text;
 using System.Text.Json;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
-using Blazored.Modal;
-using Notes2022RCL.Dialogs;
 using Blazored.Modal.Services;
 
 namespace Notes2022RCL.Comp
@@ -82,19 +79,19 @@ namespace Notes2022RCL.Comp
         /// Gets or sets the master hub connection.
         /// </summary>
         /// <value>The master hub connection.</value>
-        public HubConnection? MasterHubConnection { get; set; }
+        private HubConnection? MasterHubConnection { get { return MasterHubClient.MasterHubConnection; } }
 
         /// <summary>
         /// Gets the active users.
         /// </summary>
         /// <value>The active users.</value>
-        public List<ActiveUsers> ActiveUsers { get; set; }
+        public List<ActiveUsers> ActiveUsers { get { return MasterHubClient.ActiveUsers; } }
 
         /// <summary>
         /// Gets the user count.
         /// </summary>
         /// <value>The user count.</value>
-        public int UserCount { get; set; }
+        public int UserCount { get { return MasterHubClient.UserCount; } }
 
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
 
@@ -114,12 +111,6 @@ namespace Notes2022RCL.Comp
             // tell hub the user is leaving
             if (savedLogin is not null && savedLogin.Status == 200 && MasterHubConnection is not null)
                 await MasterHubConnection?.SendAsync("CloseSession");
-
-            if (MasterHubConnection is not null)
-            {
-                await MasterHubConnection.DisposeAsync();
-                MasterHubConnection = null;
-            }
         }
 
         /// <summary>

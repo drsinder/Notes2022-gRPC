@@ -119,6 +119,9 @@ namespace Notes2022.Server.Hubs
         /// </summary>
         public async Task UserCleanUp()
         {
+            if (UserDict == null)
+                UserDict = new Dictionary<string, ActiveUsers>();
+
             Timestamp then = Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
             if (Globals.UserDict)
             {
