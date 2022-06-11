@@ -35,12 +35,13 @@ namespace Notes2022.Server.Hubs
         /// <param name="userName">Name of the user.</param>
         public async Task OpenSession(string userId, string userName)
         {
-            if (UserDict == null)
-                UserDict = new Dictionary<string, ActiveUsers>();
             string clientId = Context.ConnectionId;
             await UserCleanUp();
             if (Globals.UserDict)
             {
+                if (UserDict == null)
+                    UserDict = new Dictionary<string, ActiveUsers>();
+
                 ActiveUsers? au;
                 try { au = UserDict[clientId]; } catch { au = null; }
                 if (au != null)
@@ -91,13 +92,14 @@ namespace Notes2022.Server.Hubs
         /// <param name="userName">Name of the user.</param>
         public async Task CloseSession()
         {
-            if (UserDict == null)
-                UserDict = new Dictionary<string, ActiveUsers>();
             string clientId = Context.ConnectionId;
             await UserCleanUp();
 
             if (Globals.UserDict)
             {
+                if (UserDict == null)
+                    UserDict = new Dictionary<string, ActiveUsers>();
+
                 ActiveUsers? au;
                 try { au = UserDict[clientId]; } catch { au = null; }
                 if (au != null)
@@ -119,12 +121,12 @@ namespace Notes2022.Server.Hubs
         /// </summary>
         public async Task UserCleanUp()
         {
-            if (UserDict == null)
-                UserDict = new Dictionary<string, ActiveUsers>();
-
             Timestamp then = Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
             if (Globals.UserDict)
             {
+                if (UserDict == null)
+                    UserDict = new Dictionary<string, ActiveUsers>();
+
                 UserDictList? aul = UserDict.ToList();
                 foreach (UserDictEntry au in aul)
                 {
@@ -159,11 +161,11 @@ namespace Notes2022.Server.Hubs
         /// </summary>
         public async Task SendUpdate()
         {
-            if (UserDict == null)
-                UserDict = new Dictionary<string, ActiveUsers>();
-
             if (Globals.UserDict)
             {
+                if (UserDict == null)
+                    UserDict = new Dictionary<string, ActiveUsers>();
+
                 List<ActiveUsers> aul = UserDict.Values.ToList();
                 await Clients.All.SendAsync("ReceiveActiveUsers", aul.Count, aul);
                 return;
