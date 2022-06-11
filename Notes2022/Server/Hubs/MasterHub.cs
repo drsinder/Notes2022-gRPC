@@ -37,7 +37,7 @@ namespace Notes2022.Server.Hubs
         {
             string clientId = Context.ConnectionId;
             await UserCleanUp();
-            if (Globals.UserDict)
+            if (true || Globals.UserDict)
             {
                 if (UserDict == null)
                     UserDict = new Dictionary<string, ActiveUsers>();
@@ -64,25 +64,25 @@ namespace Notes2022.Server.Hubs
                 return;
             }
 
-            ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
-            if (activeUsers is not null)
-            {   // update the time to prevent cleanup.
-                activeUsers.CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow);
-                _db.Update(activeUsers);
-            }
-            else
-            {   // add entry
-                ActiveUsers me = new()
-                {
-                    DisplayName = userName,
-                    Subject = userId,
-                    CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow),
-                    ClientId = clientId
-                };
-                _db.ActiveUsers.Add(me);
-            }
-            await _db.SaveChangesAsync();
-            await SendUpdate();
+            //ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.Subject == userId && p.ClientId == clientId);
+            //if (activeUsers is not null)
+            //{   // update the time to prevent cleanup.
+            //    activeUsers.CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow);
+            //    _db.Update(activeUsers);
+            //}
+            //else
+            //{   // add entry
+            //    ActiveUsers me = new()
+            //    {
+            //        DisplayName = userName,
+            //        Subject = userId,
+            //        CheckinTime = Timestamp.FromDateTimeOffset(DateTime.UtcNow),
+            //        ClientId = clientId
+            //    };
+            //    _db.ActiveUsers.Add(me);
+            //}
+            //await _db.SaveChangesAsync();
+            //await SendUpdate();
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Notes2022.Server.Hubs
             string clientId = Context.ConnectionId;
             await UserCleanUp();
 
-            if (Globals.UserDict)
+            if (true || Globals.UserDict)
             {
                 if (UserDict == null)
                     UserDict = new Dictionary<string, ActiveUsers>();
@@ -107,13 +107,13 @@ namespace Notes2022.Server.Hubs
                 await SendUpdate();
                 return;
             }
-            ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.ClientId == clientId);
-            if (activeUsers is not null)
-            {
-                _db.ActiveUsers.Remove(activeUsers);
-                await _db.SaveChangesAsync();
-            }
-            await SendUpdate();
+            //ActiveUsers? activeUsers = _db.ActiveUsers.SingleOrDefault(p => p.ClientId == clientId);
+            //if (activeUsers is not null)
+            //{
+            //    _db.ActiveUsers.Remove(activeUsers);
+            //    await _db.SaveChangesAsync();
+            //}
+            //await SendUpdate();
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Notes2022.Server.Hubs
         public async Task UserCleanUp()
         {
             Timestamp then = Timestamp.FromDateTimeOffset(DateTime.UtcNow.AddMinutes(-1).AddSeconds(-20));
-            if (Globals.UserDict)
+            if (true || Globals.UserDict)
             {
                 if (UserDict == null)
                     UserDict = new Dictionary<string, ActiveUsers>();
@@ -148,12 +148,12 @@ namespace Notes2022.Server.Hubs
                 }
                 return;
             }
-            List<ActiveUsers> inactiveUsers = _db.ActiveUsers.Where(p => p.CheckinTime <= then).ToList();
-            if (inactiveUsers != null && inactiveUsers.Count > 0)
-            {
-                _db.ActiveUsers.RemoveRange(inactiveUsers);
-                await _db.SaveChangesAsync();
-            }
+            //List<ActiveUsers> inactiveUsers = _db.ActiveUsers.Where(p => p.CheckinTime <= then).ToList();
+            //if (inactiveUsers != null && inactiveUsers.Count > 0)
+            //{
+            //    _db.ActiveUsers.RemoveRange(inactiveUsers);
+            //    await _db.SaveChangesAsync();
+            //}
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace Notes2022.Server.Hubs
         /// </summary>
         public async Task SendUpdate()
         {
-            if (Globals.UserDict)
+            if (true || Globals.UserDict)
             {
                 if (UserDict == null)
                     UserDict = new Dictionary<string, ActiveUsers>();
@@ -171,12 +171,12 @@ namespace Notes2022.Server.Hubs
                 return;
             }
 
-            List<ActiveUsers> activeUsers = _db.ActiveUsers.ToList();
-            int count = 0;
-            if (activeUsers != null && activeUsers.Count > 0)
-                count = activeUsers.Count;
-            // targets should update their local values.
-            await Clients.All.SendAsync("ReceiveActiveUsers", count, activeUsers);
+            //List<ActiveUsers> activeUsers = _db.ActiveUsers.ToList();
+            //int count = 0;
+            //if (activeUsers != null && activeUsers.Count > 0)
+            //    count = activeUsers.Count;
+            //// targets should update their local values.
+            //await Clients.All.SendAsync("ReceiveActiveUsers", count, activeUsers);
         }
 
         /// <summary>
