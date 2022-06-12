@@ -43,11 +43,18 @@ Globals.IsMaui = false;
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
 {
-    HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
-    string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
-    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
+    string subdir = "/Notes2022GRPC";
+#if DEBUG
+    subdir = "";
+#endif
 
-    //Grpc.Core.CallInvoker? invoker = channel.Intercept(new ClientLoggingInterceptor());
+    string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
+
+    SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), subdir);
+    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });
+
+    //HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
+    //GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
 
     Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
 
@@ -55,3 +62,31 @@ builder.Services.AddSingleton(services =>
 });
 
 await builder.Build().RunAsync();
+
+
+/// <summary>
+/// A delegating handler that adds a subdirectory to the URI of gRPC requests.
+/// </summary>
+public class SubdirectoryHandler : DelegatingHandler
+{
+    private readonly string _subdirectory;
+
+    public SubdirectoryHandler(HttpMessageHandler innerHandler, string subdirectory)
+        : base(innerHandler)
+    {
+        _subdirectory = subdirectory;
+    }
+
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        Uri? old = request.RequestUri;
+
+        string? url = $"{old.Scheme}://{old.Host}:{old.Port}";
+        url += $"{_subdirectory}{request.RequestUri.AbsolutePath}";
+        request.RequestUri = new Uri(url, UriKind.Absolute);
+
+        var response = base.SendAsync(request, cancellationToken);
+
+        return response;
+    }
+}

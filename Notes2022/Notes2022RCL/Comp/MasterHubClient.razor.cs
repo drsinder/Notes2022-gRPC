@@ -42,7 +42,6 @@ namespace Notes2022RCL.Comp
         protected override async Task OnParametersSetAsync()
         {   // connect to hub
             MasterHubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/masterhub")).Build();
-
             // handle talk requests
             MasterHubConnection.On<string, string, string, string>("TalkRequest", async (ToclientId, FromclientId, userName, toName) =>
             {

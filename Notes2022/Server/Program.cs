@@ -210,6 +210,8 @@ else
     app.UseHsts();
 }
 
+//app.UsePathBase("/Notes2022GRPC/");
+
 app.UseRouting();
 
 app.UseAuthentication();
