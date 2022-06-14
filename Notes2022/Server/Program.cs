@@ -210,7 +210,7 @@ else
     app.UseHsts();
 }
 
-//app.UsePathBase("/Notes2022GRPC/");
+app.UsePathBase("/Notes2022GRPC");
 
 app.UseRouting();
 
@@ -232,7 +232,7 @@ app.MapRazorPages();
 app.MapControllers();
 
 app.MapHub<ChatHub>("/chathub");
-app.MapHub<MasterHub>("/masterhub");
+//app.MapHub<MasterHub>("/masterhub");
 
 Globals.HangfireAddress = "/hangfire";
 
@@ -247,6 +247,9 @@ if (!string.IsNullOrEmpty(sentry) && sentry == "true")
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapGrpcService<Notes2022Service>().EnableGrpcWeb().RequireCors("AllowAll");
+
+    endpoints.MapHub<MasterHub>("/masterhub").RequireCors("AllowAll");
+
     //endpoints.MapHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
     //{
     //    Authorization = new List<IDashboardAuthorizationFilter> { new MyAuthorizationFilter() }

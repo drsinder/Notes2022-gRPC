@@ -43,18 +43,18 @@ Globals.IsMaui = false;
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
 {
-    string subdir = "";
+    string subdir = "/notes2022grpc";
 #if DEBUG
     subdir = "";
 #endif
 
     string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
 
-    //SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), subdir);
-    //GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });
+    SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), subdir);
+    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });
 
-    HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
-    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
+    //HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
+    //GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
 
     Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
 
@@ -84,6 +84,8 @@ public class SubdirectoryHandler : DelegatingHandler
         string? url = $"{old.Scheme}://{old.Host}:{old.Port}";
         url += $"{_subdirectory}{request.RequestUri.AbsolutePath}";
         request.RequestUri = new Uri(url, UriKind.Absolute);
+
+        Console.WriteLine(request.RequestUri);
 
         var response = base.SendAsync(request, cancellationToken);
 

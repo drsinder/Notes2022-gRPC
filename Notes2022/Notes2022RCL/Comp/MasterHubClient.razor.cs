@@ -39,52 +39,70 @@ namespace Notes2022RCL.Comp
         }
 
 
-        protected override async Task OnParametersSetAsync()
+        protected override async Task OnInitializedAsync()
         {   // connect to hub
-            MasterHubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/masterhub")).Build();
-            // handle talk requests
-            MasterHubConnection.On<string, string, string, string>("TalkRequest", async (ToclientId, FromclientId, userName, toName) =>
+            string pURI = "/notes2022grpc/masterhub";
+
+#if DEBUG
+            pURI = "/masterhub";
+#else
+            //return;
+#endif
+
+            Console.WriteLine("XXXMASTERHUB: " + pURI);
+            Console.WriteLine("MASTERHUB: " + NavigationManager.ToAbsoluteUri(pURI));
+
+            try
             {
-                // informs user of talk request and asks if they want to accept
-                IModalReference? ret = ShowYesNo($"{userName} wants to talk.");
-                ModalResult x = await ret.Result;
-                if (x.Cancelled)
+                MasterHubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri(pURI)).Build();
+                // handle talk requests
+                MasterHubConnection.On<string, string, string, string>("TalkRequest", async (ToclientId, FromclientId, userName, toName) =>
                 {
-                    await MasterHubConnection?.SendAsync("TalkRejected", ToclientId, FromclientId, toName);
-                    return;
-                }
-                // tell hub talk was accepted.  it will create a group and initiate talk dialogs.
-                await MasterHubConnection?.SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
-            });
+                    // informs user of talk request and asks if they want to accept
+                    IModalReference? ret = ShowYesNo($"{userName} wants to talk.");
+                    ModalResult x = await ret.Result;
+                    if (x.Cancelled)
+                    {
+                        await MasterHubConnection?.SendAsync("TalkRejected", ToclientId, FromclientId, toName);
+                        return;
+                    }
+                    // tell hub talk was accepted.  it will create a group and initiate talk dialogs.
+                    await MasterHubConnection?.SendAsync("TalkAccepted", ToclientId, FromclientId, userName, toName);
+                });
 
-            // Show the talk dailog
-            MasterHubConnection.On<string, string, string, string>("TalkAccepted", (ToclientId, FromclientId, userName, toName) =>
+                // Show the talk dailog
+                MasterHubConnection.On<string, string, string, string>("TalkAccepted", (ToclientId, FromclientId, userName, toName) =>
+                {
+                    ModalParameters? parameters = new();
+                    parameters.Add("ToclientId", ToclientId);
+                    parameters.Add("FromclientId", FromclientId);
+                    parameters.Add("userName", userName);
+                    parameters.Add("toName", toName);
+                    parameters.Add("Hub", MasterHubConnection);
+
+                    Modal.Show<TalkDialog>("Talk", parameters);
+                });
+
+                // tell caller the call was rejected
+                MasterHubConnection.On<string>("TalkRejected", (message) =>
+                {
+                    ShowMessage(message);
+                });
+
+                // receive active user list and count periodically
+                MasterHubConnection.On("ReceiveActiveUsers", (Action<int, List<ActiveUsers>>)((count, users) =>
+                {
+                    ActiveUsers = users;
+                    UserCount = count;
+                }));
+
+                // starts the hub connection
+                await MasterHubConnection.StartAsync();
+            }
+            catch (Exception ex)
             {
-                ModalParameters? parameters = new();
-                parameters.Add("ToclientId", ToclientId);
-                parameters.Add("FromclientId", FromclientId);
-                parameters.Add("userName", userName);
-                parameters.Add("toName", toName);
-                parameters.Add("Hub", MasterHubConnection);
-
-                Modal.Show<TalkDialog>("Talk", parameters);
-            });
-
-            // tell caller the call was rejected
-            MasterHubConnection.On<string>("TalkRejected", (message) =>
-            {
-                ShowMessage(message);
-            });
-
-            // receive active user list and count periodically
-            MasterHubConnection.On("ReceiveActiveUsers", (Action<int, List<ActiveUsers>>)((count, users) =>
-            {
-                ActiveUsers = users;
-                UserCount = count;
-            }));
-
-            // starts the hub connection
-            await MasterHubConnection.StartAsync();
+                Console.WriteLine("MasterHub >>>> " + ex.Message);
+            }
 
         }
 
