@@ -32,7 +32,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddSingleton<CookieStateAgent>();       // for login state mgt = "myState" injection in _imports.razor
+builder.Services.AddSingleton<CookieStateAgent>();  // for login state mgt = "myState" injection in _imports.razor
 
 builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });
 
@@ -43,27 +43,19 @@ Globals.IsMaui = false;
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
 {
-    string subdir = "";
-
-    string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
-
+    string subdir = ""; // preset for localhost
+    string baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
     string[] parts = baseUri.Split('/');
-
-    if (baseUri.Contains("localhost"))
-        subdir = "";
-    else
+    if (!baseUri.Contains("localhost")) // not localhost - assume it is in a virtual directory ONLY ONE LEVEL DOWN from root of site
     {
         subdir = "/" + parts[parts.Length - 2];
     }
-
-    Globals.AppVirtDir = subdir;
-
-    Console.WriteLine(parts.Length);
-    Console.WriteLine("BaseURI: " + baseUri);
-    Console.WriteLine("VirtDir: " + subdir);
+    Globals.AppVirtDir = subdir;    // save for use else where in app
 
     SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), subdir);
-    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });
+    GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, 
+        new GrpcChannelOptions 
+        { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });   // up to 50MB
 
     //HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
     //GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });

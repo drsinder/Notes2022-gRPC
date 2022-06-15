@@ -1961,13 +1961,13 @@ namespace Notes2022.Server.Services
 
             if (request.Val == "AppVirtDir")
             {
-                stuff.Val = _configuration["AppVirtDir"];
+                stuff.Val = Globals.AppVirtDir;
                 return stuff;
             }
 
             if (request.Val == "CookieName")
             {
-                stuff.Val = _configuration["CookieName"];
+                stuff.Val = Globals.CookieName;
                 return stuff;
             }
 
@@ -1983,15 +1983,8 @@ namespace Notes2022.Server.Services
                 return stuff;
             }
 
-            StringBuilder sb = new();
-            string? line;
-            while ((line = await file.ReadLineAsync()) is not null)
-            {
-                sb.AppendLine(line);
-            }
-
-            stuff.Val = sb.ToString();
-
+            stuff.Val = await file.ReadToEndAsync();
+            file.Close();
             return stuff;
         }
 
