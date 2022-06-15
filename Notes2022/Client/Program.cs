@@ -43,25 +43,20 @@ Globals.IsMaui = false;
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
 {
-    string subdir = ""; // preset for localhost
+    Globals.AppVirtDir = ""; // preset for localhost
     string baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
     string[] parts = baseUri.Split('/');
     if (!baseUri.Contains("localhost")) // not localhost - assume it is in a virtual directory ONLY ONE LEVEL DOWN from root of site
     {
-        subdir = "/" + parts[parts.Length - 2];
+        Globals.AppVirtDir = "/" + parts[parts.Length - 2];
     }
-    Globals.AppVirtDir = subdir;    // save for use else where in app
 
-    SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), subdir);
+    SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), Globals.AppVirtDir);
     GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, 
         new GrpcChannelOptions 
         { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });   // up to 50MB
 
-    //HttpClient? httpClient = new(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
-    //GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient, MaxReceiveMessageSize = 50 * 1024 * 1024 });
-
     Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
-
     return Client;
 });
 
