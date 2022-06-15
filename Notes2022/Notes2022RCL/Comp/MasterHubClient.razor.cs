@@ -40,14 +40,10 @@ namespace Notes2022RCL.Comp
 
 
         protected override async Task OnInitializedAsync()
-        {   // connect to hub
-            string pURI = "/notes2022grpc/masterhub";
-
-#if DEBUG
-            pURI = "/masterhub";
-#else
-            //return;
-#endif
+        {
+            // connect to hub
+            AString vdir = await Client.GetTextFileAsync(new AString() { Val = "AppVirtDir" });
+            string pURI = vdir.Val + "/masterhub";
 
             Console.WriteLine("XXXMASTERHUB: " + pURI);
             Console.WriteLine("MASTERHUB: " + NavigationManager.ToAbsoluteUri(pURI));

@@ -1959,11 +1959,11 @@ namespace Notes2022.Server.Services
                 Val = string.Empty
             };
 
-            //if (request.Val == "syncfusionkey.rsghjjsrsrj43632353")
-            //{
-            //    stuff.Val = _configuration["SyncfusionKey"];
-            //    return stuff;
-            //}
+            if (request.Val == "AppVirtDir")
+            {
+                stuff.Val = _configuration["AppVirtDir"];
+                return stuff;
+            }
 
             if (request.Val == "CookieName")
             {

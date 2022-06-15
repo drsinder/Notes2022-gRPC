@@ -117,7 +117,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 string? transcode = configuration["JsonTranscoding"];
 if (!string.IsNullOrEmpty(transcode) && transcode == "true")
 {
-    builder.Services.AddGrpc()
+    builder.Services.AddGrpc().AddJsonTranscoding()
             .AddServiceOptions<Notes2022Service>(options =>
             {
                 options.MaxReceiveMessageSize = 50 * 1024 * 1024; // 50 MB
@@ -125,8 +125,7 @@ if (!string.IsNullOrEmpty(transcode) && transcode == "true")
                 if (!string.IsNullOrEmpty(configuration["GrpcLogging"]) && configuration["GrpcLogging"] == "true")
                     options.Interceptors.Add<ServerLoggingInterceptor>();
                 options.Interceptors.Add<AuthInterceptor>();
-            })
-            .AddJsonTranscoding();
+            });
 }
 else
 {
@@ -172,6 +171,7 @@ Globals.SendGridEmail = configuration["SendGridEmail"];
 Globals.SendGridName = configuration["SendGridName"];
 Globals.ImportRoot = configuration["ImportRoot"];
 Globals.AppUrl = configuration["AppUrl"];
+Globals.AppVirtDir = configuration["AppVirtDir"];
 Globals.CookieName = configuration["CookieName"];
 Globals.StartTime = DateTime.UtcNow;
 
@@ -210,7 +210,7 @@ else
     app.UseHsts();
 }
 
-app.UsePathBase("/Notes2022GRPC");
+app.UsePathBase(Globals.AppVirtDir);
 
 app.UseRouting();
 
@@ -231,15 +231,7 @@ app.UseCors();
 app.MapRazorPages();
 app.MapControllers();
 
-app.MapHub<ChatHub>("/chathub");
-//app.MapHub<MasterHub>("/masterhub");
-
 Globals.HangfireAddress = "/hangfire";
-
-app.UseHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
-{
-    Authorization = new List<IDashboardAuthorizationFilter> { new MyAuthorizationFilter() }
-});
 
 if (!string.IsNullOrEmpty(sentry) && sentry == "true")
     app.UseSentryTracing();
@@ -250,11 +242,15 @@ app.UseEndpoints(endpoints =>
 
     endpoints.MapHub<MasterHub>("/masterhub").RequireCors("AllowAll");
 
-    //endpoints.MapHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
-    //{
-    //    Authorization = new List<IDashboardAuthorizationFilter> { new MyAuthorizationFilter() }
-    //});
-    //endpoints.MapControllers();
+    endpoints.MapHub<ChatHub>("/chathub").RequireCors("AllowAll");
+
+    endpoints.MapHangfireDashboard(Globals.HangfireAddress, new DashboardOptions
+    {
+        Authorization = new List<IDashboardAuthorizationFilter> { new MyAuthorizationFilter() }
+    })
+    .RequireCors("AllowAll");
+
+    endpoints.MapControllers().RequireCors("AllowAll");
 });
 
 app.MapFallbackToFile("index.html");

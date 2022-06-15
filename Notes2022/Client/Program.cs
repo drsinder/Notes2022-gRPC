@@ -43,12 +43,22 @@ Globals.IsMaui = false;
 // Add my gRPC service so it can be injected.
 builder.Services.AddSingleton(services =>
 {
-    string subdir = "/notes2022grpc";
-#if DEBUG
-    subdir = "";
-#endif
+    string subdir = "";
 
     string? baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
+
+    string[] parts = baseUri.Split('/');
+
+    if (baseUri.Contains("localhost"))
+        subdir = "";
+    else
+    {
+        subdir = "/" + parts[parts.Length - 2];
+    }
+
+    Console.WriteLine(parts.Length);
+    Console.WriteLine("BaseURI: " + baseUri);
+    Console.WriteLine("VirtDir: " + subdir);
 
     SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), subdir);
     GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });

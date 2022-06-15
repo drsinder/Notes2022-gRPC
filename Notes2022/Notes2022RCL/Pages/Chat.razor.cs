@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using Notes2022.Proto;
 
 namespace Notes2022RCL.Pages
 {
@@ -10,7 +11,10 @@ namespace Notes2022RCL.Pages
         private string? messageInput;
         protected override async Task OnInitializedAsync()
         {
-            hubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri("/chathub")).Build();
+            AString vdir = await Client.GetTextFileAsync(new AString() { Val = "AppVirtDir" });
+            string pURI = vdir.Val + "/chathub";
+
+            hubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri(pURI)).Build();
             hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
             {
                 if (messages.Count > 20)

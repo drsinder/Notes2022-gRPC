@@ -68,6 +68,8 @@ namespace Notes2022RCL
         /// <value>The cookie.  Different installations should use different values here</value>
         public static string Cookie { get; set; } = "notes2022login";
 
+        //public static string AppVirtDir { get; set; } = "/notes2022grpc";
+
         /// <summary>
         /// Gets or sets the return URL.
         /// </summary>

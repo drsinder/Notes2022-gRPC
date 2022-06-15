@@ -72,6 +72,8 @@ namespace Notes2022.Server
 
         public static string AppUrl { get; set; }
 
+        public static string AppVirtDir { get; set; }
+
         public static string CookieName { get; set; }
 
         public static long ErrorThreshold { get; set; } = 1000L;
