@@ -11,8 +11,8 @@ namespace Notes2022RCL.Pages
         private string? messageInput;
         protected override async Task OnInitializedAsync()
         {
-            AString vdir = await Client.GetTextFileAsync(new AString() { Val = "AppVirtDir" });
-            string pURI = vdir.Val + "/chathub";
+            //AString vdir = await Client.GetTextFileAsync(new AString() { Val = "AppVirtDir" });
+            string pURI = Globals.AppVirtDir + "/chathub";
 
             hubConnection = new HubConnectionBuilder().WithUrl(NavigationManager.ToAbsoluteUri(pURI)).Build();
             hubConnection.On<string, string>("ReceiveMessage", (user, message) =>

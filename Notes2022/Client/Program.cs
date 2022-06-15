@@ -56,6 +56,8 @@ builder.Services.AddSingleton(services =>
         subdir = "/" + parts[parts.Length - 2];
     }
 
+    Globals.AppVirtDir = subdir;
+
     Console.WriteLine(parts.Length);
     Console.WriteLine("BaseURI: " + baseUri);
     Console.WriteLine("VirtDir: " + subdir);
