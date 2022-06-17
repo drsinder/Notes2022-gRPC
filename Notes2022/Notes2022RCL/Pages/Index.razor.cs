@@ -165,18 +165,18 @@ namespace Notes2022RCL.Pages
             if (myState.IsAuthenticated)        // user must be autheticated before going on
             {
                 // Set and reset local state vars
-                await sessionStorage.SetItemAsync<int>("ArcId", 0);
-                await sessionStorage.SetItemAsync<int>("IndexPage", 1);
-                await sessionStorage.SetItemAsync<bool>("IsSeq", false);
-                await sessionStorage.RemoveItemAsync("SeqList");
-                await sessionStorage.RemoveItemAsync("SeqItem");
-                await sessionStorage.RemoveItemAsync("SeqIndex");
-                await sessionStorage.RemoveItemAsync("SeqHeaders");
-                await sessionStorage.RemoveItemAsync("SeqHeaderIndex");
-                await sessionStorage.RemoveItemAsync("CurrentSeqHeader");
-                await sessionStorage.SetItemAsync<bool>("InSearch", false);
-                await sessionStorage.RemoveItemAsync("SearchIndex");
-                await sessionStorage.RemoveItemAsync("SearchList");
+                Globals.ArcId = 0;
+                Globals.IndexPage = 1;
+                Globals.IsSeq = false;
+                Globals.SeqList = null;
+                Globals.SeqItem = null;
+                Globals.SeqIndex = 0;
+                Globals.SeqHeaders = null;
+                Globals.SeqHeaderIndex = 0;
+                Globals.CurrentSeqHeader = null;
+                Globals.InSearch = false;
+                Globals.SearchIndex = 0;
+                Globals.SearchList = null;
 
                 hpModel = await Client.GetHomePageModelAsync(new NoRequest(), myState.AuthHeader);
 
@@ -257,27 +257,5 @@ namespace Notes2022RCL.Pages
         {
             Navigation.NavigateTo("noteindex/" + args.Value); // goto the file
         }
-
-        ///// <summary>
-        ///// Option menu item - start sequencing
-        ///// </summary>
-        //private async Task StartSeq()
-        //{
-        //    // get users list of files
-        //    List<Sequencer> sequencers = (await Client.GetSequencerAsync(new NoRequest(), myState.AuthHeader)).List.ToList();
-        //    if (sequencers.Count == 0)
-        //        return;
-        //    // order them as prefered by user
-        //    sequencers = sequencers.OrderBy(p => p.Ordinal).ToList();
-        //    // set up state for sequencing
-        //    await sessionStorage.SetItemAsync<List<Sequencer>>("SeqList", sequencers);
-        //    await sessionStorage.SetItemAsync<int>("SeqIndex", 0);
-        //    await sessionStorage.SetItemAsync<Sequencer>("SeqItem", sequencers[0]);
-        //    await sessionStorage.SetItemAsync<bool>("IsSeq", true); // flag for noteindex
-        //    // begin
-        //    string go = "noteindex/" + sequencers[0].NoteFileId;
-        //    Navigation.NavigateTo(go);
-        //    return;
-        //}
     }
 }

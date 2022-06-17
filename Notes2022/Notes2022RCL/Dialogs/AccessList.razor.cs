@@ -111,13 +111,6 @@ namespace Notes2022RCL.Dialogs
         [Inject]
         Notes2022Server.Notes2022ServerClient Client { get; set; }
 
-        /// <summary>
-        /// Gets or sets the session storage.
-        /// </summary>
-        /// <value>The session storage.</value>
-        [Inject]
-        Blazored.SessionStorage.ISessionStorageService sessionStorage { get; set; }
-
 #pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
@@ -133,7 +126,7 @@ namespace Notes2022RCL.Dialogs
         /// <returns>A Task representing the asynchronous operation.</returns>
         protected async override Task OnParametersSetAsync()
         {
-            arcId = await sessionStorage.GetItemAsync<int>("ArcId");
+            arcId = Globals.ArcId;
             AccessAndUserList myLists = await Client.GetAccessAndUserListAsync(new AccessAndUserListRequest()
             { FileId = fileId, ArcId = arcId, UserId = myState.UserInfo?.Subject }, myState.AuthHeader);
             myList = myLists.AccessList.ToList();
@@ -173,7 +166,7 @@ namespace Notes2022RCL.Dialogs
         /// <param name="newMessage">The new message.</param>
         protected async Task ClickHandler(string newMessage)
         {
-            arcId = await sessionStorage.GetItemAsync<int>("ArcId");
+            arcId = Globals.ArcId;
             NoteAccessList myLists = await Client.GetAccessListAsync(new AccessAndUserListRequest()
             { FileId = fileId, ArcId = arcId, UserId = myState.UserInfo?.Subject }, myState.AuthHeader);
             myList = myLists.List.ToList();

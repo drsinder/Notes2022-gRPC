@@ -170,13 +170,6 @@ namespace Notes2022RCL.Pages
         NavigationManager Navigation { get; set; }
 
         /// <summary>
-        /// Gets or sets the session storage.
-        /// </summary>
-        /// <value>The session storage.</value>
-        [Inject]
-        Blazored.SessionStorage.ISessionStorageService sessionStorage { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="NoteIndex" /> class.
         /// </summary>
         public NoteIndex()
@@ -207,10 +200,10 @@ namespace Notes2022RCL.Pages
                     }
                 }
 
-                await sessionStorage.SetItemAsync<bool>("InSearch", false);
-                await sessionStorage.RemoveItemAsync("SearchIndex");
-                await sessionStorage.RemoveItemAsync("SearchList");
-                IsSeq = await sessionStorage.GetItemAsync<bool>("IsSeq");
+                Globals.InSearch = false;
+                Globals.SearchIndex = 0;
+                Globals.SearchList = null;
+                IsSeq = Globals.IsSeq;
                 if (IsSeq && NotesfileId < 0)
                 {
                     NotesfileId = -NotesfileId;
@@ -227,7 +220,7 @@ namespace Notes2022RCL.Pages
                 ShowContentR = Model.UserData.Pref5;
                 //ExpandAll = false; // Model.UserData.Pref3;
                 // restore page
-                CurPage = await sessionStorage.GetItemAsync<int>("IndexPage");
+                CurPage = Globals.IndexPage;
                 if (IsSeq)
                 {
                     await StartSeq();
@@ -258,7 +251,7 @@ namespace Notes2022RCL.Pages
         /// <param name="args">The arguments.</param>
         protected void DisplayIt(RowSelectEventArgs<NoteHeader> args)
         {
-            sessionStorage.SetItemAsync("IndexPage", sfGrid1.PageSettings.CurrentPage).GetAwaiter();
+            Globals.IndexPage = sfGrid1.PageSettings.CurrentPage;
             CurrentNoteId = args.Data.Id;
             try
             {
@@ -613,9 +606,9 @@ namespace Notes2022RCL.Pages
             results = results.OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal).ToList();
             mode = results[0].Id;
             isSearch = true;
-            await sessionStorage.SetItemAsync<bool>("InSearch", true);
-            await sessionStorage.SetItemAsync<int>("SearchIndex", 0);
-            await sessionStorage.SetItemAsync<List<NoteHeader>>("SearchList", results);
+            Globals.InSearch = true;
+            Globals.SearchIndex = 0;
+            Globals.SearchList = results;
             CurrentNoteId = mode;
             StateHasChanged();
         }
@@ -664,9 +657,9 @@ namespace Notes2022RCL.Pages
             results = results.OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal).ToList();
             mode = results[0].Id;
             isSearch = true;
-            await sessionStorage.SetItemAsync<bool>("InSearch", true);
-            await sessionStorage.SetItemAsync<int>("SearchIndex", 0);
-            await sessionStorage.SetItemAsync<List<NoteHeader>>("SearchList", results);
+            Globals.InSearch = true;
+            Globals.SearchIndex = 0;
+            Globals.SearchList = results;
             CurrentNoteId = mode;
             StateHasChanged();
         }
@@ -717,9 +710,9 @@ namespace Notes2022RCL.Pages
 
             results = results.OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal).ToList();
             mode = results[0].Id;
-            await sessionStorage.SetItemAsync<bool>("InSearch", true);
-            await sessionStorage.SetItemAsync<int>("SearchIndex", 0);
-            await sessionStorage.SetItemAsync<List<NoteHeader>>("SearchList", results);
+            Globals.InSearch = true;
+            Globals.SearchIndex = 0;
+            Globals.SearchList = results;
             CurrentNoteId = mode;
             try
             {
@@ -735,7 +728,7 @@ namespace Notes2022RCL.Pages
         /// </summary>
         protected async Task StartSeq()
         {
-            Sequencer seq = await sessionStorage.GetItemAsync<Sequencer>("SeqItem");
+            Sequencer seq = Globals.SeqItem;
             if (seq is null)
                 return;
             List<NoteHeader> noteHeaders1 = Model.AllNotes.ToList().FindAll(p => p.IsDeleted == false && p.Version == 0);
@@ -751,32 +744,32 @@ namespace Notes2022RCL.Pages
             List<NoteHeader> noteHeaders = noteHeaders2.OrderBy(p => p.NoteOrdinal).ThenBy(p => p.ResponseOrdinal).ToList();
             if (noteHeaders.Count == 0)
             {
-                List<Sequencer> sequencers = await sessionStorage.GetItemAsync<List<Sequencer>>("SeqList");
-                int seqIndex = await sessionStorage.GetItemAsync<int>("SeqIndex");
+                List<Sequencer> sequencers = Globals.SeqList;
+                int seqIndex = Globals.SeqIndex;
                 if (sequencers.Count <= ++seqIndex)
                 {
-                    await sessionStorage.SetItemAsync("IsSeq", false);
-                    await sessionStorage.RemoveItemAsync("SeqList");
-                    await sessionStorage.RemoveItemAsync("SeqItem");
-                    await sessionStorage.RemoveItemAsync("SeqIndex");
-                    await sessionStorage.RemoveItemAsync("SeqHeaders");
-                    await sessionStorage.RemoveItemAsync("SeqHeaderIndex");
-                    await sessionStorage.RemoveItemAsync("CurrentSeqHeader");
+                    Globals.IsSeq = false;
+                    Globals.SeqList = null;
+                    Globals.SeqItem = null;
+                    Globals.SeqIndex = 0;
+                    Globals.SeqHeaders = null;
+                    Globals.SeqHeaderIndex = 0;
+                    Globals.CurrentSeqHeader = null;
                     ShowMessage("You have seen all the new notes!");
                     Navigation.NavigateTo("");
                     return; // end it all
                 }
 
                 Sequencer currSeq = sequencers[seqIndex];
-                await sessionStorage.SetItemAsync("SeqIndex", seqIndex);
+                Globals.SeqIndex = seqIndex;
                 Navigation.NavigateTo("noteindex/" + -currSeq.NoteFileId);
                 return;
             }
 
-            await sessionStorage.SetItemAsync("SeqHeaders", noteHeaders);
-            await sessionStorage.SetItemAsync("SeqHeaderIndex", 0);
+            Globals.SeqHeaders = noteHeaders;
+            Globals.SeqHeaderIndex = 0;
             NoteHeader currHeader = noteHeaders[0];
-            await sessionStorage.SetItemAsync("CurrentSeqHeader", currHeader);
+            Globals.CurrentSeqHeader = currHeader;
             seq.Active = true;
             await Client.UpdateSequencerAsync(seq, myState.AuthHeader);
             CurrentNoteId = currHeader.Id;
@@ -793,8 +786,8 @@ namespace Notes2022RCL.Pages
         /// <param name="args">The arguments.</param>
         public async void ActionCompleteHandler(ActionEventArgs<NoteHeader> args)
         {
-            await sessionStorage.SetItemAsync("IndexPage", sfGrid1.PageSettings.CurrentPage);
-            CurPage = await sessionStorage.GetItemAsync<int>("IndexPage");
+            Globals.IndexPage = sfGrid1.PageSettings.CurrentPage;
+            CurPage = Globals.IndexPage;
         }
 
         /// <summary>

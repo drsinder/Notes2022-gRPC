@@ -92,13 +92,6 @@ namespace Notes2022RCL.Dialogs
         Notes2022Server.Notes2022ServerClient Client { get; set; }
 
         /// <summary>
-        /// Gets or sets the session storage.
-        /// </summary>
-        /// <value>The session storage.</value>
-        [Inject]
-        Blazored.SessionStorage.ISessionStorageService sessionStorage { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AddAccessDlg" /> class.
         /// </summary>
         public AddAccessDlg()
@@ -131,7 +124,7 @@ namespace Notes2022RCL.Dialogs
         {
             if (selectedUserId != "none")
             {
-                int aId = await sessionStorage.GetItemAsync<int>("ArcId");
+                int aId = Globals.ArcId;
                 NoteAccess item = new();
                 item.UserID = selectedUserId;
                 item.NoteFileId = NoteFileId;

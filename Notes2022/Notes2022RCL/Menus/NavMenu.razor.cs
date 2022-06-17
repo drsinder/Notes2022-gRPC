@@ -111,13 +111,6 @@ namespace Notes2022RCL.Menus
         NavigationManager Navigation { get; set; }
 
         /// <summary>
-        /// Gets or sets the session storage.
-        /// </summary>
-        /// <value>The session storage.</value>
-        [Inject]
-        Blazored.SessionStorage.ISessionStorageService sessionStorage { get; set; }
-
-        /// <summary>
         /// Gets or sets the client.
         /// </summary>
         /// <value>The client.</value>
@@ -380,10 +373,10 @@ namespace Notes2022RCL.Menus
             // order them as prefered by user
             sequencers = sequencers.OrderBy(p => p.Ordinal).ToList();
             // set up state for sequencing
-            await sessionStorage.SetItemAsync<List<Sequencer>>("SeqList", sequencers);
-            await sessionStorage.SetItemAsync<int>("SeqIndex", 0);
-            await sessionStorage.SetItemAsync<Sequencer>("SeqItem", sequencers[0]);
-            await sessionStorage.SetItemAsync<bool>("IsSeq", true); // flag for noteindex
+            Globals.SeqList = sequencers;
+            Globals.SeqIndex = 0;
+            Globals.SeqItem = sequencers[0];
+            Globals.IsSeq = true; // flag for noteindex
             // begin
             string go = "noteindex/" + sequencers[0].NoteFileId;
             Navigation.NavigateTo(go);

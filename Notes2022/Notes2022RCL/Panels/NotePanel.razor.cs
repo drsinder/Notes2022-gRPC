@@ -245,13 +245,6 @@ namespace Notes2022RCL.Panels
         [Inject]
         IJSRuntime JS { get; set; } // enables calling javascript
 
-        /// <summary>
-        /// Gets or sets the session storage.
-        /// </summary>
-        /// <value>The session storage.</value>
-        [Inject]
-        Blazored.SessionStorage.ISessionStorageService sessionStorage { get; set; }
-
 #pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
@@ -282,7 +275,7 @@ namespace Notes2022RCL.Panels
                 respHeaders = respHeaders.OrderByDescending(x => x.ResponseOrdinal).ToList();
             else if (IsRootNote && RespShown)
                 respHeaders = respHeaders.OrderBy(x => x.ResponseOrdinal).ToList();
-            IsSeq = await sessionStorage.GetItemAsync<bool>("IsSeq");
+            IsSeq = Globals.IsSeq;
         }
 
         /// <summary>
@@ -790,15 +783,15 @@ namespace Notes2022RCL.Panels
         /// </summary>
         protected async Task NextSearch()
         {
-            bool InSearch = await sessionStorage.GetItemAsync<bool>("InSearch");
+            bool InSearch = Globals.InSearch;
             if (!InSearch)
                 return;
-            int SearchIndex = await sessionStorage.GetItemAsync<int>("SearchIndex");
-            List<NoteHeader> SearchList = await sessionStorage.GetItemAsync<List<NoteHeader>>("SearchList");
+            int SearchIndex = Globals.SearchIndex;
+            List<NoteHeader> SearchList = Globals.SearchList;
             if ((++SearchIndex + 1) < SearchList.Count)
             {
                 long mode = SearchList[SearchIndex].Id;
-                await sessionStorage.SetItemAsync<int>("SearchIndex", SearchIndex);
+                Globals.SearchIndex = SearchIndex;
                 NoteId = mode;
                 await GetData();
                 try
@@ -809,9 +802,9 @@ namespace Notes2022RCL.Panels
             }
             else
             {
-                await sessionStorage.SetItemAsync<bool>("InSearch", false);
-                await sessionStorage.RemoveItemAsync("SearchIndex");
-                await sessionStorage.RemoveItemAsync("SearchList");
+                Globals.InSearch = false;
+                Globals.SearchIndex = 0;
+                Globals.SearchList = null;
                 ShowMessage("Search Completed!");
             }
         }
@@ -823,13 +816,13 @@ namespace Notes2022RCL.Panels
         {
             if (!IsSeq)
                 return;
-            int currentIndex = await sessionStorage.GetItemAsync<int>("SeqHeaderIndex");
-            List<NoteHeader> headerList = await sessionStorage.GetItemAsync<List<NoteHeader>>("SeqHeaders");
+            int currentIndex = Globals.SeqHeaderIndex;
+            List<NoteHeader> headerList = Globals.SeqHeaders;
             if (headerList.Count > ++currentIndex) // proceed to next note in file
             {
-                await sessionStorage.SetItemAsync("SeqHeaderIndex", currentIndex);
+                Globals.SeqHeaderIndex = currentIndex;
                 NoteHeader currHeader = headerList[currentIndex];
-                await sessionStorage.SetItemAsync("CurrentSeqHeader", currHeader);
+                Globals.CurrentSeqHeader = currHeader;
                 NoteId = currHeader.Id;
                 await GetData();
                 try
@@ -841,28 +834,28 @@ namespace Notes2022RCL.Panels
             else
             {
                 // update seq entry for user
-                Sequencer seq = await sessionStorage.GetItemAsync<Sequencer>("SeqItem");
+                Sequencer seq = Globals.SeqItem;
                 seq.Active = false;
                 await Client.UpdateSequencerAsync(seq, myState.AuthHeader);
                 // goto next file
-                List<Sequencer> sequencers = await sessionStorage.GetItemAsync<List<Sequencer>>("SeqList");
-                int seqIndex = await sessionStorage.GetItemAsync<int>("SeqIndex");
+                List<Sequencer> sequencers = Globals.SeqList;
+                int seqIndex = Globals.SeqIndex;
                 if (sequencers.Count <= ++seqIndex)
                 {
-                    await sessionStorage.SetItemAsync("IsSeq", false);
-                    await sessionStorage.RemoveItemAsync("SeqList");
-                    await sessionStorage.RemoveItemAsync("SeqItem");
-                    await sessionStorage.RemoveItemAsync("SeqIndex");
-                    await sessionStorage.RemoveItemAsync("SeqHeaders");
-                    await sessionStorage.RemoveItemAsync("SeqHeaderIndex");
-                    await sessionStorage.RemoveItemAsync("CurrentSeqHeader");
+                    Globals.IsSeq = false;
+                    Globals.SeqList = null;
+                    Globals.SeqItem = null;
+                    Globals.SeqIndex = 0;
+                    Globals.SeqHeaders = null;
+                    Globals.SeqHeaderIndex = 0;
+                    Globals.CurrentSeqHeader = null;
                     ShowMessage("You have seen all the new notes!");
                     return; // end it all
                 }
 
                 Sequencer currSeq = sequencers[seqIndex];
-                await sessionStorage.SetItemAsync("SeqItem", currSeq);
-                await sessionStorage.SetItemAsync("SeqIndex", seqIndex);
+                Globals.SeqItem = currSeq;
+                Globals.SeqIndex = seqIndex;
                 Navigation.NavigateTo("noteindex/" + -currSeq.NoteFileId);
             }
         }

@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using Blazored.Modal;
-using Blazored.SessionStorage;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components;
@@ -31,7 +30,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddBlazoredModal();
-builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddSingleton<CookieStateAgent>();  // for login state mgt = "myState" injection in _imports.razor
 
 builder.Services.AddSyncfusionBlazor();     // options => { options.IgnoreScriptIsolation = true; });

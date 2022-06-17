@@ -51,20 +51,13 @@ namespace Notes2022RCL.Comp
     /// <seealso cref="System.IAsyncDisposable" />
     public partial class CookieStateAgent
     {
-        [CascadingParameter]
-        public IModalService Modal { get; set; }
-
-        [Parameter]
+        //[Parameter]
         public MasterHubClient MasterHubClient { get; set; }
 
         /// <summary>
         /// Dealing with login related info
         /// </summary>
         private LoginReply? savedLogin;
-        ///// <summary>
-        ///// The saved login value used while updating cookies
-        ///// </summary>
-        //private LoginReply? savedLoginValue; // used while updating cookies
         /// <summary>
         /// The module for calling javascript
         /// </summary>

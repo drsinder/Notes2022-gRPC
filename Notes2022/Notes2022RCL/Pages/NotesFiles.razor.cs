@@ -61,8 +61,8 @@ namespace Notes2022RCL.Pages
         /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task OnParametersSetAsync()
         {
-            await sessionStorage.SetItemAsync("ArcId", 0);
-            await sessionStorage.SetItemAsync("IndexPage", 1);
+            Globals.ArcId = 0;
+            Globals.IndexPage = 1;
             // grab data from server
             HomePageModel model = await Client.GetHomePageModelAsync(new NoRequest(), myState.AuthHeader);
             Files = model.NoteFiles;

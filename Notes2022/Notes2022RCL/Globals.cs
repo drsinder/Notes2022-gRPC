@@ -32,6 +32,7 @@
 // ***********************************************************************
 // <summary></summary>
 
+using Notes2022.Proto;
 using Notes2022RCL.Menus;
 using Notes2022RCL.Pages.Admin;
 using Notes2022RCL.Shared;
@@ -99,6 +100,27 @@ namespace Notes2022RCL
         /// </summary>
         /// <value>The server address.</value>
         public static string ServerAddress { get; set; } = string.Empty;
+
+        /////////
+        /// Used to be in Blazored.SessionStorage
+        ////////
+        
+        public static int ArcId { get; set; } = 0;
+        public static List<Sequencer>? SeqList { get; set; } = null;
+        public static int SeqIndex { get; set; } = 0;
+        public static Sequencer? SeqItem { get; set; } = null;
+        public static bool IsSeq { get; set; } = false;
+        public static int IndexPage { get; set; } = 0;
+        public static List<NoteHeader>? SeqHeaders { get; set; } = null;
+        public static int SeqHeaderIndex { get; set; } = 0;
+        public static NoteHeader? CurrentSeqHeader { get; set; } = null;
+        public static bool InSearch { get; set; } = false;
+        public static List<NoteHeader>? SearchList { get; set; } = null;
+
+        public static int SearchIndex { get; set; } = 0;
+
+
+
 
         /// <summary>
         /// Base64 Encodes the plain text.
