@@ -28,8 +28,6 @@ namespace Notes2022.Server.Hubs
 
         /// <summary>
         /// Opens the session.  Keeps track of user list at user login/relogin and periodic heart beat.  Calls: SendUpdate()
-        /// 
-        /// Sends
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="userName">Name of the user.</param>

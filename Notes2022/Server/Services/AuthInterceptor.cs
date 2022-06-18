@@ -10,7 +10,7 @@ using Notes2022.Shared;
 namespace Notes2022.Server.Services
 {
     /// <summary>
-    /// Class RestInterceptor - Needed to replace [Authorize] for Json Transcoding
+    /// Class AuthInterceptor - Needed to replace [Authorize] for Json Transcoding
     /// Implements the <see cref="Interceptor" />
     /// </summary>
     /// <seealso cref="Interceptor" />
@@ -71,8 +71,8 @@ namespace Notes2022.Server.Services
             {   // check for direct gRPC
                 string? auth = dict["authorization"];   // works for direct gRPC calls not transcoded Json - exception if not exists
                 auth = auth[7..];                       // skip "bearer "
-                JwtSecurityTokenHandler hand = new();
-                JwtSecurityToken token = hand.ReadJwtToken(auth);
+                JwtSecurityTokenHandler handler = new();
+                JwtSecurityToken token = handler.ReadJwtToken(auth);
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 user = await _userManager.FindByIdAsync(token.Subject);
             }
