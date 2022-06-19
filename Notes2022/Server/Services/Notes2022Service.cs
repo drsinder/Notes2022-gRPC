@@ -87,7 +87,7 @@ namespace Notes2022.Server.Services
 
         private ApplicationUser __user;
  
-                /// <summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="Notes2022Service" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
