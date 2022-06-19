@@ -85,30 +85,21 @@ namespace Notes2022.Server.Services
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        /// <summary>
-        /// The email sender
-        /// </summary>
-        private readonly IEmailSender _emailSender;
-
         private ApplicationUser __user;
  
-
-        /// <summary>
+                /// <summary>
         /// Initializes a new instance of the <see cref="Notes2022Service" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="db">The database.</param>
-        /// <param name="configuration">The configuration.</param>
         /// <param name="roleManager">The role manager.</param>
         /// <param name="signInManager">The sign in manager.</param>
-        /// <param name="emailSender">The email sender.</param>
         /// <param name="userManager">The user manager.</param>
         public Notes2022Service(
             //ILogger<Notes2022Service> logger,
             NotesDbContext db,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender,
             UserManager<ApplicationUser> userManager
           )
         {
@@ -117,7 +108,6 @@ namespace Notes2022.Server.Services
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
-            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -227,7 +217,7 @@ namespace Notes2022.Server.Services
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
             string target = Globals.AppUrl + "/authentication/confirmemail/" + payload;
-            await _emailSender.SendEmailAsync(request.Email, "Confirm your email",
+            await new EmailSender().SendEmailAsync(request.Email, "Confirm your email",
                 $"Please confirm your Notes 2022 account email by <a href='{target}'>clicking here</a>.  You cannot login until you do this.");
 
             return new AuthReply() { Status = StatusCodes.Status200OK, Message = "User created!" };
@@ -420,7 +410,7 @@ namespace Notes2022.Server.Services
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
             string target = Globals.AppUrl + "/authentication/confirmemail/" + payload;
-            await _emailSender.SendEmailAsync(request.Val, "Confirm your email",
+            await new EmailSender().SendEmailAsync(request.Val, "Confirm your email",
                 $"Please confirm your Notes 2022 account email by <a href='{target}'>clicking here</a>.  You cannot login until you do this.");
 
             return new AuthReply() { Status = StatusCodes.Status200OK, Message = "Email sent!" };
@@ -447,7 +437,7 @@ namespace Notes2022.Server.Services
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
             string target = Globals.AppUrl + "/authentication/resetpassword/" + payload;
-            await _emailSender.SendEmailAsync(request.Val, "Reset your password",
+            await new EmailSender().SendEmailAsync(request.Val, "Reset your password",
                 $"Please <a href='{target}'>click here</a> to reset your Notes2022 password.");
 
             return new AuthReply() { Status = StatusCodes.Status200OK, Message = "Email sent!" };
@@ -560,9 +550,8 @@ namespace Notes2022.Server.Services
         /// <param name="authClaims">The authentication claims.</param>
         /// <param name="hours">The hours.</param>
         /// <returns>JwtSecurityToken.</returns>
-        private JwtSecurityToken GetToken(List<Claim> authClaims, int hours)
+        private static JwtSecurityToken GetToken(List<Claim> authClaims, int hours)
         {
-#pragma warning disable CS8604 // Possible null reference argument.
             SymmetricSecurityKey? authSigningKey = new(Encoding.UTF8.GetBytes(Globals.SecretKey));
             JwtSecurityToken? token = new (
                 issuer: Globals.ValidIssuerURL,
@@ -571,7 +560,6 @@ namespace Notes2022.Server.Services
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
-#pragma warning restore CS8604 // Possible null reference argument.
             return token;
         }
 
@@ -1654,7 +1642,7 @@ namespace Notes2022.Server.Services
         //[Authorize]
         public override async Task<NoRequest> SendEmailAuth(GEmail request, ServerCallContext context)
         {
-            await _emailSender.SendEmailAsync(request.Address, request.Subject, request.Body);
+            await new EmailSender().SendEmailAsync(request.Address, request.Subject, request.Body);
             return new NoRequest();
         }
 
@@ -1697,7 +1685,7 @@ namespace Notes2022.Server.Services
             string myEmail = await LocalService.MakeNoteForEmail(fv, fv.NoteFile, _db, appUser.Email, appUser.DisplayName);
 #pragma warning restore CS8604 // Possible null reference argument.
 
-            await _emailSender.SendEmailAsync(appUser.Email, fv.NoteSubject, myEmail);
+            await new EmailSender().SendEmailAsync(appUser.Email, fv.NoteSubject, myEmail);
             return new NoRequest();
         }
 

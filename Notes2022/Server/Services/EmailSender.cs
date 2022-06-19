@@ -121,8 +121,6 @@ namespace Notes2022.Server.Services
 
             await client.SendEmailAsync(msg);
         }
-
-
     }
 
     /// <summary>

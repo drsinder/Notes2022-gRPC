@@ -46,15 +46,15 @@ builder.Services.AddSingleton(services =>
     string[] parts = baseUri.Split('/');
     if (!baseUri.Contains("localhost")) // not localhost - assume it is in a virtual directory ONLY ONE LEVEL DOWN from root of site
     {
-        Globals.AppVirtDir = "/" + parts[parts.Length - 2];
+        Globals.AppVirtDir = "/" + parts[^2];
     }
 
-    SubdirectoryHandler? handler = new SubdirectoryHandler(new HttpClientHandler(), Globals.AppVirtDir);
+    SubdirectoryHandler? handler = new(new HttpClientHandler(), Globals.AppVirtDir);
     GrpcChannel? channel = GrpcChannel.ForAddress(baseUri, 
         new GrpcChannelOptions 
         { HttpHandler = new GrpcWebHandler(handler), MaxReceiveMessageSize = 50 * 1024 * 1024 });   // up to 50MB
 
-    Notes2022Server.Notes2022ServerClient Client = new Notes2022Server.Notes2022ServerClient(channel);
+    Notes2022Server.Notes2022ServerClient Client = new(channel);
     return Client;
 });
 
