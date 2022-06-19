@@ -49,9 +49,12 @@ namespace Notes2022.Server.Services
             ServerCallContext context,
             UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            if (NeedsAuth(context))             // check method name to see if it needs authorized
+            string[] strings = context.Method.Split('/');
+            string method = strings[^1];
+
+            if (NeedsAuth(method))             // check method name to see if it needs authorized
             {
-                context = await BindAuth(context);    // do the authorization
+                context = await BindAuth(context, method);    // do the authorization
             }
             return await continuation(request, context);
         }
@@ -63,7 +66,7 @@ namespace Notes2022.Server.Services
         /// <param name="context">The call context.</param>
         /// <returns>ServerCallContext with (added) authorization</returns>
         /// <exception cref="Notes2022.Server.Proto.AuthReply.Status">Call not authorized!</exception>
-        private async Task<ServerCallContext> BindAuth(ServerCallContext context)
+        private async Task<ServerCallContext> BindAuth(ServerCallContext context, string method)
         {   // get the headers
             ApplicationUser user = new();
             Dictionary<string, string>? dict = context.RequestHeaders.ToDictionary(x => x.Key, x => x.Value);
@@ -104,7 +107,7 @@ namespace Notes2022.Server.Services
             if (user is null || string.IsNullOrEmpty(user.Email))
                 throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
 
-            await CheckRoles(context, user);
+            await CheckRoles(method, user);
             context.UserState.Add("User", user);    // this will be used by the gRPC service method
 
             return context;
@@ -115,11 +118,8 @@ namespace Notes2022.Server.Services
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns><c>true</c> if auth needed, <c>false</c> otherwise.</returns>
-        private static bool NeedsAuth(ServerCallContext context)
+        private static bool NeedsAuth(string method)
         {
-            string[] strings = context.Method.Split('/');
-            string method = strings[^1];
-
             return method switch      // check for methods requiring No Auththorization
             {
                 "Register" or "Login" or "ConfirmEmail" or "ResendEmail" or "ResetPassword" or "ResetPassword2" or "NoOp" or "GetAbout" or "GetTextFile" or "GetHomePageMessage" => false,
@@ -132,11 +132,8 @@ namespace Notes2022.Server.Services
         /// </summary>
         /// <param name="context">The ServerCallContext.</param>
         /// <exception cref="Notes2022.Server.Proto.AuthReply.Status">Call not authorized!</exception>
-        private async Task CheckRoles(ServerCallContext context, ApplicationUser user)
+        private async Task CheckRoles(string method, ApplicationUser user)
         {
-            string[] strings = context.Method.Split('/');
-            string method = strings[strings.Length - 1];
-
             switch (method)      // check for methods requiring Admin access
             {
                 case "GetUserList":         // list of methods to require Admin access for
