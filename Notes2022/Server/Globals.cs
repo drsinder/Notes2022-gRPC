@@ -86,6 +86,16 @@ namespace Notes2022.Server
 
         public static bool UserDict { get; set; }
 
+        public static string PrimeAdminEmail { get; set; }
+
+        public static string PrimeAdminName { get; set; }
+
+        public static string SecretKey { get; set; }
+
+        public static string ValidIssuerURL { get; set; }
+
+        public static string ValidAudienceURL { get; set; }
+
         /// <summary>
         /// Base64s the encode.
         /// </summary>

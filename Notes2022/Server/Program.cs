@@ -174,6 +174,11 @@ Globals.AppUrl = configuration["AppUrl"];
 Globals.AppVirtDir = configuration["AppVirtDir"];
 Globals.CookieName = configuration["CookieName"];
 Globals.StartTime = DateTime.UtcNow;
+Globals.PrimeAdminEmail = configuration["PrimeAdminEmail"];
+Globals.PrimeAdminName = configuration["PrimeAdminName"];
+Globals.ValidIssuerURL = configuration["JWTAuth:ValidIssuerURL"];
+Globals.ValidAudienceURL = configuration["JWTAuth:ValidAudienceURL"];
+Globals.SecretKey = configuration["JWTAuth:SecretKey"];
 
 try
 {

@@ -81,11 +81,6 @@ namespace Notes2022.Server.Services
         private readonly RoleManager<IdentityRole> _roleManager;
 
         /// <summary>
-        /// The configuration
-        /// </summary>
-        private readonly IConfiguration _configuration;
-
-        /// <summary>
         /// The sign in manager
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -111,7 +106,6 @@ namespace Notes2022.Server.Services
         public Notes2022Service(
             //ILogger<Notes2022Service> logger,
             NotesDbContext db,
-            IConfiguration configuration,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
@@ -123,7 +117,6 @@ namespace Notes2022.Server.Services
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
-            _configuration = configuration;
             _emailSender = emailSender;
         }
 
@@ -233,7 +226,7 @@ namespace Notes2022.Server.Services
             ConfirmEmailRequest mess = new() { UserId = user.Id, Code = code };
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
-            string target = _configuration["AppUrl"] + "/authentication/confirmemail/" + payload;
+            string target = Globals.AppUrl + "/authentication/confirmemail/" + payload;
             await _emailSender.SendEmailAsync(request.Email, "Confirm your email",
                 $"Please confirm your Notes 2022 account email by <a href='{target}'>clicking here</a>.  You cannot login until you do this.");
 
@@ -426,7 +419,7 @@ namespace Notes2022.Server.Services
             ConfirmEmailRequest mess = new() { UserId = user.Id, Code = code };
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
-            string target = _configuration["AppUrl"] + "/authentication/confirmemail/" + payload;
+            string target = Globals.AppUrl + "/authentication/confirmemail/" + payload;
             await _emailSender.SendEmailAsync(request.Val, "Confirm your email",
                 $"Please confirm your Notes 2022 account email by <a href='{target}'>clicking here</a>.  You cannot login until you do this.");
 
@@ -453,7 +446,7 @@ namespace Notes2022.Server.Services
             ConfirmEmailRequest mess = new() { UserId = user.Id, Code = code };
             string payload = Globals.Base64Encode(JsonSerializer.Serialize(mess));
 
-            string target = _configuration["AppUrl"] + "/authentication/resetpassword/" + payload;
+            string target = Globals.AppUrl + "/authentication/resetpassword/" + payload;
             await _emailSender.SendEmailAsync(request.Val, "Reset your password",
                 $"Please <a href='{target}'>click here</a> to reset your Notes2022 password.");
 
@@ -570,10 +563,10 @@ namespace Notes2022.Server.Services
         private JwtSecurityToken GetToken(List<Claim> authClaims, int hours)
         {
 #pragma warning disable CS8604 // Possible null reference argument.
-            SymmetricSecurityKey? authSigningKey = new(Encoding.UTF8.GetBytes(_configuration["JWTAuth:SecretKey"]));
+            SymmetricSecurityKey? authSigningKey = new(Encoding.UTF8.GetBytes(Globals.SecretKey));
             JwtSecurityToken? token = new (
-                issuer: _configuration["JWTAuth:ValidIssuerURL"],
-                audience: _configuration["JWTAuth:ValidAudienceURL"],
+                issuer: Globals.ValidIssuerURL,
+                audience: Globals.ValidAudienceURL,
                 expires: DateTime.Now.AddHours(hours),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
@@ -1644,9 +1637,9 @@ namespace Notes2022.Server.Services
 
             return new AboutModel()
             {
-                PrimeAdminEmail = _configuration["PrimeAdminEmail"],
-                PrimeAdminName = _configuration["PrimeAdminName"],
-                HostUri = _configuration["AppUrl"],
+                PrimeAdminEmail = Globals.PrimeAdminEmail,
+                PrimeAdminName = Globals.PrimeAdminName,
+                HostUri = Globals.AppUrl,
                 UpTime = dur
             };
         }
