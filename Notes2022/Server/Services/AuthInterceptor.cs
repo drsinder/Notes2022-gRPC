@@ -68,48 +68,39 @@ namespace Notes2022.Server.Services
         /// <exception cref="Notes2022.Server.Proto.AuthReply.Status">Call not authorized!</exception>
         private async Task<ServerCallContext> BindAuth(ServerCallContext context, string method)
         {   // get the headers
-            ApplicationUser user = new();
+            ApplicationUser? user = new();
             Dictionary<string, string>? dict = context.RequestHeaders.ToDictionary(x => x.Key, x => x.Value);
             try
             {   // check for direct gRPC
-                string? auth = dict["authorization"];   // works for direct gRPC calls not transcoded Json - exception if not exists
-                auth = auth[7..];                       // skip "bearer "
-                JwtSecurityTokenHandler handler = new();
-                JwtSecurityToken token = handler.ReadJwtToken(auth);
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                user = await _userManager.FindByIdAsync(token.Subject);
+                user = await _userManager.FindByIdAsync(new JwtSecurityTokenHandler().ReadJwtToken(dict["authorization"][7..]).Subject);
             }
             catch (Exception)                           // no auth header (gRPC) - try cookie (Json Transcoding)
             {
-                try
+                string[] cookies = dict["cookie"].Split(',');
+                foreach (string cookie in cookies)
                 {
-                    string[] cookies = dict["cookie"].Split(',');
-                    foreach (string cookie in cookies)
+                    if (cookie.StartsWith(Globals.CookieName))
                     {
-                        if (cookie.StartsWith(Globals.CookieName))
+                        try
                         {
-                            string val = cookie[(Globals.CookieName.Length + 1)..];
-                            LoginReply? reply = JsonSerializer.Deserialize<LoginReply>(Globals.Base64Decode(val));
+                            LoginReply? reply = JsonSerializer.Deserialize<LoginReply>(Globals.Base64Decode(cookie[(Globals.CookieName.Length + 1)..]));
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                             context.RequestHeaders.Add("authorization", $"Bearer {reply.Jwt}");
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                             user = await _userManager.FindByIdAsync(reply.Info.Subject);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                             break;
                         }
+                        catch (Exception)
+                        {
+                            throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
+                        }
                     }
-                }
-                catch (Exception)
-                {
-                    throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
                 }
             }
             if (user is null || string.IsNullOrEmpty(user.Email))
                 throw new RpcException(new Status(StatusCode.Unauthenticated, "Call not authorized!"));
-
             await CheckRoles(method, user);
             context.UserState.Add("User", user);    // this will be used by the gRPC service method
-
             return context;
         }
 
@@ -149,7 +140,6 @@ namespace Notes2022.Server.Services
                     break;
 
                 // could add other Roles as needed
-
                 default:
                     break;
             }
