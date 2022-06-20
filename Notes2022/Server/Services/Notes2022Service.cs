@@ -1073,7 +1073,7 @@ namespace Notes2022.Server.Services
         public override async Task<NoteAccessList> GetAccessList(AccessAndUserListRequest request, ServerCallContext context)
         {
             NoteAccessList ret = new();
-            ret.List.AddRange((await _db.NoteAccess.Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId).ToListAsync()));
+            ret.List.AddRange((await AccessManager.GetAccessListForFile(_db, request.FileId, request.ArcId)));
             return ret;
         }
 
@@ -1090,7 +1090,7 @@ namespace Notes2022.Server.Services
             {
                 UserAccess = await AccessManager.GetAccess(_db, request.UserId, request.FileId, request.ArcId)
             };
-            accessAndUserList.AccessList.AddRange(await _db.NoteAccess.Where(p => p.NoteFileId == request.FileId && p.ArchiveId == request.ArcId).ToListAsync());
+            accessAndUserList.AccessList.AddRange(await AccessManager.GetAccessListForFile(_db, request.FileId, request.ArcId));
             accessAndUserList.AppUsers = ApplicationUser.GetGAppUserList((await _userManager.GetUsersInRoleAsync("User")).ToList());
             return accessAndUserList;
         }
@@ -1104,7 +1104,7 @@ namespace Notes2022.Server.Services
         //[Authorize]
         public override async Task<NoteAccess> UpdateAccessItem(NoteAccess request, ServerCallContext context)
         {
-            NoteAccess access = (request);
+            NoteAccess access = request;
             ApplicationUser appUser = GetUser(context);
             NoteAccess na = await AccessManager.GetAccess(_db, appUser.Id, access.NoteFileId, access.ArchiveId);
             if (na.EditAccess)

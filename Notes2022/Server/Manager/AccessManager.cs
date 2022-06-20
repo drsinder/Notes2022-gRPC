@@ -55,7 +55,7 @@ namespace Notes2022.Server
         /// <param name="deleteEdit">if set to <c>true</c> [delete edit].</param>
         /// <param name="director">if set to <c>true</c> [director].</param>
         /// <param name="editAccess">if set to <c>true</c> [edit access].</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if success, <c>false</c> otherwise.</returns>
         private static async Task<bool> Create(NotesDbContext db, string userId, int noteFileId, bool read, bool respond,
             bool write, bool setTag, bool deleteEdit, bool director, bool editAccess)
         {
@@ -85,7 +85,7 @@ namespace Notes2022.Server
         /// <param name="userManager">The user manager.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="fileId">The file identifier.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if success, <c>false</c> otherwise.</returns>
         public static async Task<bool> CreateBaseEntries(NotesDbContext db, string userId, int fileId)
         {
             bool flag1 = await Create(db, Globals.AccessOtherId, fileId, false, false, false, false, false, false, false);
@@ -114,7 +114,7 @@ namespace Notes2022.Server
                 .Where(p => p.UserID == userId && p.NoteFileId == fileId && p.ArchiveId == arcId).FirstOrDefaultAsync();
 
             // If specific user not in list use "Other"
-            if (na == null)
+            if (na is null)
                 na = await db.NoteAccess
                     .Where(p => p.UserID == Globals.AccessOtherId && p.NoteFileId == fileId && p.ArchiveId == arcId).FirstOrDefaultAsync();
 
